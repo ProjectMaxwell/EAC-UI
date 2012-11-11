@@ -1,0 +1,104 @@
+<html>
+<head>
+	<title>Create Event</title>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+    <style type="text/css">
+    	.normalButton{
+    		border: 1px solid black;
+    		border-radius: 5px;
+    		margin: 10px auto;
+    		padding: 5px;
+    		cursor: pointer;
+    		float: left;
+    	}
+    </style>
+</head>
+<body>
+	<div id="createEventSpace">
+		<div class="inputHolder">
+			Event Location Name: <input type="text" id="locationName" />
+		</div>
+		<div class="inputHolder">
+			Event Location URL: <input type="text" id="eventLocationURL" />
+		</div>
+		<div class="inputHolder">
+			Google Maps URL: <input type="text" id="gMapsURL" />
+		</div>
+		<div class="inputHolder">
+			Event Date(mm/dd/yy): <input type="text" id="eventDate" />
+		</div>
+		<div class="inputHolder">
+			Event Time(h:mm - military time): <input type="text" id="eventTime" />
+		</div>
+		<div id="submitEvent" class="normalButton">Submit Event</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#eventDate').datepicker({
+			dateFormat: "mm/dd/yy",
+			constrainInput: true
+		});
+		$('#submitEvent').click(addEvent);
+	});
+	function addEvent(){
+		var eventDate = $('#eventDate').datepicker("getDate");
+		var eventLocation = $('#locationName').val();
+		var eventMapLink = $('#gMapsURL').val();
+		var eventWebSite = $('#eventLocationURL').val();
+		var eventTime = $('#eventTime').val();
+		if(eventTime && eventDate){
+			eventTime = eventTime.split(':');
+			if(eventTime.length == 2){
+				if(!isNaN(eventTime[0]) && eventTime[0] > -1 && eventTime[0] < 24){
+					if(!isNaN(eventTime[1]) && eventTime[1] > -1 && eventTime[1] < 60){
+						eventDate.setHours(eventTime[0] + ',' + eventTime[1]);
+					}else{
+						eventTime = null;
+					}
+				}else{
+					eventTime = null;
+				}
+			}
+		}else{
+			eventTime = null;
+		}
+
+
+		if(eventTime && eventDate && eventLocation && eventMapLink && eventWebSite){
+
+			var allData = {
+					"date": eventDate.getTime(),
+					"location": eventLocation,
+					"googleMaps": eventMapLink,
+					"website": eventWebSite
+				};
+			allData = JSON.stringify(allData);
+			jQuery.ajax({
+				type: "POST",
+				data: allData,
+				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/EAC/meet-ups",
+				dataType: "JSON",
+				contentType: "application/json",
+				success: function(){
+					$('#createEventSpace').fadeOut(500, function(){
+						$('#eventDate').val('');
+						$('#eventTime').val('');
+						$('#locationName').val('');
+						$('#gMapsURL').val('');
+						$('#eventLocationURL').val('');
+						$(this).fadeIn(500);
+					});
+				},
+				error: function(){
+					alert('Something went wrong. Oops.');
+				},
+			})
+		}else{
+			alert("You are missing a field")
+		}
+	}
+</script>
+</html>

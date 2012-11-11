@@ -1,0 +1,87 @@
+<html>
+<head>
+	<title>Maxwell Login</title>
+</head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="Authenticate.js"></script>
+<body>
+		Username: <input id="username" type="text" />
+		<br>
+		Password: <input id="password" type="password" />
+		<br>
+		<input type="button" value="Get Token" id="getTokenButton" />
+		<br>
+		<input type="button" value="Refresh with Token" id="releaseTokenButton" />
+</body>
+	<script>
+
+
+/*	function authenticateByPassword(username, password){
+		if(username && password){
+			var allData = {
+					"grantType": "PASSWORD",
+					"username": username,
+					"password": password,
+					"clientId": "MAXWELL_WEB_CLIENT"
+				};
+			allData = JSON.stringify(allData);
+			jQuery.ajax({
+				type: "POST",
+				data: allData,
+				url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/token",
+				dataType: "JSON",
+				contentType: "application/json",
+				success: function(response){
+					storePhiAuthResponse(response);
+				},
+				error: function(){
+					alert(JSON.stringify(response.responseText))
+				},
+			})
+		}else{
+			alert("You are missing a field")
+		}
+	}
+	function authenticateByRefresh(){
+		if(authResponse && authResponse.refreshToken){
+			var allData = {
+				"grantType": "REFRESH",
+				"refreshToken": authResponse.refreshToken
+				};
+			allData = JSON.stringify(allData);
+			jQuery.ajax({
+				type: "POST",
+				data: allData,
+				url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/token",
+				dataType: "JSON",
+				contentType: "application/json",
+				success: function(response){
+					storePhiAuthResponse(response);
+				},
+				error: function(response){
+					alert(JSON.stringify(response.responseText));
+				},
+			})
+		}else{
+			alert("You have not yet logged in");
+		}
+	}
+	function storePhiAuthResponse(response){
+		authResponse = response;
+	}
+*/
+	$(document).ready(function(){
+		assignClicks();
+	});
+	function assignClicks(){
+		$('#getTokenButton').click(happyTrails);
+		$('#releaseTokenButton').click(happierTrails);
+	}
+	function happyTrails(){
+		authenticateByPassword($("#username").val(), $("#password").val());
+	}
+	function happierTrails(){
+		authenticateByRefresh(authResponse.refreshToken)
+	}
+	</script>
+</html>

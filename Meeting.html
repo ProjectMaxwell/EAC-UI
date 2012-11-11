@@ -1,0 +1,111 @@
+<html>
+	<head>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+		<style type="text/css">
+			body {
+				background-color: #000000;
+			}
+			h1 {
+				margin:0;
+				padding:0;
+				text-align:center;
+		 		font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+		 		font-size: 150px;
+		 		font-weight:normal;
+				color: #FFFFFF;
+			}
+			#contentHolder{
+				opacity: 0;
+				transition: opacity 500ms;
+				-moz-transition: opacity 500ms;
+				-webkit-transition: opacity 500ms;
+				-o-transition: opacity 500ms;
+			}
+			div {
+				margin:0;
+				padding:0;
+				text-align:center;
+				font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+				font-size: 30px;
+				font-weight: normal;
+				color: #FFFFFF;
+			}
+			a, a:visited {
+				text-decoration:none;
+				color: #CD6889;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="contentHolder">
+			<h1 id="date">First Friday of Each Month</h1>
+			<h1 id="location">At a Bar</h1>
+			<div>
+				<a id="map" href="">Map</a>
+				<a id="website" href="">Website</a>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+	jQuery(document).ready(getMeeting);
+	function getMeeting(){
+	    $.getJSON("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/EAC/meet-ups/next"
+	    	).success(function(data){
+	    		fillPage(data);
+	    	}).error(function(){
+	    		fillPage();
+	    	});
+	}
+	function fillPage(data){
+		var currDate = "First Friday of Each Month";
+    	var currLocation = "At a Bar";
+    	var currMapLink = "";
+    	var currWebSite = "";
+    	if(data){
+    		currDate = data.date;
+    		currLocation = "at " + data.location;
+    		currMapLink = data.googleMaps;
+    		if(data.website == ""){
+    			jQuery("#website").hide();
+    		}else{
+    			currWebSite = data.website;
+    		}
+    	}else{
+    		jQuery("#map").hide();
+    		jQuery("#website").hide();
+    	}
+    	
+    	jQuery("#date").text(currDate);
+        jQuery("#location").text(currLocation);
+        jQuery("#map").attr("href", currMapLink);
+        jQuery("#website").attr("href", currWebSite);
+
+        jQuery('#contentHolder').css('opacity', 1);
+	}
+
+	function addEvent(eventTime, eventLocation, eventMapLink, eventWebSite){
+		if(eventTime && eventLocation && eventMapLink && eventWebSite){
+			var allData = {
+					"date": eventTime,
+					"location": eventLocation,
+					"googleMaps": eventMapLink,
+					"website": eventWebSite
+				};
+			allData = JSON.stringify(allData);
+			jQuery.ajax({
+				type: "POST",
+				data: allData,
+				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/EAC/meet-ups",
+				dataType: "JSON",
+				contentType: "application/json",
+				success: function(){
+				},
+				error: function(){
+				},
+			})
+		}else{
+			alert("You are missing a field")
+		}
+	}
+	</script>
+</html>
