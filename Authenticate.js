@@ -58,6 +58,7 @@ function authenticateByRefresh(refreshToken){
 			contentType: "application/json",
 			success: function(response){
 				alertString = response;
+				authResponse = response;
 			},
 			error: function(response){
 				alertString = JSON.stringify(response.responseText);
