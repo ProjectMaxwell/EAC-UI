@@ -24,7 +24,38 @@
     		echo "Found errorCode '" . $_GET['errorCode'] . "'.";
     	}
 
+
+    	function buildAccessTokenForm(){
+
+   		 	echo "<br /><br /><br />";
+			?>
+			<form action="UWNetIDAssertionGrant.php" method="POST">
+				<label for="uwnetidToken">uwnetidToken to convert</label>
+				<input name="uwnetidToken" id="uwnetidToken" value="<?php echo $_GET['token']; ?>" size="35"/>
+				<input type="submit" value="Convert to accessToken"/>
+			</form>
+			<?php
+    	}
+
     ?>
+    </div>
+    <div>
+    	<?php
+		if(isset($_GET['token']) && $_GET['token'] != null && $_GET['token'] != ""){
+			buildAccessTokenForm();
+		}
+    	?>
+    </div>
+    <div style="text-align: center; color: red;">
+    	<?php
+
+		if(isset($_GET['accessToken']) && isset($_GET['userId']) && isset($_GET['ttl'])){
+			 echo "Found accessToken '" . $_GET['accessToken'] . "' for user '" . $_GET['userId']
+			. "' with ttl '" . $_GET['ttl'] . "'.";
+		}else if(isset($_GET['accessTokenErrorCode'])){
+			echo "Found accessTokenErrorCode '" . $_GET['accessTokenErrorCode'] . "'.";
+    	}
+    	?>
     </div>
   </body>
 </html>

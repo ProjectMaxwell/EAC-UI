@@ -2,6 +2,8 @@
 
 $uwnetid;
 
+$properties = parse_ini_file("../../UWNetID.ini");
+
 if($_POST['uwnetid'] == null){
 	echo "do error stuff";
 }else{
@@ -29,6 +31,8 @@ $data;
 $ref=getenv("HTTP_REFERER");
 if($ref == null){
 	$ref = "http://www.evergreenalumniclub.com/UWNetIDTest/index.php";
+}else if(strpos($ref, "?") >= 0){
+	$ref = substr($ref, 0, strpos($ref, "?"));
 }
 
 if(isset($jsonResponse->token)){
@@ -47,9 +51,7 @@ if(isset($jsonResponse->token)){
 	$ref .= "?errorCode=UNKNOWN.ERROR";
 }
 
-	header("Location: " . $ref);
+header("Location: " . $ref);
 
-
-	//http_redirect($ref, $data);
 
 ?>
