@@ -2,8 +2,6 @@
 
 $uwnetidToken = "";
 
-//$properties = parse_ini_file("../../UWNetID.ini");
-
 if(!isset($_POST['uwnetidToken']) || $_POST['uwnetidToken']  == null){
 	echo "do error stuff <br />";
 }else{
