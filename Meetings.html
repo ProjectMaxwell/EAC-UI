@@ -1,0 +1,105 @@
+<html>
+	<head>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+		<style type="text/css">
+			body {
+				background-color: #000000;
+			}
+			#contentHolder{
+				opacity: 0;
+				transition: opacity 500ms;
+				-moz-transition: opacity 500ms;
+				-webkit-transition: opacity 500ms;
+				-o-transition: opacity 500ms;
+			}
+			div {
+				margin:0;
+				padding:0;
+				text-align:center;
+				font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+				font-size: 30px;
+				font-weight: normal;
+				color: #FFFFFF;
+			}
+			#meetingsListHeader{
+				font-size: 20px;
+				font-weight: bold;
+			}
+			#title{
+				font-size: 150px;
+				color: #FFF000;
+			}
+			a, a:visited {
+				text-decoration:none;
+				color: #CD6889;
+			}
+			span {
+				margin:2;
+				padding:2;
+				text-align:center;
+				font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+				font-size: 30px;
+				font-weight:normal;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="contentHolder">
+			<div id="title">Historical EAC Meetings</div>
+			<div id="meetingsList">
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+	jQuery(document).ready(getMeetings);
+	function getMeetings(){
+	    $.getJSON("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/EAC/meet-ups"
+	    	).success(function(data){
+	    		fillPage(data);
+	    	}).error(function(){
+	    		fillPage();
+	    	});
+	}
+	function fillPage(data){
+		var currDate = "FTODAY";
+    	var currLocation = "At a PLACE";
+    	var currMapLink = "MMMAP";
+    	if(data){
+    		for(var i = 0; i < data.length; i++){
+
+				currDate = data[i].date;
+				currLocation = data[i].location;
+				currMapLink = data[i].googleMaps;
+
+				var newDiv = document.createElement('div');
+
+				var dateSpan = document.createElement('span');
+				var dateText = document.createTextNode(currDate);
+				dateSpan.appendChild(dateText);
+				newDiv.appendChild(dateSpan);
+
+				var locationSpan = document.createElement('span');
+				var locationText = document.createTextNode(currLocation);
+				locationSpan.appendChild(locationText);
+				newDiv.appendChild(locationSpan);
+
+				var googleMapsSpan = document.createElement('span');
+				var googleMapsLink = document.createElement('a');
+				googleMapsLink.href = currMapLink;
+				var googleMapsText = document.createTextNode(currMapLink);
+				googleMapsLink.appendChild(googleMapsText);
+				googleMapsSpan.appendChild(googleMapsLink);
+				newDiv.appendChild(googleMapsSpan);
+
+				console.log(newDiv);
+				document.getElementById("meetingsList").appendChild(newDiv);
+    		}
+    		//jQuery("div")
+    	}else{
+			alert("No EAC Meetings found.");
+    	}
+
+        jQuery('#contentHolder').css('opacity', 1);
+	}
+	</script>
+</html>
