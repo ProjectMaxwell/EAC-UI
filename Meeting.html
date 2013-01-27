@@ -49,25 +49,7 @@
 	<script type="text/javascript">
 	console.log('testing');
 	jQuery(document).ready(getMeeting);
-	function getDatas(){
-			$.ajax({
-				url: 'http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users?userType=3',
-				processData: false,
-				contentType: 'application/json',
-				type: 'GET',
-				success: function(data){
-					alert('excelsior!');
-					console.log(data);
-				},
-
-				error: function(data){
-					alert('failz');
-					console.log(data);
-				}
-			})
-		}
 	function getMeeting(){
-		getDatas();
 	    $.getJSON("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/EAC/meet-ups/next"
 	    	).success(function(data){
 	    		fillPage(data);
