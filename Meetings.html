@@ -1,7 +1,44 @@
 <html>
 	<head>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
-		<style type="text/css">
+		<script type="text/javascript"
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8vnMM2jwVnUoQR1OkN8e4Q8YZhfSmBwY&sensor=false"></script>
+		<script type="text/javascript">      
+			function initializeMap() {        
+				var mapOptions = {          
+					center: new google.maps.LatLng(47.650000,-122.331734),          
+					zoom: 12,          
+					mapTypeId: google.maps.MapTypeId.ROADMAP        
+				};        
+				map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
+			}
+			
+			function addMarker(latitude, longitude, title){
+				var coordinates = new google.maps.LatLng(latitude, longitude);
+				var marker = new google.maps.Marker({
+					position: coordinates,
+					map: map,
+					title:title
+				});
+			}
+			
+			//I stole and modified this function from stackoverflow, my regex is not this leet.  -Eric
+			//Takes a full google URL, and a parameter name that we want to pull
+			function getQueryParameterFromUri(mapsUri, name){
+			{
+				//var name = "sll"; //This is the name of the query parameter we want
+				name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+				var regexS = "[\\?&]" + name + "=([^&#]*)";
+				var regex = new RegExp(regexS);
+				var results = regex.exec(mapsUri);
+				if(results == null)
+					return "";
+				else
+					return decodeURIComponent(results[1].replace(/\+/g, " "));
+				}
+			}
+		</script>
+<style type="text/css">
 			body {
 				background-color: #000000;
 			}
@@ -44,6 +81,7 @@
 		</style>
 	</head>
 	<body>
+		<div id="map_canvas" style="width:25%; height:100%; float: left"></div>
 		<div id="contentHolder">
 			<div id="title">Historical EAC Meetings</div>
 			<div id="map"></div>
@@ -51,6 +89,7 @@
 		</div>
 	</body>
 	<script type="text/javascript">
+	jQuery(document).ready(initializeMap);
 	jQuery(document).ready(getMeetings);
 	function getMeetings(){
 	    $.getJSON("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/EAC/meet-ups"
@@ -68,19 +107,18 @@
 	function fillPage(data){
 
 		// This draws the map
-		var myLatlng = new google.maps.LatLng(http:47.606163,-122.332077);
+/* 		var myLatlng = new google.maps.LatLng(http:47.606163,-122.332077);
   		var mapOptions = {
    			zoom: 4,
     		center: myLatlng,
    			mapTypeId: google.maps.MapTypeId.ROADMAP
-   		}
+   		} */
 
 		var currDate = "FTODAY";
     	var currLocation = "At a PLACE";
     	var currMapLink = "MMMAP";
     	if(data){
     		for(var i = 0; i < data.length; i++){
-
 				currDate = data[i].date;
 				currLocation = data[i].location;
 				currMapLink = data[i].googleMaps;
@@ -109,11 +147,16 @@
 				googleMapsLink.appendChild(googleMapsText);
 				googleMapsSpan.appendChild(googleMapsLink);
 				newDiv.appendChild(googleMapsSpan);
-
-				console.log(newDiv);
+				
 				document.getElementById("meetingsList").appendChild(newDiv);
-    		}
-    		//jQuery("div")
+	
+				var coordinateString = getQueryParameterFromUri(currMapLink, "sll");
+    			var coordinateValues = coordinateString.split(",");
+    			var locationName = getQueryParameterFromUri(currMapLink, "q");
+    			console.log(locationName);
+    			console.log(coordinateString);
+    			addMarker(coordinateValues[0],coordinateValues[1],locationName);
+    		} 
     	}else{
 			alert("No EAC Meetings found.");
     	}
