@@ -152,10 +152,8 @@
 	
 				var coordinateString = getQueryParameterFromUri(currMapLink, "sll");
     			var coordinateValues = coordinateString.split(",");
-    			var locationName = getQueryParameterFromUri(currMapLink, "q");
-    			console.log(locationName);
     			console.log(coordinateString);
-    			addMarker(coordinateValues[0],coordinateValues[1],locationName);
+    			addMarker(coordinateValues[0],coordinateValues[1],currLocation);
     		} 
     	}else{
 			alert("No EAC Meetings found.");
