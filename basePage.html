@@ -1,0 +1,243 @@
+<html>
+<head>
+	<title>Maxwellz</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+	<script type="text/javascript" src="chosen/chosen.jquery.min.js"></script>
+	<link rel="stylesheet" href="chosen/chosen.css" />
+	<style type="text/css">
+	#createUsersHolder select{
+		min-width: 140px;
+	}
+	#referredByMemberInput{
+		width: 500px;
+	}
+	#kittenSubmitButton{
+		cursor: pointer;
+		overflow: hidden;
+		width: 125px;
+		height: 65px;
+		text-align: center;
+		position: relative;
+		border-radius: 5px;
+		margin-top: 7px;
+		border: 1px solid black;
+
+		-moz-box-shadow:    0px 0px 5px 0px #ccc;
+		-webkit-box-shadow: 0px 0px 5px 0px #ccc;
+		box-shadow:         0px 0px 5px 0px #ccc;
+
+		transition: all 350ms;
+		-moz-transition: all 350ms; /* Firefox 4 */
+		-webkit-transition: all 350ms; /* Safari and Chrome */
+		-o-transition: all 350ms; /* Opera */
+	}
+	#kittenSubmitButton:hover{
+		bottom: 2px;
+		border: 1px solid black;
+
+		-moz-box-shadow:    0px 0px 5px 6px #ccc;
+		-webkit-box-shadow: 0px 0px 5px 6px #ccc;
+		box-shadow:         0px 0px 5px 6px #ccc;
+	}
+	#kittenSubmitButton:active{
+		transition: all 0ms;
+		-moz-transition: all 0ms; /* Firefox 4 */
+		-webkit-transition: all 0ms; /* Safari and Chrome */
+		-o-transition: all 0ms; /* Opera */
+		top: 5px;
+	}
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		/* display: none; <- Crashes Chrome on hover */
+		-webkit-appearance: none;
+		margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+	}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="createUsersHolder">
+			<div class="normalInputHolder">
+				First Name: <input type="text"  id="firstNameInput"/>
+			</div>
+			<div class="normalInputHolder">
+				Last Name: <input type="text" id="lastNameInput"/>
+			</div>
+			<div class="normalInputHolder">
+				Email: <input type="email" id="emailAddressInput"/>
+			</div>
+			<div class="normalInputHolder">
+				Year Initiated <input type="number" id="yearInitiatedInput" />
+			</div>
+			<div class="normalInputHolder">
+				Year Graduated <input type="number" id="yearGraduatedInput" />
+			</div>
+			<div class="normalInputHolder">
+				Associate Class: <select id="associateClassInput"></select>
+			</div>
+			<div class="normalInputHolder">
+				User Type: <select id="userTypeInput"></select>
+			</div>
+			<div class="normalInputHolder">
+				Chapter Name: <select id="chapterNameInput"></select>.
+			</div>
+			<div class="normalInputHolder">
+				LinkedIn URL: <input type="text" id="linkedInURLInput" />
+			</div>
+			<div class="normalInputHolder">
+				Facebook URL: <input type="text" id="facebookURLInput" />
+			</div>
+			<div class="normalInputHolder">
+				Twitter URL: <input type="text" id="twitterURLInput" />
+			</div>
+			<div class="normalInputHolder">
+				Highschool: <input type="text" id="highschoolInput" />
+			</div>
+			<div class="normalInputHolder">
+				Phone Number: <input type="number" id="phoneNumberInput" />
+			</div>
+			<div class="normalInputHolder">
+				Member Referred by: <select id="referredByMemberInput"></select>
+			</div>
+			<div id="submitHolder">
+				Enhance: <div id="kittenSubmitButton"><img src="kittenGuestbook.gif" alt=""></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			setInitialValues();
+			getDatas({'associateClass': true});
+			getDatas({'userTypes': true});
+			getDatas({'chapters': true});
+			getDatas({'referredBy': true, referredByID: 1});
+			getDatas({'referredBy': true, referredByID: 2});
+			getDatas({'referredBy': true, referredByID: 3});
+
+		});
+		function setInitialValues(){
+			$('#yearInitiatedInput').val(new Date().getFullYear());
+			$('#referredByMemberInput').chosen();
+			/*$('#associateClassInput').chosen().change(function(){
+				console.log($(this).val())
+			});*/
+		}
+		function getDatas(dataOptions){
+			var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/"
+			if(dataOptions['associateClass']){
+				getURL += "associateClasses";
+			}else if(dataOptions['userTypes']){
+				getURL += "users/userTypes"
+			}else if(dataOptions['referredBy']){
+				getURL += "users?userType=" + dataOptions['referredByID'];
+			}else if(dataOptions['chapters']){
+				getURL += "chapters";
+			}else{
+				getURL += "users?userType=3";
+			}
+			$.getJSON(getURL
+	    	).success(function(data){
+				console.log(data);
+				if(dataOptions['associateClass']){
+					var associateClassString = '';
+					for(var i = 0; i < data.length - 1; i++){
+						associateClassString += '<option value="' + data[i]['associateClassId'] + '">' + data[i]['name'] + '</option>';
+					}
+					associateClassString += '<option value="' + data[i]['associateClassId'] + '" selected>' + data[i]['name'] + '</option>';
+					$('#associateClassInput').append(associateClassString).chosen();
+				}else if(dataOptions['userTypes']){
+					var userTypeString = '';
+					for(var i = 0; i < data.length; i++){
+						userTypeString += '<option value="' + data[i]['userTypeId'] + '">' + data[i]['name'] + '</option>';
+					}
+					$('#userTypeInput').append(userTypeString).chosen();
+				}else if(dataOptions['referredBy']){
+					var referredByString = '';
+					if(dataOptions['referredByID'] == 1){
+						referredByString += '<optgroup label="Associate">';
+					}else if(dataOptions['referredByID'] == 2){
+						referredByString += '<optgroup label="Initiate">';
+					}else if(dataOptions['referredByID'] == 3){
+						referredByString += '<optgroup label="Alumnus">';
+					}
+					for(var i = 0; i < data.length; i++){
+						referredByString += '<option value="' + data[i]['userId'] + '">' + data[i]['firstName'] + ' ' + data[i]['lastName'] + '</option>';
+					}
+					referredByString += '</optgroup>';
+					if(dataOptions['referredByID'] == 3){
+						referredByString += '<optgroup label="Other">' +
+						'<option value="" selected>No one</option>'+
+						'</optgroup>';
+					}
+					$('#referredByMemberInput').append(referredByString);
+					$('#referredByMemberInput').trigger("liszt:updated");
+				}else if(dataOptions['chapters']){
+					var userTypeString = '';
+					for(var i = 0; i < data.length; i++){
+						if(data[i]['chapterId'] == 41){
+							userTypeString += '<option value="' + data[i]['chapterId'] + '" selected>' + data[i]['name'] + '</option>';
+						}else{
+							userTypeString += '<option value="' + data[i]['chapterId'] + '">' + data[i]['name'] + '</option>';
+						}
+					}
+					$('#chapterNameInput').append(userTypeString).chosen();
+				}
+	    	});
+		}
+		function submitUser(){
+			var foundError = false;
+			var errorList = new Array();
+			var userData = new Object;
+			if($('#firstNameInput').val() && $('#lastNameInput').val()){
+				userData['firstname'] = $('#firstNameInput').val();
+				userData['lastname'] = $('#lastNameInput').val();
+			}else{
+				foundError = true;
+				errorList.push("Name is f'ed up.");
+			}
+
+			//userData[''] =  || null;
+
+			userData['email'] = $('#emailAddressInput').val() || null;
+			userData['yearInitiated'] = $('#yearInitiatedInput').val() || null;
+			userData['yearGraduated'] = $('#yearGraduatedInput').val() || null;
+			userData['associateClass'] = $('#associateClassInput').val() || null;
+			userData['userType'] = $('#userTypeInput').val() || null;
+			userData['chapter'] = $('#chapterNameInput').val() || null;
+			userData['linkedInId'] = $('#linkedInURLInput').val() || null;
+			userData['twitterId'] = $('#twitterURLInput').val() || null;
+			userData['highschool'] = $('#highschoolInput').val() || null;
+			if($('#phoneNumberInput').val().length <= 12){
+				userData['phoneNumber'] = $('#phoneNumberInput').val() || null;	
+			}else{
+				foundError = true;
+				errorList.push('Phone Number is too long.');
+			}
+			
+			userData['referredById'] = $('#referredByMemberInput').val() || null;
+			console.log(userData)
+			if(!foundError){
+				postDatas(userData);
+			}
+		}
+		function postDatas(userData){
+			userData = JSON.stringify(userData);
+			console.log(userData)
+			$.ajax({
+				dataType: "json",
+				type: "POST",
+				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
+				data: userData,
+				contentType: "application/json",
+				success: function(){
+					alert("Excelsior");
+				},
+				error: function(data){
+					alert('Something went wrong. Oops.');
+					console.log(data);
+				}
+			});
+		}
+	</script>
+</body>
+</html>
