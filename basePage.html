@@ -79,7 +79,7 @@
 				User Type: <select id="userTypeInput"></select>
 			</div>
 			<div class="normalInputHolder">
-				Chapter Name: <select id="chapterNameInput"></select>.
+				Chapter Name: <select id="chapterNameInput"></select>
 			</div>
 			<div class="normalInputHolder">
 				LinkedIn URL: <input type="text" id="linkedInURLInput" />
@@ -116,7 +116,6 @@
 
 		});
 		function setInitialValues(){
-			$('#yearInitiatedInput').val(new Date().getFullYear());
 			$('#referredByMemberInput').chosen();
 			/*$('#associateClassInput').chosen().change(function(){
 				console.log($(this).val())
@@ -189,8 +188,8 @@
 			var errorList = new Array();
 			var userData = new Object;
 			if($('#firstNameInput').val() && $('#lastNameInput').val()){
-				userData['firstname'] = $('#firstNameInput').val();
-				userData['lastname'] = $('#lastNameInput').val();
+				userData['firstName'] = $('#firstNameInput').val();
+				userData['lastName'] = $('#lastNameInput').val();
 			}else{
 				foundError = true;
 				errorList.push("Name is f'ed up.");
@@ -201,9 +200,9 @@
 			userData['email'] = $('#emailAddressInput').val() || null;
 			userData['yearInitiated'] = $('#yearInitiatedInput').val() || null;
 			userData['yearGraduated'] = $('#yearGraduatedInput').val() || null;
-			userData['associateClass'] = $('#associateClassInput').val() || null;
-			userData['userType'] = $('#userTypeInput').val() || null;
-			userData['chapter'] = $('#chapterNameInput').val() || null;
+			userData['associateClassId'] = $('#associateClassInput').val() || null;
+			userData['userTypeId'] = $('#userTypeInput').val() || null;
+			userData['chapterId'] = $('#chapterNameInput').val() || null;
 			userData['linkedInId'] = $('#linkedInURLInput').val() || null;
 			userData['twitterId'] = $('#twitterURLInput').val() || null;
 			userData['highschool'] = $('#highschoolInput').val() || null;
