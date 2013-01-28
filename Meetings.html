@@ -26,7 +26,7 @@
 				font-weight: bold;
 			}
 			#title{
-				font-size: 150px;
+				font-size: 100px;
 				color: #FFF000;
 			}
 			a, a:visited {
@@ -46,8 +46,8 @@
 	<body>
 		<div id="contentHolder">
 			<div id="title">Historical EAC Meetings</div>
-			<div id="meetingsList">
-			</div>
+			<div id="map"></div>
+			<div id="meetingsList"></div>
 		</div>
 	</body>
 	<script type="text/javascript">
@@ -60,7 +60,21 @@
 	    		fillPage();
 	    	});
 	}
+
+	function addMap(){
+
+ 	}
+
 	function fillPage(data){
+
+		// This draws the map
+		var myLatlng = new google.maps.LatLng(http:47.606163,-122.332077);
+  		var mapOptions = {
+   			zoom: 4,
+    		center: myLatlng,
+   			mapTypeId: google.maps.MapTypeId.ROADMAP
+   		}
+
 		var currDate = "FTODAY";
     	var currLocation = "At a PLACE";
     	var currMapLink = "MMMAP";
@@ -82,6 +96,11 @@
 				var locationText = document.createTextNode(currLocation);
 				locationSpan.appendChild(locationText);
 				newDiv.appendChild(locationSpan);
+
+
+				//This adds a marker to the map (I hope)
+
+
 
 				var googleMapsSpan = document.createElement('span');
 				var googleMapsLink = document.createElement('a');
