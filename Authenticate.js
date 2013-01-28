@@ -42,6 +42,44 @@ function authenticateByPassword(username, password){
 		alert(alertString);
 	}
 }
+function authenticateByClient(){
+	alert("Hooray");
+}
+function authenticateByUWNetID(UWNETIDToken){
+	var alertString = "";
+	if(UWNETIDToken){
+		var allData = {
+			"grantType": "ASSERTION",
+			"assertionType": "UWNETID",
+			"clientId": "MAXWELL_WEB_CLIENT",
+			"assertion":{
+      			"assertionValue": UWNETIDToken
+  			}
+		};
+		allData = JSON.stringify(allData);
+		jQuery.ajax({
+			type: "POST",
+			data: allData,
+			url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/token",
+			dataType: "JSON",
+			contentType: "application/json",
+			success: function(response){
+				authResponse = response;
+				alertString = response;
+				return response;
+			},
+			error: function(){
+				alertString = JSON.stringify(response.responseText);
+			},
+			complete: function(){
+				alert(alertString);
+			}
+		})
+	}else{
+		alertString = "This method requires a valid login to UW services";
+	}
+	alert(alertString);
+}
 function authenticateByRefresh(refreshToken){
 	var alertString = "";
 	if(refreshToken){
@@ -70,7 +108,4 @@ function authenticateByRefresh(refreshToken){
 	}else{
 		alert("You have not yet logged in");
 	}
-}
-function authenticateByClient(){
-	alert("Hooray");
 }

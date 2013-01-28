@@ -26,7 +26,7 @@
 				font-weight: bold;
 			}
 			#title{
-				font-size: 150px;
+				font-size: 100px;
 				color: #FFF000;
 			}
 			a, a:visited {
@@ -46,8 +46,8 @@
 	<body>
 		<div id="contentHolder">
 			<div id="title">Historical EAC Meetings</div>
-			<div id="meetingsList">
-			</div>
+			<div id="map"></div>
+			<div id="meetingsList"></div>
 		</div>
 	</body>
 	<script type="text/javascript">
@@ -60,29 +60,53 @@
 	    		fillPage();
 	    	});
 	}
+/**
+	function addMap(){
+
+ 	}
+*/
 	function fillPage(data){
-		var currDate = "FTODAY";
-    	var currLocation = "At a PLACE";
-    	var currMapLink = "MMMAP";
+/**
+		// This draws the map
+		var myLatlng = new google.maps.LatLng(http:47.606163,-122.332077);
+  		var mapOptions = {
+   			zoom: 4,
+    		center: myLatlng,
+   			mapTypeId: google.maps.MapTypeId.ROADMAP
+   		}
+*/
+		var currDate;
+    	var currLocation;
+    	var currMapLink;
+    	var currWebsite;
+
     	if(data){
     		for(var i = 0; i < data.length; i++){
 
 				currDate = data[i].date;
 				currLocation = data[i].location;
 				currMapLink = data[i].googleMaps;
+				currWebsite = data[i].website;
 
 				var newDiv = document.createElement('div');
-
-				var dateSpan = document.createElement('span');
-				var dateText = document.createTextNode(currDate);
-				dateSpan.appendChild(dateText);
-				newDiv.appendChild(dateSpan);
 
 				var locationSpan = document.createElement('span');
 				var locationText = document.createTextNode(currLocation);
 				locationSpan.appendChild(locationText);
 				newDiv.appendChild(locationSpan);
 
+				var dateSpan = document.createElement('span');
+				var dateText = document.createTextNode(currDate);
+				dateSpan.appendChild(dateText);
+				newDiv.appendChild(dateSpan);
+
+				var websiteSpan = document.createElement('span');
+				var websiteText = document.createTextNode(currWebsite);
+				websiteSpan.appendChild(websiteText);
+				newDiv.appendChild(websiteSpan);
+
+				//This adds a marker to the map (I hope)
+/*
 				var googleMapsSpan = document.createElement('span');
 				var googleMapsLink = document.createElement('a');
 				googleMapsLink.href = currMapLink;
@@ -90,7 +114,7 @@
 				googleMapsLink.appendChild(googleMapsText);
 				googleMapsSpan.appendChild(googleMapsLink);
 				newDiv.appendChild(googleMapsSpan);
-
+*/
 				console.log(newDiv);
 				document.getElementById("meetingsList").appendChild(newDiv);
     		}
