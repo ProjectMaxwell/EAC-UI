@@ -1,2 +1,5 @@
 *.png*
 *Thumbs.db*
+*.project*
+*.classpath*
+*.settings*
