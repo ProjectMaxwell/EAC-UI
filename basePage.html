@@ -273,10 +273,11 @@
 		function getUserToken(userData, pinNumber, passwordWord){
 			var tokenDeets = {
 				"grantType": "PASSWORD",
-				"username": pinNumber,
+				"username": pinNumber.toString(),
 				"password": passwordWord,
 				"clientId": "MAXWELL_WEB_CLIENT" 
 			}
+			tokenDeets = JSON.stringify(tokenDeets);
 			$.ajax({
 				dataType: "json",
 				type: "POST",
@@ -285,7 +286,7 @@
 				contentType: "application/json",
 				success: function(data){
 					alert("yashimash");
-					postDatas(userData)
+					postDatas(userData, data.accessToken)
 				},
 				error: function(data){
 					alert('NooooooOOOOOooOOOoOOooOOOOoOOOooooooo!');
@@ -293,12 +294,15 @@
 				}
 			});
 		}
-		function postDatas(userData){
+		function postDatas(userData, accessToken){
 			userData = JSON.stringify(userData);
 			console.log(userData)
 			$.ajax({
 				dataType: "json",
 				type: "POST",
+				headers: {
+					"accessToken": accessToken
+				},
 				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
 				data: userData,
 				contentType: "application/json",
