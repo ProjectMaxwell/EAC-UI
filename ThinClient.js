@@ -48,7 +48,7 @@ default:
 }
 
 switch (screenSize){
-case mobile
+case mobile:
     addFile("mobile.css", "css");
     break;
 default:
