@@ -37,10 +37,6 @@
 					return decodeURIComponent(results[1].replace(/\+/g, " "));
 				}
 			}
-
-			function getDateFrom(){
-
-			}
 		</script>
 <style type="text/css">
 			body {
@@ -93,8 +89,8 @@
 		</div>
 	</body>
 	<script type="text/javascript">
-	jQuery(document).ready(initializeMap);
-	jQuery(document).ready(getMeetings);
+//	jQuery(document).ready(initializeMap);
+//	jQuery(document).ready(getMeetings);
 	function getMeetings(){
 	    $.getJSON("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/EAC/meet-ups?numRows=100"
 	    	).success(function(data){

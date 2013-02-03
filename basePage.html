@@ -253,14 +253,15 @@
 
 			if(errorList.length == 0){
 				var userPin = prompt("WHAT YOU PIN NUMBA, DOCTA JONES?")
+			}
 			if(userPin != null && userPin.length != 0 && !isNaN(userPin)){
-				getUserToken(userData);
+				var password = prompt("PASSWERD");
+				getUserToken(userData, userPin, password);
 			}else if(userPin != null){
 				var checkTryAgain = confirm("Pin has to be a number, fool. Try again?");
 				if(checkTryAgain){
 					submitUser();
 				}
-			}
 			}else{
 				var errorString = "Fix yo goddamn shit: \n";
 				for(var i = 0; i < errorList.length; i++){
@@ -269,21 +270,23 @@
 				alert(errorString);
 			}
 		}
-		function getUserToken(userData, pinNumber){
+		function getUserToken(userData, pinNumber, passwordWord){
 			var tokenDeets = {
-				"grantType":"PASSWORD",
-				"username": pinNumber,
-				"password":"testpassword",
-				"clientId":"MAXWELL_WEB_CLIENT" 
+				"grantType": "PASSWORD",
+				"username": pinNumber.toString(),
+				"password": passwordWord,
+				"clientId": "MAXWELL_WEB_CLIENT" 
 			}
+			tokenDeets = JSON.stringify(tokenDeets);
 			$.ajax({
 				dataType: "json",
 				type: "POST",
-				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
+				url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/token",
 				data: tokenDeets,
 				contentType: "application/json",
 				success: function(data){
-					postDatas(userData)
+					alert("yashimash");
+					postDatas(userData, data.accessToken)
 				},
 				error: function(data){
 					alert('NooooooOOOOOooOOOoOOooOOOOoOOOooooooo!');
@@ -291,12 +294,15 @@
 				}
 			});
 		}
-		function postDatas(userData){
+		function postDatas(userData, accessToken){
 			userData = JSON.stringify(userData);
 			console.log(userData)
 			$.ajax({
 				dataType: "json",
 				type: "POST",
+				headers: {
+					"accessToken": accessToken
+				},
 				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
 				data: userData,
 				contentType: "application/json",
