@@ -63,7 +63,15 @@
     	var currMapLink = "";
     	var currWebSite = "";
     	if(data){
-    		currDate = data.date;
+    		var tempDate = new Date(data.date*1000);
+    		var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    		var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    		if(tempDate.getHours() > 12){
+    			var tempHour = tempDate.getHours()%12 + ":" + tempDate.getMinutes() + "pm";
+    		}else{
+    			var tempHour = tempDate.getHours() + ":" + tempDate.getMinutes() + "am";
+    		}
+    		currDate = days[tempDate.getDay()] + ", " + months[tempDate.getMonth()] + " " + tempDate.getDate() + " " + tempHour;
     		currLocation = "at " + data.location;
     		currMapLink = data.googleMaps;
     		if(data.website == ""){
@@ -82,31 +90,6 @@
         jQuery("#website").attr("href", currWebSite);
 
         jQuery('#contentHolder').css('opacity', 1);
-	}
-
-	function addEvent(eventTime, eventLocation, eventMapLink, eventWebSite){
-		if(eventTime && eventLocation && eventMapLink && eventWebSite){
-			var allData = {
-					"date": eventTime,
-					"location": eventLocation,
-					"googleMaps": eventMapLink,
-					"website": eventWebSite
-				};
-			allData = JSON.stringify(allData);
-			jQuery.ajax({
-				type: "POST",
-				data: allData,
-				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/EAC/meet-ups",
-				dataType: "JSON",
-				contentType: "application/json",
-				success: function(){
-				},
-				error: function(){
-				},
-			})
-		}else{
-			alert("You are missing a field")
-		}
 	}
 	</script>
 </html>

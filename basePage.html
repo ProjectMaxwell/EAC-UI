@@ -250,9 +250,17 @@
 			}
 			
 			userData['referredById'] = $('#referredByMemberInput').val() || null;
-			console.log(userData)
-			if(erroList.length != 0){
-				postDatas(userData);
+
+			if(errorList.length == 0){
+				var userPin = prompt("WHAT YOU PIN NUMBA, DOCTA JONES?")
+			if(userPin != null && userPin.length != 0 && !isNaN(userPin)){
+				getUserToken(userData);
+			}else if(userPin != null){
+				var checkTryAgain = confirm("Pin has to be a number, fool. Try again?");
+				if(checkTryAgain){
+					submitUser();
+				}
+			}
 			}else{
 				var errorString = "Fix yo goddamn shit: \n";
 				for(var i = 0; i < errorList.length; i++){
@@ -260,6 +268,28 @@
 				}
 				alert(errorString);
 			}
+		}
+		function getUserToken(userData, pinNumber){
+			var tokenDeets = {
+				"grantType":"PASSWORD",
+				"username": pinNumber,
+				"password":"testpassword",
+				"clientId":"MAXWELL_WEB_CLIENT" 
+			}
+			$.ajax({
+				dataType: "json",
+				type: "POST",
+				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
+				data: tokenDeets,
+				contentType: "application/json",
+				success: function(data){
+					postDatas(userData)
+				},
+				error: function(data){
+					alert('NooooooOOOOOooOOOoOOooOOOOoOOOooooooo!');
+					console.log(data);
+				}
+			});
 		}
 		function postDatas(userData){
 			userData = JSON.stringify(userData);
