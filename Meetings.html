@@ -116,7 +116,7 @@
 				$('#meetingsList').append('<div><a href="'+ currWebsite + '" target="_blank">' + currLocation + '</a><span>' + currDate + '</span></div>');
 
 
-				var coordinateString = getQueryParameterFromUri(currMapLink, "sll");
+				var coordinateString = getQueryParameterFromUri(currMapLink, "ll");
     			var coordinateValues = coordinateString.split(",");
     			console.log(coordinateString);
     			addMarker(coordinateValues[0],coordinateValues[1],currLocation);
