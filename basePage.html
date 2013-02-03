@@ -79,6 +79,9 @@
 				User Type: <select id="userTypeInput"></select>
 			</div>
 			<div class="normalInputHolder">
+				Pin Number: <input type="number" id="pinNumberInput">
+			</div>
+			<div class="normalInputHolder">
 				Chapter Name: <select id="chapterNameInput"></select>
 			</div>
 			<div class="normalInputHolder">
@@ -117,6 +120,7 @@
 		});
 		function setInitialValues(){
 			$('#referredByMemberInput').chosen();
+			$('#kittenSubmitButton').click(submitUser);
 			/*$('#associateClassInput').chosen().change(function(){
 				console.log($(this).val())
 			});*/
@@ -134,22 +138,51 @@
 			}else{
 				getURL += "users?userType=3";
 			}
-			$.getJSON(getURL
-	    	).success(function(data){
-				console.log(data);
+			$.getJSON(getURL)
+			.success(function(data){
 				if(dataOptions['associateClass']){
 					var associateClassString = '';
 					for(var i = 0; i < data.length - 1; i++){
 						associateClassString += '<option value="' + data[i]['associateClassId'] + '">' + data[i]['name'] + '</option>';
 					}
 					associateClassString += '<option value="' + data[i]['associateClassId'] + '" selected>' + data[i]['name'] + '</option>';
-					$('#associateClassInput').append(associateClassString).chosen();
+					$('#associateClassInput').append(associateClassString).chosen().change(function(){
+						var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
+					});
 				}else if(dataOptions['userTypes']){
 					var userTypeString = '';
 					for(var i = 0; i < data.length; i++){
 						userTypeString += '<option value="' + data[i]['userTypeId'] + '">' + data[i]['name'] + '</option>';
 					}
-					$('#userTypeInput').append(userTypeString).chosen();
+					$('#userTypeInput').append(userTypeString).chosen().change(function(){
+						if($(this).val() == 5){
+							$('#yearInitiatedInput').attr('disabled', 'true').val('');
+							$('#yearGraduatedInput').attr('disabled', 'true').val('');
+							$('#pinNumberInput').attr('disabled', 'true').val('');
+
+							$('#associateClassInput').attr('disabled', 'true');
+							$('#associateClassInput')[0].selectedIndex = 0;
+							$('#associateClassInput').trigger("liszt:updated");
+
+							$('#chapterNameInput').attr('disabled', 'true');
+							$('#chapterNameInput')[0].selectedIndex = 0;
+							$('#chapterNameInput').trigger("liszt:updated");
+						}else if($(this).val() == 1 || $(this).val() == 2){
+							$('#associateClassInput')[0].selectedIndex = 0;
+							$('#chapterNameInput').attr('disabled', 'true');
+							$('#chapterNameInput')[0].selectedIndex = 0;
+							$('#associateClassInput').trigger("liszt:updated");
+							$('#chapterNameInput').trigger("liszt:updated");
+						}else{
+							$('#yearInitiatedInput').removeAttr('disabled');
+							$('#yearGraduatedInput').removeAttr('disabled');
+							$('#associateClassInput').removeAttr('disabled');
+							$('#pinNumberInput').removeAttr('disabled');
+							$('#chapterNameInput').removeAttr('disabled');
+							$('#associateClassInput').trigger("liszt:updated");
+							$('#chapterNameInput').trigger("liszt:updated");
+						}
+					});
 				}else if(dataOptions['referredBy']){
 					var referredByString = '';
 					if(dataOptions['referredByID'] == 1){
@@ -168,8 +201,7 @@
 						'<option value="" selected>No one</option>'+
 						'</optgroup>';
 					}
-					$('#referredByMemberInput').append(referredByString);
-					$('#referredByMemberInput').trigger("liszt:updated");
+					$('#referredByMemberInput').append(referredByString).trigger("liszt:updated");
 				}else if(dataOptions['chapters']){
 					var userTypeString = '';
 					for(var i = 0; i < data.length; i++){
@@ -184,23 +216,28 @@
 	    	});
 		}
 		function submitUser(){
-			var foundError = false;
 			var errorList = new Array();
 			var userData = new Object;
 			if($('#firstNameInput').val() && $('#lastNameInput').val()){
 				userData['firstName'] = $('#firstNameInput').val();
 				userData['lastName'] = $('#lastNameInput').val();
 			}else{
-				foundError = true;
 				errorList.push("Name is f'ed up.");
 			}
-
-			//userData[''] =  || null;
 
 			userData['email'] = $('#emailAddressInput').val() || null;
 			userData['yearInitiated'] = $('#yearInitiatedInput').val() || null;
 			userData['yearGraduated'] = $('#yearGraduatedInput').val() || null;
-			userData['associateClassId'] = $('#associateClassInput').val() || null;
+			if($('#userTypeInput').val() == 1 || $('#userTypeInput').val() == 2){
+				if($('#associateClassInput').val() == 0){
+					errorList.push("Undergrads must have an Associate Class.")
+				}else{
+					userData['associateClassId'] = $('#associateClassInput').val()
+				}
+			}else{
+				userData['associateClassId'] = $('#associateClassInput').val()
+			}
+			
 			userData['userTypeId'] = $('#userTypeInput').val() || null;
 			userData['chapterId'] = $('#chapterNameInput').val() || null;
 			userData['linkedInId'] = $('#linkedInURLInput').val() || null;
@@ -209,14 +246,19 @@
 			if($('#phoneNumberInput').val().length <= 12){
 				userData['phoneNumber'] = $('#phoneNumberInput').val() || null;	
 			}else{
-				foundError = true;
 				errorList.push('Phone Number is too long.');
 			}
 			
 			userData['referredById'] = $('#referredByMemberInput').val() || null;
 			console.log(userData)
-			if(!foundError){
+			if(erroList.length != 0){
 				postDatas(userData);
+			}else{
+				var errorString = "Fix yo goddamn shit: \n";
+				for(var i = 0; i < errorList.length; i++){
+					errorString += (i+1) + ": " + errorList[i] + "\n";
+				}
+				alert(errorString);
 			}
 		}
 		function postDatas(userData){
