@@ -1,11 +1,12 @@
 $(document).ready(function(){
 	initialSetup();
-	setNewUserValues();
-	getNewUserData();
+	
 });
 function initialSetup(){
 	$('#newUser').click(function(){
 		$('#usersListHolder').hide();
+		setNewUserValues();
+		getNewUserData();
 		$('#createUsersHolder').show();
 	});
 	$('#usersList').click(function(){
