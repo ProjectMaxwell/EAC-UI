@@ -28,7 +28,7 @@ function populateUserTable(){
 	$.getJSON(getURL)
 	.success(function(data){
 		console.log(data);
-	}.error(function(data){
+	}).error(function(data){
 		console.log('fail');
 		console.log(data);
 	})
