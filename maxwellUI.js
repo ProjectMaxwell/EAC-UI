@@ -32,10 +32,10 @@ function populateUserTable(){
 	.success(function(data){
 		console.log(data);
 		var newUserText = '';
-		for(var currUser in data){
-			newUserText += '<tr><td><div class="userTableFullName">' + currUser.firstName + ' ' + currUser.lastName + '</div></td>' +
-			'<td><div class="userTableAssociateClass">classID ' + currUser.associateClassId + '</div></td>' +
-			'<td><divclass="userTableEmailAddy">' + currUser.email + '</div></td>' +
+		for(var i = 0; i < data.length; i++){
+			newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
+			'<td><div class="userTableAssociateClass">classID ' + data[i].associateClassId + '</div></td>' +
+			'<td><divclass="userTableEmailAddy">' + data[i].email + '</div></td>' +
 			'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
 		}
 		$('#usersListBody').empty().append(newUserText);
