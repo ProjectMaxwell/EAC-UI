@@ -31,15 +31,18 @@ function populateUserTable(){
 	$.getJSON(getURL + 'userType=' + $('#userTableTypeSelect').val())
 	.success(function(data){
 		console.log(data);
+		var newUserText = '';
+		for(var currUser in data){
+			newUserText += '<tr><td><div class="userTableFullName">' + currUser.firstName + ' ' + currUser.lastName + '</div></td>' +
+			'<td><div class="userTableAssociateClass">classID ' + currUser.associateClassId + '</div></td>' +
+			'<td><divclass="userTableEmailAddy">' + currUser.email + '</div></td>' +
+			'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
+		}
+		$('#usersListBody').empty().append(newUserText);
 	}).error(function(data){
 		console.log('fail');
 		console.log(data);
-	})
-	var newUserText = '<tr><td><div class="userTableFullName">Jowel Shapio</div></td>' +
-		'<td><div class="userTableAssociateClass">Chi Omega</div></td>' +
-		'<td><divclass="userTableEmailAddy">JowelShapio@email.net</div></td>' +
-		'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
-	$('#usersListBody').empty().append(newUserText);
+	});
 }	
 function setNewUserValues(){
 	$('#referredByMemberInput').chosen();
