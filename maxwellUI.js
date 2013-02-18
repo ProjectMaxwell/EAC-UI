@@ -14,6 +14,9 @@ function initialSetup(){
 		populateUserTable();
 		$('#usersListHolder').show();
 	});
+	$('#userTableTypeSelect').change(function(){
+		populateUserTable();
+	});
 }
 function getNewUserData(){
 	getDatas({'associateClass': true});
@@ -24,8 +27,8 @@ function getNewUserData(){
 	getDatas({'referredBy': true, referredByID: 3});
 }
 function populateUserTable(){
-	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users";
-	$.getJSON(getURL)
+	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users?";
+	$.getJSON(getURL + $('#userTableTypeSelect').val());
 	.success(function(data){
 		console.log(data);
 	}).error(function(data){
