@@ -3,74 +3,46 @@
 	<title>Maxwellz</title>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 	<script type="text/javascript" src="chosen/chosen.jquery.min.js"></script>
+	<script type="text/javascript" src="maxwellUI.js"></script>
 	<link rel="stylesheet" href="chosen/chosen.css" />
-	<style type="text/css">
-	#createUsersHolder select{
-		min-width: 140px;
-	}
-	#referredByMemberInput{
-		width: 500px;
-	}
-	#kittenSubmitButton{
-		cursor: pointer;
-		overflow: hidden;
-		width: 125px;
-		height: 65px;
-		text-align: center;
-		position: relative;
-		border-radius: 5px;
-		margin-top: 7px;
-		border: 1px solid black;
-
-		-moz-box-shadow:    0px 0px 5px 0px #ccc;
-		-webkit-box-shadow: 0px 0px 5px 0px #ccc;
-		box-shadow:         0px 0px 5px 0px #ccc;
-
-		transition: all 350ms;
-		-moz-transition: all 350ms; /* Firefox 4 */
-		-webkit-transition: all 350ms; /* Safari and Chrome */
-		-o-transition: all 350ms; /* Opera */
-	}
-	#kittenSubmitButton:hover{
-		bottom: 2px;
-		border: 1px solid black;
-
-		-moz-box-shadow:    0px 0px 5px 6px #ccc;
-		-webkit-box-shadow: 0px 0px 5px 6px #ccc;
-		box-shadow:         0px 0px 5px 6px #ccc;
-	}
-	#kittenSubmitButton:active{
-		transition: all 0ms;
-		-moz-transition: all 0ms; /* Firefox 4 */
-		-webkit-transition: all 0ms; /* Safari and Chrome */
-		-o-transition: all 0ms; /* Opera */
-		top: 5px;
-	}
-	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
-		/* display: none; <- Crashes Chrome on hover */
-		-webkit-appearance: none;
-		margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-	}
-	</style>
+	<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 	<div id="container">
+		<div id="navHolder">
+			<div class="sectionSelector" id="usersList">Users List</div>
+			<div class="sectionSelector" id="newUser">New Users</div>
+		</div>
+		<div id="usersListHolder">
+			<table id="usersListTable">
+				<thead>
+					<tr>
+						<td><div class="userTableFullName">Full Name</div></td>
+						<td><div class="userTableAssociateClass">Associate Class</div></td>
+						<td><divclass="userTableEmailAddy">Email Addy</div></td>
+						<td><div class="userTablePhoneNumber">Phone Number</div></td>
+					</tr>
+				</thead>
+				<tbody id="usersListBody">
+					
+				</tbody>
+			</table>
+		</div>
 		<div id="createUsersHolder">
 			<div class="normalInputHolder">
-				First Name: <input type="text"  id="firstNameInput"/>
+				First Name: <input class="newUserInput" type="text"  id="firstNameInput"/>
 			</div>
 			<div class="normalInputHolder">
-				Last Name: <input type="text" id="lastNameInput"/>
+				Last Name: <input class="newUserInput" type="text" id="lastNameInput"/>
 			</div>
 			<div class="normalInputHolder">
-				Email: <input type="email" id="emailAddressInput"/>
+				Email: <input class="newUserInput" type="email" id="emailAddressInput"/>
 			</div>
 			<div class="normalInputHolder">
-				Year Initiated <input type="number" id="yearInitiatedInput" />
+				Year Initiated <input class="newUserInput" type="number" id="yearInitiatedInput" />
 			</div>
 			<div class="normalInputHolder">
-				Year Graduated <input type="number" id="yearGraduatedInput" />
+				Year Graduated <input class="newUserInput" type="number" id="yearGraduatedInput" />
 			</div>
 			<div class="normalInputHolder">
 				Associate Class: <select id="associateClassInput"></select>
@@ -79,242 +51,36 @@
 				User Type: <select id="userTypeInput"></select>
 			</div>
 			<div class="normalInputHolder">
-				Pin Number: <input type="number" id="pinNumberInput">
+				Pin Number: <input class="newUserInput" type="number" id="pinNumberInput">
 			</div>
 			<div class="normalInputHolder">
 				Chapter Name: <select id="chapterNameInput"></select>
 			</div>
 			<div class="normalInputHolder">
-				LinkedIn URL: <input type="text" id="linkedInURLInput" />
+				LinkedIn URL: <input class="newUserInput" type="text" id="linkedInURLInput" />
 			</div>
 			<div class="normalInputHolder">
-				Facebook URL: <input type="text" id="facebookURLInput" />
+				Facebook URL: <input class="newUserInput" type="text" id="facebookURLInput" />
 			</div>
 			<div class="normalInputHolder">
-				Twitter URL: <input type="text" id="twitterURLInput" />
+				Twitter URL: <input class="newUserInput" type="text" id="twitterURLInput" />
 			</div>
 			<div class="normalInputHolder">
-				Highschool: <input type="text" id="highschoolInput" />
+				Highschool: <input class="newUserInput" type="text" id="highschoolInput" />
 			</div>
 			<div class="normalInputHolder">
-				Phone Number: <input type="number" id="phoneNumberInput" />
+				Phone Number: <input class="newUserInput" type="number" id="phoneNumberInput" />
 			</div>
 			<div class="normalInputHolder">
 				Member Referred by: <select id="referredByMemberInput"></select>
 			</div>
 			<div id="submitHolder">
-				Enhance: <div id="kittenSubmitButton"><img src="kittenGuestbook.gif" alt=""></div>
+				Enhance: <div id="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
 			</div>
 		</div>
 	</div>
 	<script type="text/javascript">
-		$(document).ready(function(){
-			setInitialValues();
-			getDatas({'associateClass': true});
-			getDatas({'userTypes': true});
-			getDatas({'chapters': true});
-			getDatas({'referredBy': true, referredByID: 1});
-			getDatas({'referredBy': true, referredByID: 2});
-			getDatas({'referredBy': true, referredByID: 3});
 
-		});
-		function setInitialValues(){
-			$('#referredByMemberInput').chosen();
-			$('#kittenSubmitButton').click(submitUser);
-			/*$('#associateClassInput').chosen().change(function(){
-				console.log($(this).val())
-			});*/
-		}
-		function getDatas(dataOptions){
-			var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/"
-			if(dataOptions['associateClass']){
-				getURL += "associateClasses";
-			}else if(dataOptions['userTypes']){
-				getURL += "users/userTypes"
-			}else if(dataOptions['referredBy']){
-				getURL += "users?userType=" + dataOptions['referredByID'];
-			}else if(dataOptions['chapters']){
-				getURL += "chapters";
-			}else{
-				getURL += "users?userType=3";
-			}
-			$.getJSON(getURL)
-			.success(function(data){
-				if(dataOptions['associateClass']){
-					var associateClassString = '';
-					for(var i = 0; i < data.length - 1; i++){
-						associateClassString += '<option value="' + data[i]['associateClassId'] + '">' + data[i]['name'] + '</option>';
-					}
-					associateClassString += '<option value="' + data[i]['associateClassId'] + '" selected>' + data[i]['name'] + '</option>';
-					$('#associateClassInput').append(associateClassString).chosen().change(function(){
-						var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
-					});
-				}else if(dataOptions['userTypes']){
-					var userTypeString = '';
-					for(var i = 0; i < data.length; i++){
-						userTypeString += '<option value="' + data[i]['userTypeId'] + '">' + data[i]['name'] + '</option>';
-					}
-					$('#userTypeInput').append(userTypeString).chosen().change(function(){
-						if($(this).val() == 5){
-							$('#yearInitiatedInput').attr('disabled', 'true').val('');
-							$('#yearGraduatedInput').attr('disabled', 'true').val('');
-							$('#pinNumberInput').attr('disabled', 'true').val('');
-
-							$('#associateClassInput').attr('disabled', 'true');
-							$('#associateClassInput')[0].selectedIndex = 0;
-							$('#associateClassInput').trigger("liszt:updated");
-
-							$('#chapterNameInput').attr('disabled', 'true');
-							$('#chapterNameInput')[0].selectedIndex = 0;
-							$('#chapterNameInput').trigger("liszt:updated");
-						}else if($(this).val() == 1 || $(this).val() == 2){
-							$('#associateClassInput')[0].selectedIndex = 0;
-							$('#chapterNameInput').attr('disabled', 'true');
-							$('#chapterNameInput')[0].selectedIndex = 0;
-							$('#associateClassInput').trigger("liszt:updated");
-							$('#chapterNameInput').trigger("liszt:updated");
-						}else{
-							$('#yearInitiatedInput').removeAttr('disabled');
-							$('#yearGraduatedInput').removeAttr('disabled');
-							$('#associateClassInput').removeAttr('disabled');
-							$('#pinNumberInput').removeAttr('disabled');
-							$('#chapterNameInput').removeAttr('disabled');
-							$('#associateClassInput').trigger("liszt:updated");
-							$('#chapterNameInput').trigger("liszt:updated");
-						}
-					});
-				}else if(dataOptions['referredBy']){
-					var referredByString = '';
-					if(dataOptions['referredByID'] == 1){
-						referredByString += '<optgroup label="Associate">';
-					}else if(dataOptions['referredByID'] == 2){
-						referredByString += '<optgroup label="Initiate">';
-					}else if(dataOptions['referredByID'] == 3){
-						referredByString += '<optgroup label="Alumnus">';
-					}
-					for(var i = 0; i < data.length; i++){
-						referredByString += '<option value="' + data[i]['userId'] + '">' + data[i]['firstName'] + ' ' + data[i]['lastName'] + '</option>';
-					}
-					referredByString += '</optgroup>';
-					if(dataOptions['referredByID'] == 3){
-						referredByString += '<optgroup label="Other">' +
-						'<option value="" selected>No one</option>'+
-						'</optgroup>';
-					}
-					$('#referredByMemberInput').append(referredByString).trigger("liszt:updated");
-				}else if(dataOptions['chapters']){
-					var userTypeString = '';
-					for(var i = 0; i < data.length; i++){
-						if(data[i]['chapterId'] == 41){
-							userTypeString += '<option value="' + data[i]['chapterId'] + '" selected>' + data[i]['name'] + '</option>';
-						}else{
-							userTypeString += '<option value="' + data[i]['chapterId'] + '">' + data[i]['name'] + '</option>';
-						}
-					}
-					$('#chapterNameInput').append(userTypeString).chosen();
-				}
-	    	});
-		}
-		function submitUser(){
-			var errorList = new Array();
-			var userData = new Object;
-			if($('#firstNameInput').val() && $('#lastNameInput').val()){
-				userData['firstName'] = $('#firstNameInput').val();
-				userData['lastName'] = $('#lastNameInput').val();
-			}else{
-				errorList.push("Name is f'ed up.");
-			}
-
-			userData['email'] = $('#emailAddressInput').val() || null;
-			userData['yearInitiated'] = $('#yearInitiatedInput').val() || null;
-			userData['yearGraduated'] = $('#yearGraduatedInput').val() || null;
-			if($('#userTypeInput').val() == 1 || $('#userTypeInput').val() == 2){
-				if($('#associateClassInput').val() == 0){
-					errorList.push("Undergrads must have an Associate Class.")
-				}else{
-					userData['associateClassId'] = $('#associateClassInput').val()
-				}
-			}else{
-				userData['associateClassId'] = $('#associateClassInput').val()
-			}
-			
-			userData['userTypeId'] = $('#userTypeInput').val() || null;
-			userData['chapterId'] = $('#chapterNameInput').val() || null;
-			userData['linkedInId'] = $('#linkedInURLInput').val() || null;
-			userData['twitterId'] = $('#twitterURLInput').val() || null;
-			userData['highschool'] = $('#highschoolInput').val() || null;
-			if($('#phoneNumberInput').val().length <= 12){
-				userData['phoneNumber'] = $('#phoneNumberInput').val() || null;	
-			}else{
-				errorList.push('Phone Number is too long.');
-			}
-			
-			userData['referredById'] = $('#referredByMemberInput').val() || null;
-
-			if(errorList.length == 0){
-				var userPin = prompt("WHAT YOU PIN NUMBA, DOCTA JONES?")
-			}
-			if(userPin != null && userPin.length != 0 && !isNaN(userPin)){
-				var password = prompt("PASSWERD");
-				getUserToken(userData, userPin, password);
-			}else if(userPin != null){
-				var checkTryAgain = confirm("Pin has to be a number, fool. Try again?");
-				if(checkTryAgain){
-					submitUser();
-				}
-			}else{
-				var errorString = "Fix yo goddamn shit: \n";
-				for(var i = 0; i < errorList.length; i++){
-					errorString += (i+1) + ": " + errorList[i] + "\n";
-				}
-				alert(errorString);
-			}
-		}
-		function getUserToken(userData, pinNumber, passwordWord){
-			var tokenDeets = {
-				"grantType": "PASSWORD",
-				"username": pinNumber.toString(),
-				"password": passwordWord,
-				"clientId": "MAXWELL_WEB_CLIENT" 
-			}
-			tokenDeets = JSON.stringify(tokenDeets);
-			$.ajax({
-				dataType: "json",
-				type: "POST",
-				url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/token",
-				data: tokenDeets,
-				contentType: "application/json",
-				success: function(data){
-					alert("yashimash");
-					postDatas(userData, data.accessToken)
-				},
-				error: function(data){
-					alert('NooooooOOOOOooOOOoOOooOOOOoOOOooooooo!');
-					console.log(data);
-				}
-			});
-		}
-		function postDatas(userData, accessToken){
-			userData = JSON.stringify(userData);
-			console.log(userData)
-			$.ajax({
-				dataType: "json",
-				type: "POST",
-				headers: {
-					"accessToken": accessToken
-				},
-				url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
-				data: userData,
-				contentType: "application/json",
-				success: function(){
-					alert("Excelsior");
-				},
-				error: function(data){
-					alert('Something went wrong. Oops.');
-					console.log(data);
-				}
-			});
-		}
 	</script>
 </body>
 </html>

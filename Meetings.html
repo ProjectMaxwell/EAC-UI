@@ -104,6 +104,7 @@
 
 
     	if(data){
+    		var markers = [];
     		for(var i = data.length-1; i >= 0; i--){
     			var tempDate = new Date(data[i].date*1000);
     			var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -115,11 +116,14 @@
 
 				$('#meetingsList').append('<div><a href="'+ currWebsite + '" target="_blank">' + currLocation + '</a><span>' + currDate + '</span></div>');
 
-
 				var coordinateString = getQueryParameterFromUri(currMapLink, "ll");
     			var coordinateValues = coordinateString.split(",");
     			console.log(coordinateString);
-    			addMarker(coordinateValues[0],coordinateValues[1],currLocation);
+    			// This creates a marker on the map, if there is already a marker with the same name, then it does not "dupicate" the marker
+    			if(markers[currLocation] == null){
+					addMarker(coordinateValues[0],coordinateValues[1],currLocation);
+					markers[i] = currLocation;
+    			}
     		}
     	}else{
 			alert("No EAC Meetings found.");
