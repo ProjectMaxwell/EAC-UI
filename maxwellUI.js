@@ -27,7 +27,7 @@ function populateUserTable(){
 	$.ajax({
 		dataType: "json",
 		type: "GET",
-		url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/users",
+		url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
 		contentType: "application/json",
 		success: function(data){
 			alert("yashimash");
