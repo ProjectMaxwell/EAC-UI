@@ -28,7 +28,7 @@ function getNewUserData(){
 }
 function populateUserTable(){
 	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users?";
-	$.getJSON(getURL + $('#userTableTypeSelect').val());
+	$.getJSON(getURL + $('#userTableTypeSelect').val())
 	.success(function(data){
 		console.log(data);
 	}).error(function(data){
