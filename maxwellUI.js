@@ -24,20 +24,14 @@ function getNewUserData(){
 	getDatas({'referredBy': true, referredByID: 3});
 }
 function populateUserTable(){
-	$.ajax({
-		dataType: "json",
-		type: "GET",
-		url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
-		contentType: "application/json",
-		success: function(data){
-			alert("yashimash");
-			console.log(data)
-		},
-		error: function(data){
-			alert('NooooooOOOOOooOOOoOOooOOOOoOOOooooooo!');
-			console.log(data);
-		}
-	});
+	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users";
+	$.getJSON(getURL)
+	.success(function(data){
+		console.log(data);
+	}.error(function(data){
+		console.log('fail');
+		console.log(data);
+	})
 	var newUserText = '<tr><td><div class="userTableFullName">Jowel Shapio</div></td>' +
 		'<td><div class="userTableAssociateClass">Chi Omega</div></td>' +
 		'<td><divclass="userTableEmailAddy">JowelShapio@email.net</div></td>' +
