@@ -1,7 +1,7 @@
-associateClasses = [];
-chapters = [];
-userTypes = [];
-metadataOnChangeEvents = [];
+var associateClasses = new Array();
+var chapters = new Array();
+var userTypes = new Array();
+var metadataOnChangeEvents = new Array();
 
 $(document).ready(function(){
 	initialSetup();
@@ -36,7 +36,7 @@ function initialSetup(){
 }
 function initializeOnChangeHandlers(){
 	//Associate Class event handlers
-	associateClasses.onChange = [];
+	associateClasses.onChange = new Array();
 	associateClasses.onChange[0] = function(){ 
 		var associateClassString = '';
 		for(var i = 0; i < associateClasses.length; i++){
@@ -57,7 +57,7 @@ function initializeOnChangeHandlers(){
 	};
 	
 	//Chapter event handlers
-	chapters.onChange = [];
+	chapters.onChange = new Array();
 	chapters.onChange[0] = function(){ 
 		var chapterString = '';
 		for(var i = 0; i < chapters.length; i++){
@@ -78,7 +78,7 @@ function initializeOnChangeHandlers(){
 	};
 	
 	//UserType event handlers
-	userTypes.onChange = [];
+	userTypes.onChange = new Array();
 	userTypes.onChange[0] = function(){ 
 		var userTypeString = '';
 		for(var i = 0; i < userTypes.length; i++){
@@ -105,7 +105,7 @@ function triggerMetadataOnChangeHandlers(object){
 }
 function initializeMetadata(){
 	maxwellClient.getAssociateClasses(function(data){
-		var tempAssociateClassArray = [];
+		var tempAssociateClassArray = new Array();
 		for(var i = 0; i < data.length; i++){
 			tempAssociateClassArray[data[i].associateClassId] = data[i];
 			//addAssociateClassMapping(data[i].associateClassId,data[i]);
@@ -113,7 +113,7 @@ function initializeMetadata(){
 		setAssociateClasses(tempAssociateClassArray);
 	});
 	maxwellClient.getChapters(function(data){
-		var tempChapterArray = [];
+		var tempChapterArray = new Array();
 		for(var i = 0; i < data.length; i++){
 			tempChapterArray[data[i].chapterId] = data[i];
 			//addChapterMapping(data[i].chapterId,data[i]);
@@ -121,7 +121,7 @@ function initializeMetadata(){
 		setChapters(tempChapterArray);
 	});
 	maxwellClient.getUserTypes(function(data){
-		var tempUserTypeArray = [];
+		var tempUserTypeArray = new Array();
 		for(var i = 0; i < data.length; i++){
 			tempUserTypeArray[data[i].userTypeId] = data[i];
 			//addUserTypeMapping(data[i].userTypeId,data[i]);
