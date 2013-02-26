@@ -16,7 +16,7 @@ var maxwellClient = {
 		}).fail(function(responseHandler, status, data){
 			if(failureObject){
 				if(typeof failureObject['failureCallback'] == "function"){
-					failureCallback(data, responseHandler);
+					failureObject['failureCallback']
 				}
 				if(typeof failureObject['failureString'] == "string"){
 					alert(failureString);
