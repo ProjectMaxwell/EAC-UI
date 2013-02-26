@@ -14,7 +14,14 @@ var maxwellClient = {
 		}).done(function(data, status, responseHandler){
 			successCallback(data, responseHandler);
 		}).fail(function(responseHandler, status, data){
-			if(failureObject){
+			if(failureObject && typeof failureObject['failureCallback'] == "function"){
+				failureCallback(data, responseHandler);
+			}else{
+				//If null or if it's not a function, do some default failure behavior
+				failureCallback(responseHandler.responseText);
+			}
+			console.log(failureString + ' ' + responseHandler.responseText);
+/*			if(failureObject){
 				if(typeof failureObject['failureCallback'] == "function"){
 					failureObject['failureCallback'];
 				}
@@ -22,7 +29,7 @@ var maxwellClient = {
 					alert(failureString);
 					console.log(failureString + ' ' + responseHandler.responseText);
 				}
-			}
+			}*/
 			//failureCallback(data, responseHandler);
 		});
 	},
@@ -91,13 +98,17 @@ var maxwellClient = {
 	createEACMeeting: function(EACMeetingObject, successCallback){
 		var path = "/EAC/meet-ups";
 		
-		this.get(path, successCallback, {'failureString': 'Could not create EAC meeting.'});
+		this.post(path, EACMeetingObject, successCallback,this.defaultFailureBehavior('Could not create EAC Meeting'));
+		//this.get(path, successCallback, {'failureString': 'Could not create EAC meeting.'});
 		/*this.post(path,EACMeetingObject,function(responseObject,responseHandler){
 			successCallback(responseObject);
 		},function(responseObject,responseHandler){
 			console.log(responseHandler.responseText);
 			alert("Could not create EAC meeting. " + responseHandler.responseText);
 		});*/
+	},
+	defaultFailureBehavior: function(failureString){
+		alert(failureString);
 	}
 
 };
