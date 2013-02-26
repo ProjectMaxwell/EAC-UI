@@ -1,4 +1,4 @@
-var MaxwellClient = {
+var maxwellClient = {
 	init: function(serviceUrl){
 		this.serviceUrl = serviceUrl;
 	},

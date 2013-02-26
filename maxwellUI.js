@@ -8,7 +8,7 @@ $(document).ready(function(){
 	
 });
 function initialSetup(){
-	maxwellClient = new MaxwellClient("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest");
+	maxwellClient.init("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest");
 	initializeOnChangeHandlers();
 	initializeMetadata();
 	$('#newUser').click(function(){
