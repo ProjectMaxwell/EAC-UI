@@ -372,10 +372,10 @@ function createEACMeeting(){
 	var eventMapLink = $('#eventGoogleMaps').val();
 	var eventWebSite = $('#eventWebsite').val();
 	var eacObject = new Object();
-	eacObject.location = eventLocation;
-	eacObject.date = eventDate;
-	eacObject.googleMaps = eventMapLink;
-	eacObject.website = eventWebSite;
+	eacObject.location = eventLocation.length < 1 ? null : eventLocation;
+	eacObject.date = eventDate.length < 1 ? null : eventDate;
+	eacObject.googleMaps = eventMapLink.length < 1 ? null : eventMapLink;
+	eacObject.website = eventWebSite.length < 1 ? null : eventWebSite;
 	maxwellClient.createEACMeeting(eacObject, function(responseObject, responseHandler){
 		console.log(responseObject);
 		$('.createEACMeetingInput').val('');

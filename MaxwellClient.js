@@ -2,6 +2,10 @@ var maxwellClient = {
 	init: function(serviceUrl){
 		this.serviceUrl = serviceUrl;
 	},
+	defaultFailureBehavior: function(failureString){
+		//This function does exactly what the "if typeof == string" block was doing
+		alert(failureString);
+	},
 	post: function(path, postObject, successCallback, failureObject){
 		var jsonString = JSON.stringify(postObject);
 		var uri = this.serviceUrl + path;
@@ -14,13 +18,15 @@ var maxwellClient = {
 		}).done(function(data, status, responseHandler){
 			successCallback(data, responseHandler);
 		}).fail(function(responseHandler, status, data){
-			if(failureObject && typeof failureObject['failureCallback'] == "function"){
-				failureCallback(data, responseHandler);
+			//Make sure object is non-null, and is a function
+			if(failureObject && typeof failureObject == "function"){
+				//Trigger the function
+				failureObject(data, responseHandler);
 			}else{
 				//If null or if it's not a function, do some default failure behavior
-				failureCallback(responseHandler.responseText);
+				maxwellClient.defaultFailureBehavior(responseHandler.responseText);
 			}
-			console.log(failureString + ' ' + responseHandler.responseText);
+			console.log(responseHandler.responseText);
 /*			if(failureObject){
 				if(typeof failureObject['failureCallback'] == "function"){
 					failureObject['failureCallback'];
@@ -98,7 +104,8 @@ var maxwellClient = {
 	createEACMeeting: function(EACMeetingObject, successCallback){
 		var path = "/EAC/meet-ups";
 		
-		this.post(path, EACMeetingObject, successCallback,this.defaultFailureBehavior('Could not create EAC Meeting'));
+		//Call a function instead of passing in a different data type
+		this.post(path, EACMeetingObject, successCallback,null);
 		//this.get(path, successCallback, {'failureString': 'Could not create EAC meeting.'});
 		/*this.post(path,EACMeetingObject,function(responseObject,responseHandler){
 			successCallback(responseObject);
@@ -106,9 +113,6 @@ var maxwellClient = {
 			console.log(responseHandler.responseText);
 			alert("Could not create EAC meeting. " + responseHandler.responseText);
 		});*/
-	},
-	defaultFailureBehavior: function(failureString){
-		alert(failureString);
 	}
 
 };
