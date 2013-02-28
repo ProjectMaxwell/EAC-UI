@@ -43,8 +43,6 @@ function initializeOnChangeHandlers(){
 			var associateClassObject = associateClasses[i];
 			if(associateClassObject !== undefined){
 				associateClassString += '<option value="' + associateClassObject.associateClassId + '">' + associateClassObject.name + '</option>';
-			}else{
-				console.log("Associate class object was undefined.");
 			}
 		}
 		//console.log(associateClassString);
@@ -64,8 +62,6 @@ function initializeOnChangeHandlers(){
 			var chapterObject = chapters[i];
 			if(chapterObject !== undefined){
 				chapterString += '<option value="' + chapterObject.chapterId + '">' + chapterObject.name + '</option>';
-			}else{
-				console.log("Chapter object was undefined.");
 			}
 		}
 		//console.log(chapterString);
@@ -85,8 +81,6 @@ function initializeOnChangeHandlers(){
 			var userTypeObject = userTypes[i];
 			if(userTypeObject !== undefined){
 				userTypeString += '<option value="' + userTypeObject.userTypeId + '">' + userTypeObject.name + '</option>';
-			}else{
-				console.log("UserType object was undefined.");
 			}
 		}
 		//console.log(userTypeString);
