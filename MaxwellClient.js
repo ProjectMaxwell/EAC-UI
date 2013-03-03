@@ -1,5 +1,6 @@
 var maxwellClient = {
 	usersEndpoint: "/users",
+	userByIdEndpoint: "/users/%s",
 	associateClassesEndpoint: "/associateClasses",
 	chaptersEndpoint: "/chapters",
 	userTypesEndpoint: "/users/userTypes",
@@ -66,6 +67,13 @@ var maxwellClient = {
 		}
 		this.get(path, successCallback, function(data, responseHandler){ 
 			alert('Could not retrieve list of users.');
+		});
+	},
+	getUserById: function(userId,successCallback){
+		var path = this.userByIdEndpoint.replace("%s",userId);
+		
+		this.get(path, successCallback, function(data, responseHandler){ 
+			alert('Could not retrieve user.');
 		});
 	},
 	getAssociateClasses: function(successCallback){
@@ -166,6 +174,60 @@ var maxwellClient = {
 		  }																			\
 		]';
 		successCallback(mockedResponse, null);
+		return mockedResponse;
+	},
+	getRecruitContactTypes: function(successCallback){
+		var mockedResponse = '																		\
+		[																							\
+		  {																							\
+		    "recruitContactTypeId":1,																\
+		    "name":"Text Message",																	\
+		    "description":"Sent a text message or series of text messages."							\
+		  },																						\
+		  {																							\
+		    "recruitContactTypeId":2,																\
+		    "name":"Email",																			\
+		    "description":"Emailed, either individually or in bulk."								\
+		  },																						\
+		  {																							\
+		    "recruitContactTypeId":3,																\
+		    "name":"Social media",																	\
+		    "description":"Made contact through a social media site such as twitter, facebook, etc."\
+		  },																						\
+		  {																							\
+		    "recruitContactTypeId":4,																\
+		    "name":"Phone (talked)",																\
+		    "description":"Talked directly over the phone."											\
+		  },																						\
+		  {																							\
+		    "recruitContactTypeId":5,																\
+		    "name":"Phone (voicemail)",																\
+		    "description":"Left a voicemail."														\
+		  }																							\
+		]';
+		successCallback(mockedResponse, null);
+		return mockedResponse;
+	},
+	recordRecruitContact: function(recruitContactObject, successCallback){
+		if(recruitContactObject == null){
+			alert("No recruitContactObject defined.");
+		}else if(recruitContactObject.contactorId == null || recruitContactObject.contactorId == undefined){
+			alert("Recruit contact object did not have a contactorId defined.");
+		}else if(recruitContactObject.contacteeId == null || recruitContactObject.contacteeId == undefined){
+			alert("Recruit contact object did not have a contacteeId defined.");
+		}else if(recruitContactObject.contactTypeId == null || recruitContactObject.contactTypeId == undefined){
+			alert("Recruit contact object did not have a contactTypeId defined.");
+		}
+		var mockedResponse = '													\
+		{																		\
+			"recruitContactId":6969,											\
+			"contactorId":' + recruitContactObject.contactorId +',				\
+			"contacteeId":' + recruitContactObject.contacteeId +',				\
+			"timestamp":13426700,												\
+			"contactTypeId":' + recruitContactObject.contacteeId +',			\
+			"notes":"' + recruitContactObject.notes +'"							\
+		}';
+		console.log("Recorded contact with recruit.");
 		return mockedResponse;
 	}
 
