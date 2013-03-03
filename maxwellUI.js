@@ -1,33 +1,138 @@
+var associateClasses = new Array();
+var chapters = new Array();
+var userTypes = new Array();
+var metadataOnChangeEvents = new Array();
+
 $(document).ready(function(){
 	initialSetup();
 	
 });
 function initialSetup(){
+	maxwellClient.init("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest");
+	initializeOnChangeHandlers();
+	initializeMetadata();
 	$('#newUser').click(function(){
 		$('#usersListHolder').hide();
+		$('#newEACMeetingHolder').hide();
 		setNewUserValues();
 		getNewUserData();
 		$('#createUsersHolder').show();
 	});
 	$('#usersList').click(function(){
 		$('#createUsersHolder').hide();
+		$('#newEACMeetingHolder').hide();
 		populateUserTable();
 		$('#usersListHolder').show();
 	});
 	$('#userTableTypeSelect').change(function(){
 		populateUserTable();
 	});
+	$('#newEACMeeting').click(function(){
+		$('#createUsersHolder').hide();
+		$('#usersListHolder').hide();
+		$('#newEACMeetingHolder').show();
+	});
+	$('#submitEventButton').click(createEACMeeting);
+}
+function initializeOnChangeHandlers(){
+	//Associate Class event handlers
+	associateClasses.onChange = new Array();
+	associateClasses.onChange[0] = function(){ 
+		var associateClassString = '';
+		for(var i = 0; i < associateClasses.length; i++){
+			var associateClassObject = associateClasses[i];
+			if(associateClassObject !== undefined){
+				associateClassString += '<option value="' + associateClassObject.associateClassId + '">' + associateClassObject.name + '</option>';
+			}
+		}
+		//console.log(associateClassString);
+		//associateClassString += '<option value="' + data[i]['associateClassId'] + '" selected>' + data[i]['name'] + '</option>';
+		$('#associateClassInput').html(associateClassString);
+		/*.chosen().change(function(){
+			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
+		});*/
+		$("#associateClassInput").val(associateClasses.length -1);
+	};
+	
+	//Chapter event handlers
+	chapters.onChange = new Array();
+	chapters.onChange[0] = function(){ 
+		var chapterString = '';
+		for(var i = 0; i < chapters.length; i++){
+			var chapterObject = chapters[i];
+			if(chapterObject !== undefined){
+				chapterString += '<option value="' + chapterObject.chapterId + '">' + chapterObject.name + '</option>';
+			}
+		}
+		//console.log(chapterString);
+		//chapterString += '<option value="' + data[i]['chapterId'] + '" selected>' + data[i]['name'] + '</option>';
+		$('#chapterNameInput').html(chapterString);
+		/*.chosen().change(function(){
+			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
+		});*/
+		$("#chapterNameInput").val(41);
+	};
+	
+	//UserType event handlers
+	userTypes.onChange = new Array();
+	userTypes.onChange[0] = function(){ 
+		var userTypeString = '';
+		for(var i = 0; i < userTypes.length; i++){
+			var userTypeObject = userTypes[i];
+			if(userTypeObject !== undefined){
+				userTypeString += '<option value="' + userTypeObject.userTypeId + '">' + userTypeObject.name + '</option>';
+			}
+		}
+		//console.log(userTypeString);
+		//userTypeString += '<option value="' + data[i]['userTypeId'] + '" selected>' + data[i]['name'] + '</option>';
+		$('#userTypeInput').html(userTypeString);
+		/*.chosen().change(function(){
+			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
+		});*/
+		$("#userTypeInput").val(41);
+	};
+}
+function triggerMetadataOnChangeHandlers(object){
+	for(var i = 0; i < object.onChange.length; i++){
+		object.onChange[i]();
+	}
+}
+function initializeMetadata(){
+	maxwellClient.getAssociateClasses(function(data){
+		var tempAssociateClassArray = new Array();
+		for(var i = 0; i < data.length; i++){
+			tempAssociateClassArray[data[i].associateClassId] = data[i];
+			//addAssociateClassMapping(data[i].associateClassId,data[i]);
+		}
+		setAssociateClasses(tempAssociateClassArray);
+	});
+	maxwellClient.getChapters(function(data){
+		var tempChapterArray = new Array();
+		for(var i = 0; i < data.length; i++){
+			tempChapterArray[data[i].chapterId] = data[i];
+			//addChapterMapping(data[i].chapterId,data[i]);
+		}
+		setChapters(tempChapterArray);
+	});
+	maxwellClient.getUserTypes(function(data){
+		var tempUserTypeArray = new Array();
+		for(var i = 0; i < data.length; i++){
+			tempUserTypeArray[data[i].userTypeId] = data[i];
+			//addUserTypeMapping(data[i].userTypeId,data[i]);
+		}
+		setUserTypes(tempUserTypeArray);
+	});
 }
 function getNewUserData(){
-	getDatas({'associateClass': true});
-	getDatas({'userTypes': true});
-	getDatas({'chapters': true});
+	//getDatas({'associateClass': true});
+	//getDatas({'userTypes': true});
+	//getDatas({'chapters': true});
 	getDatas({'referredBy': true, referredByID: 1});
 	getDatas({'referredBy': true, referredByID: 2});
 	getDatas({'referredBy': true, referredByID: 3});
 }
 function populateUserTable(){
-	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users?";
+	/*	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users?";
 	$.getJSON(getURL + 'userType=' + $('#userTableTypeSelect').val())
 	.success(function(data){
 		console.log(data);
@@ -42,7 +147,20 @@ function populateUserTable(){
 	}).error(function(data){
 		console.log('fail');
 		console.log(data);
+	});*/
+	maxwellClient.getUsersByType($('#userTableTypeSelect').val(), function(data){
+		var newUserText = '';
+		for(var i = 0; i < data.length; i++){
+			var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
+			var email = data[i].email == null ? '' : data[i].email;
+			newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
+			'<td><div class="userTableAssociateClass">' + associateClassId + '</div></td>' +
+			'<td><divclass="userTableEmailAddy">' + email + '</div></td>' +
+			'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
+		}
+		$('#usersListBody').empty().append(newUserText);
 	});
+	
 }	
 function setNewUserValues(){
 	$('#referredByMemberInput').chosen();
@@ -241,4 +359,37 @@ function postDatas(userData, accessToken){
 			console.log(data);
 		}
 	});
+}
+function createEACMeeting(){
+	var eventDate = $('#eventDate').val();
+	var eventLocation = $('#eventLocation').val();
+	var eventMapLink = $('#eventGoogleMaps').val();
+	var eventWebSite = $('#eventWebsite').val();
+	var eacObject = new Object();
+	eacObject.location = eventLocation.length < 1 ? null : eventLocation;
+	eacObject.date = eventDate.length < 1 ? null : eventDate;
+	eacObject.googleMaps = eventMapLink.length < 1 ? null : eventMapLink;
+	eacObject.website = eventWebSite.length < 1 ? null : eventWebSite;
+	maxwellClient.createEACMeeting(eacObject, function(responseObject, responseHandler){
+		console.log(responseObject);
+		$('.createEACMeetingInput').val('');
+	});
+}
+function setAssociateClasses(associateClasses){
+	var tempOnChange = this.associateClasses.onChange;
+	this.associateClasses = associateClasses;
+	this.associateClasses.onChange = tempOnChange;
+	triggerMetadataOnChangeHandlers(this.associateClasses);
+}
+function setChapters(chapters){
+	var tempOnChange = this.chapters.onChange;
+	this.chapters = chapters;
+	this.chapters.onChange = tempOnChange;
+	triggerMetadataOnChangeHandlers(this.chapters);
+}
+function setUserTypes(userTypes){
+	var tempOnChange = this.userTypes.onChange;
+	this.userTypes = userTypes;
+	this.userTypes.onChange = tempOnChange;
+	triggerMetadataOnChangeHandlers(this.userTypes);
 }
