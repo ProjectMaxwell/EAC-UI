@@ -7,14 +7,37 @@ var maxwellClient = {
 	eacMeetingsEndpoint: "/EAC/meet-ups",
 	recruitInfoEndpoint: "/users/%s/recruitInfo",
 	recruitContactTypesEndpoint: "/recruitContacts/recruitContactTypes",
-	init: function(serviceUrl){
+	/**
+	 * 
+	 * @param serviceUrl - the url to root rest url (i.e. https://evergreenalumniclub.com/ProjectMaxwell/rest)
+	 * @param accessToken - the token retrieved from a PhiAuth authentication call
+	 */
+	init: function(serviceUrl, accessToken){
 		this.serviceUrl = serviceUrl;
+		this.accessToken = accessToken;
+	},
+	/**
+	 * Set the access token to be used as authorization when making requests to the server
+	 * @param accessToken - the token retrieved from a PhiAuth authentication call
+	 */
+	setAccessToken: function(accessToken){
+		this.accessToken = accessToken;
 	},
 	defaultFailureBehavior: function(failureString){
-		//This function does exactly what the "if typeof == string" block was doing
 		alert(failureString);
 	},
+	/**
+	 * This is the genericized POST method. To use it, define other methods that call this one and pass in success and failure handlers.
+	 * This is important because it provides the UI a layer of abstraction away from the messy HTTP stuff,
+	 * thus allowing for better separation of model, view, and controller.
+	 * @param path - The path from the REST uri root (i.e. /users/userTypes) of the endpoint you want to hit
+	 * @param postObject - the actual object to be serialized into JSON and sent to the server
+	 * @param successCallback - a function that will be triggered if the http status code on response indicates success
+	 * @param failureCallback - a function that will be triggered if the http status code on response indicates failure
+	 */
 	post: function(path, postObject, successCallback, failureCallback){
+		//Do we need to put an if-check on typeof = object here,
+		//or is a === a.stringify in the case where a was already a string??
 		var jsonString = JSON.stringify(postObject);
 		var uri = this.serviceUrl + path;
 		jQuery.ajax({
@@ -22,7 +45,12 @@ var maxwellClient = {
 			data: jsonString,
 			url: uri,
 			dataType: "json",
-			contentType: "application/json"
+			contentType: "application/json",
+			beforeSend: function(request){
+				if(maxwellClient.accessToken != null && maxwellClient.accessToken != undefined){
+					request.setRequestHeader("Authorization", maxwellClient.accessToken);
+				}
+			}
 		}).done(function(data, status, responseHandler){
 			successCallback(data, responseHandler);
 		}).fail(function(responseHandler, status, data){
@@ -47,8 +75,21 @@ var maxwellClient = {
 	 * @param failureCallback
 	 */
 	get: function(path, successCallback, failureObject){		
-		$.getJSON(this.serviceUrl + path).done(function(data,status,responseHandler){
+/*		$.getJSON(this.serviceUrl + path).done(function(data,status,responseHandler){
 				successCallback(data, responseHandler);
+		})*/
+		var uri = this.serviceUrl + path;
+		$.ajax({
+			type: "GET",
+			dataType: "json",
+			url: uri,
+			beforeSend: function(request){
+				if(maxwellClient.accessToken != null && maxwellClient.accessToken != undefined){
+					request.setRequestHeader("Authorization", maxwellClient.accessToken);
+				}
+			}			
+		}).done(function(data, status, responseHandler){
+			successCallback(data, responseHandler);
 		}).fail(function(responseHandler, status, data){
 			//Make sure object is non-null, and is a function
 			if(failureCallback && typeof failureCallback == "function"){
@@ -75,6 +116,11 @@ var maxwellClient = {
 		
 		this.get(path, successCallback, function(data, responseHandler){ 
 			alert('Could not retrieve user.');
+		});
+	},
+	createUser: function(userObject,successCallback){
+		this.post(this.usersEndpoint, userObject, successCallback, function(data, responseHandler){ 
+			alert('Could not create user.' + data);
 		});
 	},
 	getAssociateClasses: function(successCallback){
@@ -177,37 +223,11 @@ var maxwellClient = {
 		successCallback(mockedResponse, null);
 		return mockedResponse;
 	},
+	/**
+	 * Get the metadata describing all of the potential recruit contact methods
+	 * @param successCallback - the function to trigger on success
+	 */
 	getRecruitContactTypes: function(successCallback){
-/*		var mockedResponse = '																		\
-		[																							\
-		  {																							\
-		    "recruitContactTypeId":1,																\
-		    "name":"Text Message",																	\
-		    "description":"Sent a text message or series of text messages."							\
-		  },																						\
-		  {																							\
-		    "recruitContactTypeId":2,																\
-		    "name":"Email",																			\
-		    "description":"Emailed, either individually or in bulk."								\
-		  },																						\
-		  {																							\
-		    "recruitContactTypeId":3,																\
-		    "name":"Social media",																	\
-		    "description":"Made contact through a social media site such as twitter, facebook, etc."\
-		  },																						\
-		  {																							\
-		    "recruitContactTypeId":4,																\
-		    "name":"Phone (talked)",																\
-		    "description":"Talked directly over the phone."											\
-		  },																						\
-		  {																							\
-		    "recruitContactTypeId":5,																\
-		    "name":"Phone (voicemail)",																\
-		    "description":"Left a voicemail."														\
-		  }																							\
-		]';
-		successCallback(mockedResponse, null);
-		return mockedResponse;*/
 		this.get(this.recruitContactTypesEndpoint, successCallback, function(data,response){
 			console.log("Could not retrieve contact types.  " + data);
 		});
