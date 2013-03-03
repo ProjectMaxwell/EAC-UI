@@ -6,7 +6,8 @@ var maxwellClient = {
 	userTypesEndpoint: "/users/userTypes",
 	eacMeetingsEndpoint: "/EAC/meet-ups",
 	recruitInfoEndpoint: "/users/%s/recruitInfo",
-	recruitContactTypesEndpoint: "/recruitContacts/recruitContactTypes",
+	recruitContactEndpoint: "/recruitContact",
+	recruitContactTypesEndpoint: "/recruitContact/recruitContactTypes",
 	/**
 	 * 
 	 * @param serviceUrl - the url to root rest url (i.e. https://evergreenalumniclub.com/ProjectMaxwell/rest)
@@ -222,6 +223,26 @@ var maxwellClient = {
 		]';
 		successCallback(mockedResponse, null);
 		return mockedResponse;
+	},
+	getRecruitContactHistoryByParameters: function(recruitUserId,recruitContactorUserId, maxResults, successCallback){
+		var path = this.recruitContactEndpoint;
+		var existingParams = false;
+		if(recruitUserId){
+			path += "?recruitUserId=" + recruitUserId;
+			existingParams = true;
+		}
+		if(recruitContactorUserId){
+			path += (existingParams ? "&" : "?") + "recruitContactorUserId=" + recruitContactorUserId;
+			existingParams = true;
+		}
+		if(maxResults){
+			path += (existingParams ? "&" : "?") + "maxResults=" + maxResults;
+			existingParams = true;
+		}
+		
+		this.get(path, successCallback, function(data,responseHandler){
+			console.log("Could not retrieve contact history.  " + data);
+		});
 	},
 	/**
 	 * Get the metadata describing all of the potential recruit contact methods
