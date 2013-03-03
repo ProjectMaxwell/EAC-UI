@@ -6,6 +6,7 @@ var maxwellClient = {
 	userTypesEndpoint: "/users/userTypes",
 	eacMeetingsEndpoint: "/EAC/meet-ups",
 	recruitInfoEndpoint: "/users/%s/recruitInfo",
+	recruitContactTypesEndpoint: "/recruitContacts/recruitContactTypes",
 	init: function(serviceUrl){
 		this.serviceUrl = serviceUrl;
 	},
@@ -177,7 +178,7 @@ var maxwellClient = {
 		return mockedResponse;
 	},
 	getRecruitContactTypes: function(successCallback){
-		var mockedResponse = '																		\
+/*		var mockedResponse = '																		\
 		[																							\
 		  {																							\
 		    "recruitContactTypeId":1,																\
@@ -206,7 +207,10 @@ var maxwellClient = {
 		  }																							\
 		]';
 		successCallback(mockedResponse, null);
-		return mockedResponse;
+		return mockedResponse;*/
+		this.get(this.recruitContactTypesEndpoint, successCallback, function(data,response){
+			console.log("Could not retrieve contact types.  " + data);
+		});
 	},
 	recordRecruitContact: function(recruitContactObject, successCallback){
 		if(recruitContactObject == null){
