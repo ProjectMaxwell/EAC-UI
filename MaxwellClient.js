@@ -107,6 +107,50 @@ var maxwellClient = {
 		this.post(path, recruitInfoObject, successCallback, function(data,responseHandler){
 			alert('Could not create recruit info.');
 		});
+	},
+	getRecruitContactHistoryByRecruitUserId: function(userId, successCallback){
+		var mockedResponse = '														\
+		[																			\
+		  {																			\
+		    "recruitContactId":69,													\
+		    "contactorId":123,														\
+		    "contacteeId":321,														\
+		    "timestamp":13426700,													\
+		    "contactTypeId":3,														\
+		    "notes":"Talked to recruit about Skiing."								\
+		  },																		\
+		  {																			\
+		    "recruitContactId":6969													\
+		    "contactorId":100,														\
+		    "contacteeId":321,														\
+		    "timestamp":13427900,													\
+		    "contactTypeId":2,														\
+		    "notes":"Facebook chatted with recruit.  Turns out he’s a huge racist."	\
+		  }																			\
+		]';
+		return mockedResponse;
+	},
+	getRecruitContactHistoryByUserId: function(userId, successCallback){
+		var mockedResponse = '														\
+		[																			\
+		  {																			\
+		    "recruitContactId":69,													\
+		    "contactorId":123,														\
+		    "contacteeId":321,														\
+		    "timestamp":13426700,													\
+		    "contactTypeId":3,														\
+		    "notes":"Talked to recruit about Skiing."								\
+		  },																		\
+		  {																			\
+		    "recruitContactId":96													\
+		    "contactorId":123,														\
+		    "contacteeId":8008135,													\
+		    "timestamp":13426900,													\
+		    "contactTypeId":2,														\
+		    "notes":"Facebooked Rutherford McRecruitster. He wants to attend a bbq."\
+		  }																			\
+		]';
+		return mockedResponse;
 	}
 
 };
