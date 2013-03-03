@@ -108,13 +108,20 @@ var maxwellClient = {
 			alert('Could not create recruit info.');
 		});
 	},
-	getRecruitContactHistoryByRecruitUserId: function(userId, successCallback){
+	/**
+	 * retrieve a list of all contacts made to the specified recruit
+	 * @param recruitUserId - the userId of the recruit being contacted
+	 * @param numResults - the maximum number of contact objects to return. Server default is 20
+	 * @param successCallback - the function to perform on the response object
+	 * @returns {String} - temporary return while mocked
+	 */
+	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, numResults, successCallback){
 		var mockedResponse = '														\
 		[																			\
 		  {																			\
 		    "recruitContactId":69,													\
 		    "contactorId":123,														\
-		    "contacteeId":321,														\
+		    "contacteeId":' + recruitUserId + ',									\
 		    "timestamp":13426700,													\
 		    "contactTypeId":3,														\
 		    "notes":"Talked to recruit about Skiing."								\
@@ -122,20 +129,28 @@ var maxwellClient = {
 		  {																			\
 		    "recruitContactId":6969													\
 		    "contactorId":100,														\
-		    "contacteeId":321,														\
+		    "contacteeId":' + recruitUserId + ',									\
 		    "timestamp":13427900,													\
 		    "contactTypeId":2,														\
-		    "notes":"Facebook chatted with recruit.  Turns out he’s a huge racist."	\
+		    "notes":"Facebook chatted with recruit.  Turns out he is a huge racist."\
 		  }																			\
 		]';
+		successCallback(mockedResponse, null);
 		return mockedResponse;
 	},
-	getRecruitContactHistoryByUserId: function(userId, successCallback){
+	/**
+	 * retrieve a list of all contacts made by a given user (i.e. a recruitment chair)
+	 * @param userId - the userId of the person making contact with recruits
+	 * @param numResults - the maximum number of contact objects to return. Server default is 20
+	 * @param successCallback - the function to perform on the response object
+	 * @returns {String} - temporary return while mocked
+	 */
+	getRecruitContactHistoryByUserId: function(userId, numResults, successCallback){
 		var mockedResponse = '														\
 		[																			\
 		  {																			\
 		    "recruitContactId":69,													\
-		    "contactorId":123,														\
+		    "contactorId":' + userId +',											\
 		    "contacteeId":321,														\
 		    "timestamp":13426700,													\
 		    "contactTypeId":3,														\
@@ -143,13 +158,14 @@ var maxwellClient = {
 		  },																		\
 		  {																			\
 		    "recruitContactId":96													\
-		    "contactorId":123,														\
+		    "contactorId":' + userId + ',											\
 		    "contacteeId":8008135,													\
 		    "timestamp":13426900,													\
 		    "contactTypeId":2,														\
 		    "notes":"Facebooked Rutherford McRecruitster. He wants to attend a bbq."\
 		  }																			\
 		]';
+		successCallback(mockedResponse, null);
 		return mockedResponse;
 	}
 
