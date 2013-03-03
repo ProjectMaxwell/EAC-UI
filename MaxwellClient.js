@@ -75,7 +75,7 @@ var maxwellClient = {
 	 * @param successCallback
 	 * @param failureCallback
 	 */
-	get: function(path, successCallback, failureObject){		
+	get: function(path, successCallback, failureCallback){		
 /*		$.getJSON(this.serviceUrl + path).done(function(data,status,responseHandler){
 				successCallback(data, responseHandler);
 		})*/
@@ -167,12 +167,12 @@ var maxwellClient = {
 	/**
 	 * retrieve a list of all contacts made to the specified recruit
 	 * @param recruitUserId - the userId of the recruit being contacted
-	 * @param numResults - the maximum number of contact objects to return. Server default is 20
+	 * @param maxResults - the maximum number of contact objects to return. Server default is 20
 	 * @param successCallback - the function to perform on the response object
 	 * @returns {String} - temporary return while mocked
 	 */
-	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, numResults, successCallback){
-		var mockedResponse = '														\
+	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, maxResults, successCallback){
+/*		var mockedResponse = '														\
 		[																			\
 		  {																			\
 		    "recruitContactId":69,													\
@@ -192,17 +192,19 @@ var maxwellClient = {
 		  }																			\
 		]';
 		successCallback(mockedResponse, null);
-		return mockedResponse;
+		return mockedResponse;*/
+
+		this.getRecruitContactHistoryByParameters(recruitUserId, null, maxResults, successCallback);
 	},
 	/**
 	 * retrieve a list of all contacts made by a given user (i.e. a recruitment chair)
 	 * @param userId - the userId of the person making contact with recruits
-	 * @param numResults - the maximum number of contact objects to return. Server default is 20
+	 * @param maxResults - the maximum number of contact objects to return. Server default is 20
 	 * @param successCallback - the function to perform on the response object
 	 * @returns {String} - temporary return while mocked
 	 */
-	getRecruitContactHistoryByUserId: function(userId, numResults, successCallback){
-		var mockedResponse = '														\
+	getRecruitContactHistoryByUserId: function(userId, maxResults, successCallback){
+		/*var mockedResponse = '														\
 		[																			\
 		  {																			\
 		    "recruitContactId":69,													\
@@ -222,7 +224,8 @@ var maxwellClient = {
 		  }																			\
 		]';
 		successCallback(mockedResponse, null);
-		return mockedResponse;
+		return mockedResponse;*/
+		this.getRecruitContactHistoryByParameters(null, userId, maxResults, successCallback);
 	},
 	getRecruitContactHistoryByParameters: function(recruitUserId,recruitContactorUserId, maxResults, successCallback){
 		var path = this.recruitContactEndpoint;
