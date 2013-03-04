@@ -172,28 +172,6 @@ var maxwellClient = {
 	 * @returns {String} - temporary return while mocked
 	 */
 	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, maxResults, successCallback){
-/*		var mockedResponse = '														\
-		[																			\
-		  {																			\
-		    "recruitContactId":69,													\
-		    "contactorId":123,														\
-		    "contacteeId":' + recruitUserId + ',									\
-		    "timestamp":13426700,													\
-		    "contactTypeId":3,														\
-		    "notes":"Talked to recruit about Skiing."								\
-		  },																		\
-		  {																			\
-		    "recruitContactId":6969													\
-		    "contactorId":100,														\
-		    "contacteeId":' + recruitUserId + ',									\
-		    "timestamp":13427900,													\
-		    "contactTypeId":2,														\
-		    "notes":"Facebook chatted with recruit.  Turns out he is a huge racist."\
-		  }																			\
-		]';
-		successCallback(mockedResponse, null);
-		return mockedResponse;*/
-
 		this.getRecruitContactHistoryByParameters(recruitUserId, null, maxResults, successCallback);
 	},
 	/**
@@ -204,27 +182,6 @@ var maxwellClient = {
 	 * @returns {String} - temporary return while mocked
 	 */
 	getRecruitContactHistoryByUserId: function(userId, maxResults, successCallback){
-		/*var mockedResponse = '														\
-		[																			\
-		  {																			\
-		    "recruitContactId":69,													\
-		    "contactorId":' + userId +',											\
-		    "contacteeId":321,														\
-		    "timestamp":13426700,													\
-		    "contactTypeId":3,														\
-		    "notes":"Talked to recruit about Skiing."								\
-		  },																		\
-		  {																			\
-		    "recruitContactId":96													\
-		    "contactorId":' + userId + ',											\
-		    "contacteeId":8008135,													\
-		    "timestamp":13426900,													\
-		    "contactTypeId":2,														\
-		    "notes":"Facebooked Rutherford McRecruitster. He wants to attend a bbq."\
-		  }																			\
-		]';
-		successCallback(mockedResponse, null);
-		return mockedResponse;*/
 		this.getRecruitContactHistoryByParameters(null, userId, maxResults, successCallback);
 	},
 	getRecruitContactHistoryByParameters: function(recruitUserId,recruitContactorUserId, maxResults, successCallback){
@@ -257,26 +214,9 @@ var maxwellClient = {
 		});
 	},
 	recordRecruitContact: function(recruitContactObject, successCallback){
-		if(recruitContactObject == null){
-			alert("No recruitContactObject defined.");
-		}else if(recruitContactObject.contactorId == null || recruitContactObject.contactorId == undefined){
-			alert("Recruit contact object did not have a contactorId defined.");
-		}else if(recruitContactObject.contacteeId == null || recruitContactObject.contacteeId == undefined){
-			alert("Recruit contact object did not have a contacteeId defined.");
-		}else if(recruitContactObject.contactTypeId == null || recruitContactObject.contactTypeId == undefined){
-			alert("Recruit contact object did not have a contactTypeId defined.");
-		}
-		var mockedResponse = '													\
-		{																		\
-			"recruitContactId":6969,											\
-			"contactorId":' + recruitContactObject.contactorId +',				\
-			"contacteeId":' + recruitContactObject.contacteeId +',				\
-			"timestamp":13426700,												\
-			"contactTypeId":' + recruitContactObject.contacteeId +',			\
-			"notes":"' + recruitContactObject.notes +'"							\
-		}';
-		console.log("Recorded contact with recruit.");
-		return mockedResponse;
+		this.post(this.recruitContactEndpoint, recruitContactObject, successCallback, function(data, responseHandler){
+			console.log("Could not create recruit contact record.  " + responseHandler.responseText);
+		});
 	}
 
 };
