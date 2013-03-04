@@ -62,7 +62,7 @@ var maxwellClient = {
 			successCallback(data, responseHandler);
 		}).fail(function(responseHandler, status, data){
 			//Make sure object is non-null, and is a function
-			if(failureCallback && typeof failureCallback == "function"){
+			if(typeof failureCallback == "function"){
 				//Trigger the function
 				failureCallback(data, responseHandler);
 			}else{
@@ -99,7 +99,7 @@ var maxwellClient = {
 			successCallback(data, responseHandler);
 		}).fail(function(responseHandler, status, data){
 			//Make sure object is non-null, and is a function
-			if(failureCallback && typeof failureCallback == "function"){
+			if(typeof failureCallback == "function"){
 				//Trigger the function
 				failureCallback(data, responseHandler);
 			}else{
