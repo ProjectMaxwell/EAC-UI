@@ -1,13 +1,4 @@
 var maxwellClient = {
-	usersEndpoint: "/users",
-	userByIdEndpoint: "/users/%s",
-	associateClassesEndpoint: "/associateClasses",
-	chaptersEndpoint: "/chapters",
-	userTypesEndpoint: "/users/userTypes",
-	eacMeetingsEndpoint: "/EAC/meet-ups",
-	recruitInfoEndpoint: "/users/%s/recruitInfo",
-	recruitContactEndpoint: "/recruitContact",
-	recruitContactTypesEndpoint: "/recruitContact/recruitContactTypes",
 	/**
 	 * 
 	 * @param serviceUrl - the url to root rest url (i.e. https://evergreenalumniclub.com/ProjectMaxwell/rest)
@@ -16,6 +7,21 @@ var maxwellClient = {
 	init: function(serviceUrl, accessToken){
 		this.serviceUrl = serviceUrl;
 		this.accessToken = accessToken;
+		this.setInitialSystemVariables();
+	},
+	/**
+	 * Sets initial system variables to be used in various functions.
+	 */
+	setInitialSystemVariables: function(){
+		this.usersEndpoint: "/users",
+		this.userByIdEndpoint: "/users/%s",
+		this.associateClassesEndpoint: "/associateClasses",
+		this.chaptersEndpoint: "/chapters",
+		this.userTypesEndpoint: "/users/userTypes",
+		this.eacMeetingsEndpoint: "/EAC/meet-ups",
+		this.recruitInfoEndpoint: "/users/%s/recruitInfo",
+		this.recruitContactEndpoint: "/recruitContact",
+		this.recruitContactTypesEndpoint: "/recruitContact/recruitContactTypes",
 	},
 	/**
 	 * Set the access token to be used as authorization when making requests to the server
