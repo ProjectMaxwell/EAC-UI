@@ -13,15 +13,15 @@ var maxwellClient = {
 	 * Sets initial system variables to be used in various functions.
 	 */
 	setInitialSystemVariables: function(){
-		this.usersEndpoint: "/users",
-		this.userByIdEndpoint: "/users/%s",
-		this.associateClassesEndpoint: "/associateClasses",
-		this.chaptersEndpoint: "/chapters",
-		this.userTypesEndpoint: "/users/userTypes",
-		this.eacMeetingsEndpoint: "/EAC/meet-ups",
-		this.recruitInfoEndpoint: "/users/%s/recruitInfo",
-		this.recruitContactEndpoint: "/recruitContact",
-		this.recruitContactTypesEndpoint: "/recruitContact/recruitContactTypes",
+		this.usersEndpoint = "/users";
+		this.userByIdEndpoint = "/users/%s";
+		this.associateClassesEndpoint = "/associateClasses";
+		this.chaptersEndpoint = "/chapters";
+		this.userTypesEndpoint = "/users/userTypes";
+		this.eacMeetingsEndpoint = "/EAC/meet-ups";
+		this.recruitInfoEndpoint = "/users/%s/recruitInfo";
+		this.recruitContactEndpoint = "/recruitContact";
+		this.recruitContactTypesEndpoint = "/recruitContact/recruitContactTypes";
 	},
 	/**
 	 * Set the access token to be used as authorization when making requests to the server
