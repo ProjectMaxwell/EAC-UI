@@ -2,49 +2,40 @@ var phiAuthClient = {
 	init: function(hostname){
 		phiAuthClient.hostname = hostname;
 	},
+	requestToken: function(tokenRequestObject){
+		var tokenRequestString = JSON.stringify(tokenRequestObject);
+		jQuery.ajax({
+			type: "POST",
+			data: tokenRequestString,
+			url: phiAuthClient.hostname + "/PhiAuth/rest/token",
+			dataType: "JSON",
+			contentType: "application/json"
+		}).done(function(data,status,responseHandler){
+			phiAuthClient.tokenResponse = data;
+		}).fail(function(data,status,responseHandler){
+			phiAuthClient.errorResponse = data;
+		});
+	},
 	authenticateByPassword: function(username, password){
-		var alertString = "";
 		if(username && password){
-			var allData = {
+			var tokenRequestObject = {
 					"grantType": "PASSWORD",
 					"username": username,
 					"password": password,
 					"clientId": "MAXWELL_WEB_CLIENT"
 				};
-			allData = JSON.stringify(allData);
-			jQuery.ajax({
-				type: "POST",
-				data: allData,
-				url: phiAuthClient.hostname + "/PhiAuth/rest/token",
-				dataType: "JSON",
-				contentType: "application/json"
-			}).done(function(data,status,responseHandler){
-				phiAuthClient.tokenResponse = data;
-			}).fail(function(data,status,responseHandler){
-				alertString = JSON.stringify(responseHandler.responseText);
-			});
+			phiAuthClient.requestToken(tokenRequestObject);
 		}else{
 			if(!username){
-				alertString = "Enter a username. ";
+				console.log("Cannot authenticate due to missing username.");
+			}else if(!password){
+				console.log("Cannot authenticate due to missing password.");
 			}
-			if(!password){
-				if(alertString != ""){
-					alertString += " Also, you";
-				}else{
-					alertString = "You";
-				}
-				alertString += " are missing a password";
-			}
-			alert(alertString);
 		}
-	}
-/*	function authenticateByClient(){
-		alert("Hooray");
-	}
-	function authenticateByUWNetID(UWNETIDToken){
-		var alertString = "";
+	},
+	authenticateByUWNetID: function(UWNETIDToken){
 		if(UWNETIDToken){
-			var allData = {
+			var tokenRequestObject = {
 				"grantType": "ASSERTION",
 				"assertionType": "UWNETID",
 				"clientId": "MAXWELL_WEB_CLIENT",
@@ -52,57 +43,20 @@ var phiAuthClient = {
 	      			"assertionValue": UWNETIDToken
 	  			}
 			};
-			allData = JSON.stringify(allData);
-			jQuery.ajax({
-				type: "POST",
-				data: allData,
-				url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/token",
-				dataType: "JSON",
-				contentType: "application/json",
-				success: function(response){
-					authResponse = response;
-					alertString = response;
-					return response;
-				},
-				error: function(){
-					alertString = JSON.stringify(response.responseText);
-				},
-				complete: function(){
-					alert(alertString);
-				}
-			})
+			phiAuthClient.requestToken(tokenRequestObject);
 		}else{
-			alertString = "This method requires a valid login to UW services";
+			console.log("This method requires a valid login session from UW services");
 		}
-		alert(alertString);
-	}
-	function authenticateByRefresh(refreshToken){
-		var alertString = "";
+	},
+	refreshToken: function(refreshToken){
 		if(refreshToken){
-			var allData = {
+			var tokenRequestObject = {
 				"grantType": "REFRESH",
 				"refreshToken": refreshToken
 				};
-			allData = JSON.stringify(allData);
-			jQuery.ajax({
-				type: "POST",
-				data: allData,
-				url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/token",
-				dataType: "JSON",
-				contentType: "application/json",
-				success: function(response){
-					alertString = response;
-					authResponse = response;
-				},
-				error: function(response){
-					alertString = JSON.stringify(response.responseText);
-				},
-				complete: function(){
-					alert(alertString);
-				}
-			})
+			phiAuthClient.requestToken(tokenRequestObject);
 		}else{
-			alert("You have not yet logged in");
+			console.log("The refresh grant requires a valid refresh token.");
 		}
-	}*/
-}
+	}
+};
