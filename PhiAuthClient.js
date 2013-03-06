@@ -52,6 +52,7 @@ var phiAuthClient = {
 		if(refreshToken){
 			var tokenRequestObject = {
 				"grantType": "REFRESH",
+				"clientId":"MAXWELL_WEB_CLIENT",
 				"refreshToken": refreshToken
 				};
 			phiAuthClient.requestToken(tokenRequestObject);
