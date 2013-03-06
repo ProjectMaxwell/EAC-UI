@@ -5,10 +5,12 @@ var metadataOnChangeEvents = new Array();
 
 $(document).ready(function(){
 	initialSetup();
+	$("#loginPane").lightbox_me();
 	
 });
 function initialSetup(){
 	maxwellClient.init("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest");
+	phiAuthClient.init("http://evergreenalumniclub.com:7080");
 	initializeOnChangeHandlers();
 	initializeMetadata();
 	$('#newUser').click(function(){
@@ -33,6 +35,11 @@ function initialSetup(){
 		$('#newEACMeetingHolder').show();
 	});
 	$('#submitEventButton').click(createEACMeeting);
+	$('#submitPasswordLoginButton').click(function(){
+		var username = $("#loginFormUsername").val();
+		var password = $("#loginFormPassword").val();
+		phiAuthClient.authenticateByPassword(username,password);
+	});
 }
 function initializeOnChangeHandlers(){
 	//Associate Class event handlers

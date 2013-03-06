@@ -12,8 +12,12 @@ var phiAuthClient = {
 			contentType: "application/json"
 		}).done(function(data,status,responseHandler){
 			phiAuthClient.tokenResponse = data;
+			phiAuthClient.lastResponse = responseHandler;
+			phiAuthClient.success = true;
 		}).fail(function(data,status,responseHandler){
 			phiAuthClient.errorResponse = data;
+			phiAuthClient.lastResponse = responseHandler;
+			phiAuthClient.success = false;
 		});
 	},
 	authenticateByPassword: function(username, password){

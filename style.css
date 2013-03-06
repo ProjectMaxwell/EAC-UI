@@ -9,12 +9,24 @@ body{
 	padding: 10px;
 	border: 1px solid black;
 }
+#loginPane{
+	background: white;
+	width: 600px;
+	min-height: 400px;
+	margin: 50px auto;
+	padding: 10px;
+	border: 1px solid black;
+	display: none;
+}
 #navHolder{
 	text-align: center;
 	font-size: 25px;
 }
 #usersListTable{
 	width: 100%;
+}
+#loginForm{
+	text-align: center;
 }
 .userTableFullName{
 	width: 205px;
