@@ -158,17 +158,51 @@ function populateRecruitmentPage(){
 	});
 }
 function loadRecruitDetails(recruitID){
-	console.log(recruitID);
-	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitID, 50, function(data){
+	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').empty();
+	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitID, function(data){
 		console.log('first')
 		console.log(data);
 		if(data.length == 0){
-			$('#recruitsDetailsHolder').append("<div>Ain't nobody talked to him yet!</div>")
+			$('#recruitsContactHistoryListHolder').append('<div><img src="http://i.qkme.me/3t9sd0.jpg" /></div>');
+		}else{
+			var recruitContactUL = $('<ul id="recruitsContactHistoryList"></ul>');
+			var recruitListText = '';
+			var recruitContactors = [];
+			for(var i = 0; i < data.length; i++){
+				recruitHistory += '<li class="recruitContactItem"><div class="recruitContactItemInner">' +
+					'<div class="recruitContactTimestamp">Time was ' + data[i]['contactTimestamp'] + '</div>' +
+					'<div class="recruitContactRecruitor">Contacter was <span class="recruitContactorUserId-' + data[i]['recruitContactRecruitor'] + '">loading....</span></div>' +
+					'<div class="recruitContactMethod">Contacted via ' + data[i]['recruitContactTypeId'] + '</div>' +
+					'</div></li>';
+				if($.inArray(data[i]['recruitContactRecruitor'], recruitContactors) == -1){
+					recruitContactors.push(data[i]['recruitContactRecruitor']);
+				}
+			}
+			recruitContactUL.append(recruitListText);
+			$('recruitsContactHistoryListHolder').append(recruitContactUL);
+			
+			maxwellClient.getUserById(recruitContactorUserId, function(userData){
+				if(userData.length != 0){
+					console.log(userData);
+					$('.recruitContactorUserId').text(userData[0].firstName + ' ' + userData[0].lastName)
+				}
+			});
 		}
 	});
 	maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
-		console.log('second');
-		console.log(data);
+		var recruitDetails = '<div>classStanding: ' + data.classStanding + '</div>' +
+		'<div>dateAdded: ' + data.dateAdded + '</div>' +
+		'<div>gpa: ' + data.gpa + '</div>' +
+		'<div>lifeExperiences: ' + data.lifeExperiences + '</div>' +
+		'<div>DEFCON: ' + data.recruitEngagementLevelId + '</div>' +
+		'<div>recruitSourceId: <span id="recruitSourceId">loading....</span></div>' +
+		'<div>rushListUserId: ' + data.rushListUserId + '</div>';
+		$('#recruitBlurbHolder').append(recruitDetails);
+		maxwellClient.getUserById(data['recruitSourceId'], function(userData){
+			if(userData.length != 0){
+				$('#recruitSourceId').text(userData['firstName'] + ' ' + userData['lastName'])
+			}
+		});
 	});
 	
 }
