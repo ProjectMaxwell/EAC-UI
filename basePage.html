@@ -14,89 +14,101 @@
 			<div class="sectionSelector" id="usersList">Users List</div>
 			<div class="sectionSelector" id="newUser">New Users</div>
 			<div class="sectionSelector" id="newEACMeeting">New EAC Meeting</div>
+			<div class="sectionSelector" id="recruitPage">Recruitment</div>
 		</div>
-		<div id="usersListHolder">
-			EAT SHIT AND DIE: <select id="userTableTypeSelect"><option value="1">Associate</option>
-			<option value="2">Initiate</option>
-			<option value="3">Alumnus</option></select>
-			<table id="usersListTable">
-				<thead>
-					<tr>
-						<td><div class="userTableFullName">Full Name</div></td>
-						<td><div class="userTableAssociateClass">Associate Class</div></td>
-						<td><div class="userTableEmailAddy">Email Addy</div></td>
-						<td><div class="userTablePhoneNumber">Phone Number</div></td>
-					</tr>
-				</thead>
-				<tbody id="usersListBody">
+		<div id="contentHolder">
+			<div id="recruitmentPageHolder">
+				<div id="recruitsNameListHolder">
+					<ul id="recruitsNameList">
+					</ul>
+				</div>
+				<div id="recruitsDetailsHolder">
 					
-				</tbody>
-			</table>
-		</div>
-		<div id="createUsersHolder">
-			<div class="normalInputHolder">
-				First Name: <input class="newUserInput" type="text"  id="firstNameInput"/>
+				</div>
 			</div>
-			<div class="normalInputHolder">
-				Last Name: <input class="newUserInput" type="text" id="lastNameInput"/>
+			<div id="usersListHolder">
+				EAT SHIT AND DIE: <select id="userTableTypeSelect"><option value="1">Associate</option>
+				<option value="2">Initiate</option>
+				<option value="3">Alumnus</option></select>
+				<table id="usersListTable">
+					<thead>
+						<tr>
+							<td><div class="userTableFullName">Full Name</div></td>
+							<td><div class="userTableAssociateClass">Associate Class</div></td>
+							<td><div class="userTableEmailAddy">Email Addy</div></td>
+							<td><div class="userTablePhoneNumber">Phone Number</div></td>
+						</tr>
+					</thead>
+					<tbody id="usersListBody">
+						
+					</tbody>
+				</table>
 			</div>
-			<div class="normalInputHolder">
-				Email: <input class="newUserInput" type="email" id="emailAddressInput"/>
+			<div id="createUsersHolder">
+				<div class="normalInputHolder">
+					First Name: <input class="newUserInput" type="text"  id="firstNameInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Last Name: <input class="newUserInput" type="text" id="lastNameInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Email: <input class="newUserInput" type="email" id="emailAddressInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Year Initiated <input class="newUserInput" type="number" id="yearInitiatedInput" />
+				</div>
+				<div class="normalInputHolder">
+					Year Graduated <input class="newUserInput" type="number" id="yearGraduatedInput" />
+				</div>
+				<div class="normalInputHolder">
+					Associate Class: <select id="associateClassInput"></select>
+				</div>
+				<div class="normalInputHolder">
+					User Type: <select id="userTypeInput"></select>
+				</div>
+				<div class="normalInputHolder">
+					Pin Number: <input class="newUserInput" type="number" id="pinNumberInput">
+				</div>
+				<div class="normalInputHolder">
+					Chapter Name: <select id="chapterNameInput"></select>
+				</div>
+				<div class="normalInputHolder">
+					LinkedIn URL: <input class="newUserInput" type="text" id="linkedInURLInput" />
+				</div>
+				<div class="normalInputHolder">
+					Facebook URL: <input class="newUserInput" type="text" id="facebookURLInput" />
+				</div>
+				<div class="normalInputHolder">
+					Twitter URL: <input class="newUserInput" type="text" id="twitterURLInput" />
+				</div>
+				<div class="normalInputHolder">
+					Highschool: <input class="newUserInput" type="text" id="highschoolInput" />
+				</div>
+				<div class="normalInputHolder">
+					Phone Number: <input class="newUserInput" type="number" id="phoneNumberInput" />
+				</div>
+				<div class="normalInputHolder">
+					Member Referred by: <select id="referredByMemberInput"></select>
+				</div>
+				<div id="submitHolder">
+					Enhance: <div id="kittenSubmitButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+				</div>
+			</div>	
+			<div id="newEACMeetingHolder">
+				<div class="normalInputHolder">
+					Event Location Name: <input type="text" id="eventLocation" class="createEACMeetingInput" />
+				</div>
+				<div class="normalInputHolder">
+					Event Location URL: <input type="text" id="eventWebsite" class="createEACMeetingInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Google Maps URL: <input type="text" id="eventGoogleMaps" class="createEACMeetingInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Event Date(Unix Timestamp): <input type="text" id="eventDate" class="createEACMeetingInput"/>
+				</div>
+				<div id="submitEventButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
 			</div>
-			<div class="normalInputHolder">
-				Year Initiated <input class="newUserInput" type="number" id="yearInitiatedInput" />
-			</div>
-			<div class="normalInputHolder">
-				Year Graduated <input class="newUserInput" type="number" id="yearGraduatedInput" />
-			</div>
-			<div class="normalInputHolder">
-				Associate Class: <select id="associateClassInput"></select>
-			</div>
-			<div class="normalInputHolder">
-				User Type: <select id="userTypeInput"></select>
-			</div>
-			<div class="normalInputHolder">
-				Pin Number: <input class="newUserInput" type="number" id="pinNumberInput">
-			</div>
-			<div class="normalInputHolder">
-				Chapter Name: <select id="chapterNameInput"></select>
-			</div>
-			<div class="normalInputHolder">
-				LinkedIn URL: <input class="newUserInput" type="text" id="linkedInURLInput" />
-			</div>
-			<div class="normalInputHolder">
-				Facebook URL: <input class="newUserInput" type="text" id="facebookURLInput" />
-			</div>
-			<div class="normalInputHolder">
-				Twitter URL: <input class="newUserInput" type="text" id="twitterURLInput" />
-			</div>
-			<div class="normalInputHolder">
-				Highschool: <input class="newUserInput" type="text" id="highschoolInput" />
-			</div>
-			<div class="normalInputHolder">
-				Phone Number: <input class="newUserInput" type="number" id="phoneNumberInput" />
-			</div>
-			<div class="normalInputHolder">
-				Member Referred by: <select id="referredByMemberInput"></select>
-			</div>
-			<div id="submitHolder">
-				Enhance: <div id="kittenSubmitButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
-			</div>
-		</div>	
-		<div id="newEACMeetingHolder">
-			<div class="normalInputHolder">
-				Event Location Name: <input type="text" id="eventLocation" class="createEACMeetingInput" />
-			</div>
-			<div class="normalInputHolder">
-				Event Location URL: <input type="text" id="eventWebsite" class="createEACMeetingInput"/>
-			</div>
-			<div class="normalInputHolder">
-				Google Maps URL: <input type="text" id="eventGoogleMaps" class="createEACMeetingInput"/>
-			</div>
-			<div class="normalInputHolder">
-				Event Date(Unix Timestamp): <input type="text" id="eventDate" class="createEACMeetingInput"/>
-			</div>
-			<div id="submitEventButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
 		</div>
 	</div>
 	<script type="text/javascript">

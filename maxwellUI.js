@@ -5,22 +5,20 @@ var metadataOnChangeEvents = new Array();
 
 $(document).ready(function(){
 	initialSetup();
-	
+	$('#recruitPage').click();
 });
 function initialSetup(){
 	maxwellClient.init("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest");
 	initializeOnChangeHandlers();
 	initializeMetadata();
 	$('#newUser').click(function(){
-		$('#usersListHolder').hide();
-		$('#newEACMeetingHolder').hide();
+		$('#contentHolder').children().not('#createUsersHolder').hide();
 		setNewUserValues();
 		getNewUserData();
 		$('#createUsersHolder').show();
 	});
 	$('#usersList').click(function(){
-		$('#createUsersHolder').hide();
-		$('#newEACMeetingHolder').hide();
+		$('#contentHolder').children().not('#usersListHolder').hide();
 		populateUserTable();
 		$('#usersListHolder').show();
 	});
@@ -28,9 +26,13 @@ function initialSetup(){
 		populateUserTable();
 	});
 	$('#newEACMeeting').click(function(){
-		$('#createUsersHolder').hide();
-		$('#usersListHolder').hide();
+		$('#contentHolder').children().not('#newEACMeetingHolder').hide();
 		$('#newEACMeetingHolder').show();
+	});
+	$('#recruitPage').click(function(){
+		$('#contentHolder').children().not('#recruitmentPageHolder').hide();
+		populateRecruitmentPage();
+		$('#recruitmentPageHolder').show();
 	});
 	$('#submitEventButton').click(createEACMeeting);
 }
@@ -124,30 +126,11 @@ function initializeMetadata(){
 	});
 }
 function getNewUserData(){
-	//getDatas({'associateClass': true});
-	//getDatas({'userTypes': true});
-	//getDatas({'chapters': true});
 	getDatas({'referredBy': true, referredByID: 1});
 	getDatas({'referredBy': true, referredByID: 2});
 	getDatas({'referredBy': true, referredByID: 3});
 }
 function populateUserTable(){
-	/*	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users?";
-	$.getJSON(getURL + 'userType=' + $('#userTableTypeSelect').val())
-	.success(function(data){
-		console.log(data);
-		var newUserText = '';
-		for(var i = 0; i < data.length; i++){
-			newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
-			'<td><div class="userTableAssociateClass">classID ' + data[i].associateClassId + '</div></td>' +
-			'<td><divclass="userTableEmailAddy">' + data[i].email + '</div></td>' +
-			'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
-		}
-		$('#usersListBody').empty().append(newUserText);
-	}).error(function(data){
-		console.log('fail');
-		console.log(data);
-	});*/
 	maxwellClient.getUsersByType($('#userTableTypeSelect').val(), function(data){
 		var newUserText = '';
 		for(var i = 0; i < data.length; i++){
@@ -161,7 +144,34 @@ function populateUserTable(){
 		$('#usersListBody').empty().append(newUserText);
 	});
 	
-}	
+}
+function populateRecruitmentPage(){
+	maxwellClient.getUsersByType(5, function(data){
+		var recruitListText = '';
+		for(var i = 0; i < data.length; i++){
+			recruitListText += '<li class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
+		}
+		if(data.length != 0){
+			loadRecruitDetails(data[0]['userId']);
+		}
+		$('#recruitsNameList').empty().append(recruitListText);
+	});
+}
+function loadRecruitDetails(recruitID){
+	console.log(recruitID);
+	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitID, 50, function(data){
+		console.log('first')
+		console.log(data);
+		if(data.length == 0){
+			$('#recruitsDetailsHolder').append("<div>Ain't nobody talked to him yet!</div>")
+		}
+	});
+	maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
+		console.log('second');
+		console.log(data);
+	});
+	
+}
 function setNewUserValues(){
 	$('#referredByMemberInput').chosen();
 	$('#kittenSubmitButton').click(submitUser);
