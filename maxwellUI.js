@@ -160,8 +160,6 @@ function populateRecruitmentPage(){
 function loadRecruitDetails(recruitID){
 	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').empty();
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitID, function(data){
-		console.log('first')
-		console.log(data);
 		if(data.length == 0){
 			$('#recruitsContactHistoryListHolder').append('<div><img src="http://i.qkme.me/3t9sd0.jpg" /></div>');
 		}else{
@@ -169,24 +167,31 @@ function loadRecruitDetails(recruitID){
 			var recruitListText = '';
 			var recruitContactors = [];
 			for(var i = 0; i < data.length; i++){
-				recruitHistory += '<li class="recruitContactItem"><div class="recruitContactItemInner">' +
-					'<div class="recruitContactTimestamp">Time was ' + data[i]['contactTimestamp'] + '</div>' +
-					'<div class="recruitContactRecruitor">Contacter was <span class="recruitContactorUserId-' + data[i]['recruitContactRecruitor'] + '">loading....</span></div>' +
-					'<div class="recruitContactMethod">Contacted via ' + data[i]['recruitContactTypeId'] + '</div>' +
+				if(data[i]['notes']){
+					var contactNotes = data[i]['notes'];
+				}else{
+					var contactNotes = "Nope.";
+				}
+				recruitListText += '<li class="recruitContactItem"><div class="recruitContactItemInner">' +
+					'<div class="recruitContactTimestamp">Time was: ' + data[i]['contactTimestamp'] + '</div>' +
+					'<div class="recruitContactRecruitor">Contacter was: <span class="recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span></div>' +
+					'<div class="recruitContactMethod">Contacted method: ' + data[i]['recruitContactTypeId'] + '</div>' +
+					'<div class="recruitContactNotes">Notes: ' + contactNotes + '</div>' +
 					'</div></li>';
-				if($.inArray(data[i]['recruitContactRecruitor'], recruitContactors) == -1){
-					recruitContactors.push(data[i]['recruitContactRecruitor']);
+
+				if($.inArray(data[i]['recruitContactorUserId'], recruitContactors) == -1){
+					recruitContactors.push(data[i]['recruitContactorUserId']);
 				}
 			}
 			recruitContactUL.append(recruitListText);
-			$('recruitsContactHistoryListHolder').append(recruitContactUL);
-			
-			maxwellClient.getUserById(recruitContactorUserId, function(userData){
-				if(userData.length != 0){
-					console.log(userData);
-					$('.recruitContactorUserId').text(userData[0].firstName + ' ' + userData[0].lastName)
-				}
-			});
+			$('#recruitsContactHistoryListHolder').append(recruitContactUL);
+			for(var i = 0; i < recruitContactors.length; i++){
+				maxwellClient.getUserById(recruitContactors[i], function(userData){
+					if(userData){
+						$('.recruitContactorUserId-' + userData['userId']).text(userData.firstName + ' ' + userData.lastName)
+					}
+				});
+			}
 		}
 	});
 	maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
@@ -199,7 +204,7 @@ function loadRecruitDetails(recruitID){
 		'<div>rushListUserId: ' + data.rushListUserId + '</div>';
 		$('#recruitBlurbHolder').append(recruitDetails);
 		maxwellClient.getUserById(data['recruitSourceId'], function(userData){
-			if(userData.length != 0){
+			if(userData){
 				$('#recruitSourceId').text(userData['firstName'] + ' ' + userData['lastName'])
 			}
 		});

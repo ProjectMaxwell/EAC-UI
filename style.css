@@ -6,6 +6,9 @@ ul{
 	-webkit-margin-after: 0px;
 	-webkit-padding-start: 0px;
 }
+li{
+	list-style: none;
+}
 #container{
 	background: white;
 	width: 800px;
@@ -112,11 +115,9 @@ input::-webkit-inner-spin-button {
 #recruitsNameListHolder{
 	width: 25%;
 	height: 100%;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 	border-right: 1px solid black;
-}
-#recruitsNameList > li{
-	list-style: none;
 }
 .recruitsListItem{
 	cursor: pointer;
@@ -141,4 +142,7 @@ input::-webkit-inner-spin-button {
 	overflow: auto;
 	top: 0px;
 	right: 0px;
+}
+#recruitsDetailsHolder > div{
+	margin: 20px;
 }
