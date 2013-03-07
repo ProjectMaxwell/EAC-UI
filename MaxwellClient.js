@@ -178,7 +178,7 @@ var maxwellClient = {
 	 * @returns {String} - temporary return while mocked
 	 */
 	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, successCallback, maxResults){
-		this.getRecruitContactHistoryByParameters(recruitUserId, null, maxResults, successCallback);
+		this.getRecruitContactHistoryByParameters(recruitUserId, null, successCallback, maxResults);
 	},
 	/**
 	 * retrieve a list of all contacts made by a given user (i.e. a recruitment chair)
@@ -188,7 +188,7 @@ var maxwellClient = {
 	 * @returns {String} - temporary return while mocked
 	 */
 	getRecruitContactHistoryByUserId: function(userId, successCallback, maxResults){
-		this.getRecruitContactHistoryByParameters(null, userId, maxResults, successCallback);
+		this.getRecruitContactHistoryByParameters(null, userId, successCallback, maxResults);
 	},
 	getRecruitContactHistoryByParameters: function(recruitUserId,recruitContactorUserId, successCallback, maxResults){
 		var path = this.recruitContactEndpoint;

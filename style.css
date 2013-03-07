@@ -1,6 +1,14 @@
 body{
 	background: url('http://evergreenalumniclub.com/images/xv.png');
 }
+ul{
+	-webkit-margin-before: 0px;
+	-webkit-margin-after: 0px;
+	-webkit-padding-start: 0px;
+}
+li{
+	list-style: none;
+}
 #container{
 	background: white;
 	width: 800px;
@@ -112,4 +120,45 @@ input::-webkit-inner-spin-button {
 	/* display: none; <- Crashes Chrome on hover */
 	-webkit-appearance: none;
 	margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+/*Recruits tab*/
+#recruitmentPageHolder{
+	display: none;
+	position: relative;
+	border: 1px solid black;
+}
+#recruitsNameListHolder{
+	width: 25%;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	border-right: 1px solid black;
+}
+.recruitsListItem{
+	cursor: pointer;
+	height: 35px;
+	line-height: 35px;
+	border-bottom: 1px solid black;
+}
+.recruitsListItem:hover{
+	background: grey;
+}
+.recruitsListItem > div{
+	margin: 0px 5px;
+	white-space: nowrap;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#recruitsDetailsHolder{
+	width: 75%;
+	position: absolute;
+	height: 100%;
+	overflow: auto;
+	top: 0px;
+	right: 0px;
+}
+#recruitsDetailsHolder > div{
+	margin: 20px;
 }
