@@ -9,8 +9,8 @@ $(document).ready(function(){
 	$("#loginPane").lightbox_me();
 });
 function initialSetup(){
-	maxwellClient.init("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest");
-	phiAuthClient.init("http://evergreenalumniclub.com:7080");
+	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
+	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
 	initializeOnChangeHandlers();
 	initializeMetadata();
 	$('#newUser').click(function(){
