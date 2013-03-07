@@ -177,7 +177,7 @@ var maxwellClient = {
 	 * @param successCallback - the function to perform on the response object
 	 * @returns {String} - temporary return while mocked
 	 */
-	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, maxResults, successCallback){
+	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, successCallback, maxResults){
 		this.getRecruitContactHistoryByParameters(recruitUserId, null, maxResults, successCallback);
 	},
 	/**
@@ -187,10 +187,10 @@ var maxwellClient = {
 	 * @param successCallback - the function to perform on the response object
 	 * @returns {String} - temporary return while mocked
 	 */
-	getRecruitContactHistoryByUserId: function(userId, maxResults, successCallback){
+	getRecruitContactHistoryByUserId: function(userId, successCallback, maxResults){
 		this.getRecruitContactHistoryByParameters(null, userId, maxResults, successCallback);
 	},
-	getRecruitContactHistoryByParameters: function(recruitUserId,recruitContactorUserId, maxResults, successCallback){
+	getRecruitContactHistoryByParameters: function(recruitUserId,recruitContactorUserId, successCallback, maxResults){
 		var path = this.recruitContactEndpoint;
 		var existingParams = false;
 		if(recruitUserId){
