@@ -28,6 +28,10 @@ body{
 #loginForm{
 	text-align: center;
 }
+.error{
+	color: red;
+	font-weight: bold;
+}
 .userTableFullName{
 	width: 205px;
 }

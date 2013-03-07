@@ -35,12 +35,27 @@ function initialSetup(){
 		$('#newEACMeetingHolder').show();
 	});
 	$('#submitEventButton').click(createEACMeeting);
-	$('#submitPasswordLoginButton').click(function(){
-		var username = $("#loginFormUsername").val();
-		var password = $("#loginFormPassword").val();
-		phiAuthClient.authenticateByPassword(username,password);
-	});
+	$('#submitPasswordLoginButton').click(doLoginByPassword);
 }
+
+/**
+ * Use PhiAuth to attempt a password grant.
+ * If a token is successfully retrieved, add it to maxwellClient, and set the refresh countdown
+ */
+function doLoginByPassword(){
+	var username = $("#loginFormUsername").val();
+	var password = $("#loginFormPassword").val();
+	phiAuthClient.authenticateByPassword(username,password,
+			function(data,statusCode,responseHandler){
+				$("#loginPane").trigger("close");
+				console.log(phiAuthClient.tokenResponse);
+				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+				//Refresh countdown here
+			},function(data,statusCode,responseHandler){
+				$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
+			});
+}
+
 function initializeOnChangeHandlers(){
 	//Associate Class event handlers
 	associateClasses.onChange = new Array();
