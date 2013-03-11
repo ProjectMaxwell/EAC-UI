@@ -22,6 +22,7 @@ var maxwellClient = {
 		this.recruitInfoEndpoint = "/users/%s/recruitInfo";
 		this.recruitContactEndpoint = "/recruitContact";
 		this.recruitContactTypesEndpoint = "/recruitContact/recruitContactTypes";
+		this.recruitEngagementLevelsEndpoint = "/recruits/recruitEngagementLevels";
 	},
 	/**
 	 * Set the access token to be used as authorization when making requests to the server
@@ -222,6 +223,11 @@ var maxwellClient = {
 	recordRecruitContact: function(recruitContactObject, successCallback){
 		this.post(this.recruitContactEndpoint, recruitContactObject, successCallback, function(data, responseHandler){
 			console.log("Could not create recruit contact record.  " + responseHandler.responseText);
+		});
+	},
+	getRecruitEngagementLevels: function(successCallback){
+		this.get(this.recruitEngagementLevelsEndpoint, successCallback, function(data,response){
+			console.log("Could not retrieve recruit engagement levels.  " + data);
 		});
 	}
 
