@@ -226,7 +226,7 @@ function loadRecruitDetails(recruitID){
 	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').empty();
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitID, function(data){
 		if(data.length == 0){
-			$('#recruitsContactHistoryListHolder').append('<div><img src="http://i.qkme.me/3t9sd0.jpg" /></div>');
+			$('#recruitsContactHistoryListHolder').append('<div>Could not retrieve any recruit information</div>');
 		}else{
 			var recruitContactUL = $('<ul id="recruitsContactHistoryList"></ul>');
 			var recruitListText = '';
@@ -264,7 +264,6 @@ function loadRecruitDetails(recruitID){
 		'<div>dateAdded: ' + data.dateAdded + '</div>' +
 		'<div>gpa: ' + data.gpa + '</div>' +
 		'<div>lifeExperiences: ' + data.lifeExperiences + '</div>' +
-		'<div>DEFCON: ' + data.recruitEngagementLevelId + '</div>' +
 		'<div>recruitSourceId: <span id="recruitSourceId">loading....</span></div>' +
 		'<div>rushListUserId: ' + data.rushListUserId + '</div>';
 		$('#recruitBlurbHolder').append(recruitDetails);
