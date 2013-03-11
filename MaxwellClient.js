@@ -168,6 +168,12 @@ var maxwellClient = {
 			alert('Could not create user.' + data);
 		});
 	},
+	updateUser: function(userObject,successCallback){
+		var path = this.userByIdEndpoint.replace("%s",userObject.userId);
+		this.put(path, userObject, successCallback, function(data, responseHandler){ 
+			alert('Could not update user.' + data);
+		});
+	},
 	getAssociateClasses: function(successCallback){
 		
 		this.get(this.associateClassesEndpoint, successCallback, function(data, responseHandler){ 
