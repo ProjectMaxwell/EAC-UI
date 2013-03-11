@@ -6,9 +6,11 @@ var metadataOnChangeEvents = new Array();
 $(document).ready(function(){
 	initialSetup();
 	$('#recruitPage').click();
+	$("#loginPane").lightbox_me();
 });
 function initialSetup(){
-	maxwellClient.init("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest");
+	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
+	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
 	initializeOnChangeHandlers();
 	initializeMetadata();
 	$('#newUser').click(function(){
@@ -35,7 +37,70 @@ function initialSetup(){
 		$('#recruitmentPageHolder').show();
 	});
 	$('#submitEventButton').click(createEACMeeting);
+	$('#submitPasswordLoginButton').click(doLoginByPassword);
 }
+
+/**
+ * Use PhiAuth to attempt a password grant.
+ * If a token is successfully retrieved, add it to maxwellClient, and set the refresh countdown
+ */
+function doLoginByPassword(){
+	var username = $("#loginFormUsername").val();
+	var password = $("#loginFormPassword").val();
+	phiAuthClient.authenticateByPassword(username,password,
+			function(data,statusCode,responseHandler){
+				$("#loginPane").trigger("close");
+				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+				
+				$(".loginFormInput").val(null);
+				//These variables are here because this is an asynchronous wait timer,
+				//and phiAuthClient is liable to change in the time before the timer is triggered
+				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
+				var tmpTtl = phiAuthClient.tokenResponse.ttl;
+				setRefreshTimer(tmpRefreshToken, tmpTtl);
+			},function(data,statusCode,responseHandler){
+				$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
+				$("#loginFormPassword").val(null);
+			});
+}
+
+/**
+ * Helper function to schedule refreshing the tokens
+ * @param token - the refresh token from the phi auth response
+ * @param seconds - the number of seconds to wait before requesting a new token
+ */
+function setRefreshTimer(token, seconds){
+	if(seconds == null){
+		seconds = 7200;
+	}
+	var tmpTimer = window.setTimeout(function(){
+		refreshToken(token);
+		window.currentTokenRefreshTimer = null;
+	},seconds * 1000);
+	if(window.currentTokenRefreshTimer != null){
+		window.clearTimeout(window.currentTokenRefreshTimer);
+	}
+	window.currentTokenRefreshTimer = tmpTimer;
+}
+
+/**
+ * Given a current refresh token, request from PhiAuth a completely new set of tokens
+ * And then restart the refresh timer
+ * @param token - the refresh token provided from previous Phi Auth token grant
+ */
+function refreshToken(token){
+	phiAuthClient.refreshToken(token,function(data, status, responseHandler){
+		maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+		//These variables are here because this is an asynchronous wait timer,
+		//and phiAuthClient is liable to change in the time before the timer is triggered
+		var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
+		var tmpTtl = phiAuthClient.tokenResponse.ttl;
+		setRefreshTimer(tmpRefreshToken, tmpTtl);
+	},function(data,status,responseHandler){
+		console.log("Refresh failed, login will expire at end of current token's ttl.");
+	});
+}
+
 function initializeOnChangeHandlers(){
 	//Associate Class event handlers
 	associateClasses.onChange = new Array();
@@ -308,6 +373,8 @@ function getDatas(dataOptions){
 		}
 	});
 }
+
+//TODO: UNWIND ME AND USE CLIENTS, PLEASE
 function submitUser(){
 	var errorList = new Array();
 	var userData = new Object;

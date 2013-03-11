@@ -4,11 +4,25 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 	<script type="text/javascript" src="chosen/chosen.jquery.min.js"></script>
 	<script type="text/javascript" src="MaxwellClient.js"></script>
+	<script type="text/javascript" src="PhiAuthClient.js"></script>
 	<script type="text/javascript" src="maxwellUI.js"></script>
+	<script type="text/javascript" src="jquery.lightbox_me.js"></script>
 	<link rel="stylesheet" href="chosen/chosen.css" />
 	<link rel="stylesheet" href="style.css" />
 </head>
 <body>
+	<div id="loginPane">
+		<div id="loginForm">
+			<div id="loginFormErrorDiv" class="error"></div>
+			<div class="normalInputHolder">
+				Username: <input type="text" id="loginFormUsername" class="loginFormInput" />
+			</div>
+			<div class="normalInputHolder">
+				Password: <input type="password" id="loginFormPassword" class="loginFormInput" />
+			</div>
+			<div id="submitPasswordLoginButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+		</div>
+	</div>
 	<div id="container">
 		<div id="navHolder">
 			<div class="sectionSelector" id="usersList">Users List</div>
