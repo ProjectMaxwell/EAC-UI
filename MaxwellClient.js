@@ -73,6 +73,43 @@ var maxwellClient = {
 			console.log(responseHandler.responseText);
 		});
 	},
+	/**
+	 * This is the genericized PUT method. To use it, define other methods that call this one and pass in success and failure handlers.
+	 * This is important because it provides the UI a layer of abstraction away from the messy HTTP stuff,
+	 * thus allowing for better separation of model, view, and controller.
+	 * @param path - The path from the REST uri root (i.e. /users/{userId}/recruitInfo) of the endpoint you want to hit
+	 * @param postObject - the actual object to be serialized into JSON and sent to the server
+	 * @param successCallback - a function that will be triggered if the http status code on response indicates success
+	 * @param failureCallback - a function that will be triggered if the http status code on response indicates failure
+	 */
+	put: function(path, putObject, successCallback, failureCallback){
+		var jsonString = JSON.stringify(putObject);
+		var uri = this.serviceUrl + path;
+		jQuery.ajax({
+			type: "PUT",
+			data: jsonString,
+			url: uri,
+			dataType: "json",
+			contentType: "application/json",
+			beforeSend: function(request){
+				if(maxwellClient.accessToken != null && maxwellClient.accessToken != undefined){
+					request.setRequestHeader("Authorization", maxwellClient.accessToken);
+				}
+			}
+		}).done(function(data, status, responseHandler){
+			successCallback(data, responseHandler);
+		}).fail(function(responseHandler, status, data){
+			//Make sure object is non-null, and is a function
+			if(typeof failureCallback == "function"){
+				//Trigger the function
+				failureCallback(data, responseHandler);
+			}else{
+				//If null or if it's not a function, do some default failure behavior
+				maxwellClient.defaultFailureBehavior(responseHandler.responseText);
+			}
+			console.log(responseHandler.responseText);
+		});
+	},
 
 	/**
 	 * This is the genericized "GET" method.  To use it, define other methods that call this one and pass in success and failure handlers.
@@ -169,6 +206,13 @@ var maxwellClient = {
 		
 		this.post(path, recruitInfoObject, successCallback, function(data,responseHandler){
 			alert('Could not create recruit info.');
+		});
+	},
+	updateRecruitInfo: function(userId, recruitInfoObject, successCallback){
+		var path = this.recruitInfoEndpoint.replace("%s",userId);
+		
+		this.put(path, recruitInfoObject, successCallback, function(data,responseHandler){
+			alert('Could not update recruit info.');
 		});
 	},
 	/**
