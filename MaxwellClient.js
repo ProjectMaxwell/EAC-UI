@@ -13,15 +13,15 @@ var maxwellClient = {
 	 * Sets initial system variables to be used in various functions.
 	 */
 	setInitialSystemVariables: function(){
-		this.usersEndpoint: "/users",
-		this.userByIdEndpoint: "/users/%s",
-		this.associateClassesEndpoint: "/associateClasses",
-		this.chaptersEndpoint: "/chapters",
-		this.userTypesEndpoint: "/users/userTypes",
-		this.eacMeetingsEndpoint: "/EAC/meet-ups",
-		this.recruitInfoEndpoint: "/users/%s/recruitInfo",
-		this.recruitContactEndpoint: "/recruitContact",
-		this.recruitContactTypesEndpoint: "/recruitContact/recruitContactTypes",
+		this.usersEndpoint = "/users";
+		this.userByIdEndpoint = "/users/%s";
+		this.associateClassesEndpoint = "/associateClasses";
+		this.chaptersEndpoint = "/chapters";
+		this.userTypesEndpoint = "/users/userTypes";
+		this.eacMeetingsEndpoint = "/EAC/meet-ups";
+		this.recruitInfoEndpoint = "/users/%s/recruitInfo";
+		this.recruitContactEndpoint = "/recruitContact";
+		this.recruitContactTypesEndpoint = "/recruitContact/recruitContactTypes";
 	},
 	/**
 	 * Set the access token to be used as authorization when making requests to the server
@@ -177,8 +177,8 @@ var maxwellClient = {
 	 * @param successCallback - the function to perform on the response object
 	 * @returns {String} - temporary return while mocked
 	 */
-	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, maxResults, successCallback){
-		this.getRecruitContactHistoryByParameters(recruitUserId, null, maxResults, successCallback);
+	getRecruitContactHistoryByRecruitUserId: function(recruitUserId, successCallback, maxResults){
+		this.getRecruitContactHistoryByParameters(recruitUserId, null, successCallback, maxResults);
 	},
 	/**
 	 * retrieve a list of all contacts made by a given user (i.e. a recruitment chair)
@@ -187,10 +187,10 @@ var maxwellClient = {
 	 * @param successCallback - the function to perform on the response object
 	 * @returns {String} - temporary return while mocked
 	 */
-	getRecruitContactHistoryByUserId: function(userId, maxResults, successCallback){
-		this.getRecruitContactHistoryByParameters(null, userId, maxResults, successCallback);
+	getRecruitContactHistoryByUserId: function(userId, successCallback, maxResults){
+		this.getRecruitContactHistoryByParameters(null, userId, successCallback, maxResults);
 	},
-	getRecruitContactHistoryByParameters: function(recruitUserId,recruitContactorUserId, maxResults, successCallback){
+	getRecruitContactHistoryByParameters: function(recruitUserId,recruitContactorUserId, successCallback, maxResults){
 		var path = this.recruitContactEndpoint;
 		var existingParams = false;
 		if(recruitUserId){

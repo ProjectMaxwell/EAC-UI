@@ -5,22 +5,22 @@ var metadataOnChangeEvents = new Array();
 
 $(document).ready(function(){
 	initialSetup();
-	
+	$('#recruitPage').click();
+	$("#loginPane").lightbox_me();
 });
 function initialSetup(){
-	maxwellClient.init("http://evergreenalumniclub.com:7080/ProjectMaxwell/rest");
+	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
+	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
 	initializeOnChangeHandlers();
 	initializeMetadata();
 	$('#newUser').click(function(){
-		$('#usersListHolder').hide();
-		$('#newEACMeetingHolder').hide();
+		$('#contentHolder').children().not('#createUsersHolder').hide();
 		setNewUserValues();
 		getNewUserData();
 		$('#createUsersHolder').show();
 	});
 	$('#usersList').click(function(){
-		$('#createUsersHolder').hide();
-		$('#newEACMeetingHolder').hide();
+		$('#contentHolder').children().not('#usersListHolder').hide();
 		populateUserTable();
 		$('#usersListHolder').show();
 	});
@@ -28,12 +28,79 @@ function initialSetup(){
 		populateUserTable();
 	});
 	$('#newEACMeeting').click(function(){
-		$('#createUsersHolder').hide();
-		$('#usersListHolder').hide();
+		$('#contentHolder').children().not('#newEACMeetingHolder').hide();
 		$('#newEACMeetingHolder').show();
 	});
+	$('#recruitPage').click(function(){
+		$('#contentHolder').children().not('#recruitmentPageHolder').hide();
+		populateRecruitmentPage();
+		$('#recruitmentPageHolder').show();
+	});
 	$('#submitEventButton').click(createEACMeeting);
+	$('#submitPasswordLoginButton').click(doLoginByPassword);
 }
+
+/**
+ * Use PhiAuth to attempt a password grant.
+ * If a token is successfully retrieved, add it to maxwellClient, and set the refresh countdown
+ */
+function doLoginByPassword(){
+	var username = $("#loginFormUsername").val();
+	var password = $("#loginFormPassword").val();
+	phiAuthClient.authenticateByPassword(username,password,
+			function(data,statusCode,responseHandler){
+				$("#loginPane").trigger("close");
+				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+				
+				$(".loginFormInput").val(null);
+				//These variables are here because this is an asynchronous wait timer,
+				//and phiAuthClient is liable to change in the time before the timer is triggered
+				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
+				var tmpTtl = phiAuthClient.tokenResponse.ttl;
+				setRefreshTimer(tmpRefreshToken, tmpTtl);
+			},function(data,statusCode,responseHandler){
+				$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
+				$("#loginFormPassword").val(null);
+			});
+}
+
+/**
+ * Helper function to schedule refreshing the tokens
+ * @param token - the refresh token from the phi auth response
+ * @param seconds - the number of seconds to wait before requesting a new token
+ */
+function setRefreshTimer(token, seconds){
+	if(seconds == null){
+		seconds = 7200;
+	}
+	var tmpTimer = window.setTimeout(function(){
+		refreshToken(token);
+		window.currentTokenRefreshTimer = null;
+	},seconds * 1000);
+	if(window.currentTokenRefreshTimer != null){
+		window.clearTimeout(window.currentTokenRefreshTimer);
+	}
+	window.currentTokenRefreshTimer = tmpTimer;
+}
+
+/**
+ * Given a current refresh token, request from PhiAuth a completely new set of tokens
+ * And then restart the refresh timer
+ * @param token - the refresh token provided from previous Phi Auth token grant
+ */
+function refreshToken(token){
+	phiAuthClient.refreshToken(token,function(data, status, responseHandler){
+		maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+		//These variables are here because this is an asynchronous wait timer,
+		//and phiAuthClient is liable to change in the time before the timer is triggered
+		var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
+		var tmpTtl = phiAuthClient.tokenResponse.ttl;
+		setRefreshTimer(tmpRefreshToken, tmpTtl);
+	},function(data,status,responseHandler){
+		console.log("Refresh failed, login will expire at end of current token's ttl.");
+	});
+}
+
 function initializeOnChangeHandlers(){
 	//Associate Class event handlers
 	associateClasses.onChange = new Array();
@@ -124,30 +191,11 @@ function initializeMetadata(){
 	});
 }
 function getNewUserData(){
-	//getDatas({'associateClass': true});
-	//getDatas({'userTypes': true});
-	//getDatas({'chapters': true});
 	getDatas({'referredBy': true, referredByID: 1});
 	getDatas({'referredBy': true, referredByID: 2});
 	getDatas({'referredBy': true, referredByID: 3});
 }
 function populateUserTable(){
-	/*	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users?";
-	$.getJSON(getURL + 'userType=' + $('#userTableTypeSelect').val())
-	.success(function(data){
-		console.log(data);
-		var newUserText = '';
-		for(var i = 0; i < data.length; i++){
-			newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
-			'<td><div class="userTableAssociateClass">classID ' + data[i].associateClassId + '</div></td>' +
-			'<td><divclass="userTableEmailAddy">' + data[i].email + '</div></td>' +
-			'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
-		}
-		$('#usersListBody').empty().append(newUserText);
-	}).error(function(data){
-		console.log('fail');
-		console.log(data);
-	});*/
 	maxwellClient.getUsersByType($('#userTableTypeSelect').val(), function(data){
 		var newUserText = '';
 		for(var i = 0; i < data.length; i++){
@@ -161,7 +209,73 @@ function populateUserTable(){
 		$('#usersListBody').empty().append(newUserText);
 	});
 	
-}	
+}
+function populateRecruitmentPage(){
+	maxwellClient.getUsersByType(5, function(data){
+		var recruitListText = '';
+		for(var i = 0; i < data.length; i++){
+			recruitListText += '<li class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
+		}
+		if(data.length != 0){
+			loadRecruitDetails(data[0]['userId']);
+		}
+		$('#recruitsNameList').empty().append(recruitListText);
+	});
+}
+function loadRecruitDetails(recruitID){
+	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').empty();
+	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitID, function(data){
+		if(data.length == 0){
+			$('#recruitsContactHistoryListHolder').append('<div><img src="http://i.qkme.me/3t9sd0.jpg" /></div>');
+		}else{
+			var recruitContactUL = $('<ul id="recruitsContactHistoryList"></ul>');
+			var recruitListText = '';
+			var recruitContactors = [];
+			for(var i = 0; i < data.length; i++){
+				if(data[i]['notes']){
+					var contactNotes = data[i]['notes'];
+				}else{
+					var contactNotes = "Nope.";
+				}
+				recruitListText += '<li class="recruitContactItem"><div class="recruitContactItemInner">' +
+					'<div class="recruitContactTimestamp">Time was: ' + data[i]['contactTimestamp'] + '</div>' +
+					'<div class="recruitContactRecruitor">Contacter was: <span class="recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span></div>' +
+					'<div class="recruitContactMethod">Contacted method: ' + data[i]['recruitContactTypeId'] + '</div>' +
+					'<div class="recruitContactNotes">Notes: ' + contactNotes + '</div>' +
+					'</div></li>';
+
+				if($.inArray(data[i]['recruitContactorUserId'], recruitContactors) == -1){
+					recruitContactors.push(data[i]['recruitContactorUserId']);
+				}
+			}
+			recruitContactUL.append(recruitListText);
+			$('#recruitsContactHistoryListHolder').append(recruitContactUL);
+			for(var i = 0; i < recruitContactors.length; i++){
+				maxwellClient.getUserById(recruitContactors[i], function(userData){
+					if(userData){
+						$('.recruitContactorUserId-' + userData['userId']).text(userData.firstName + ' ' + userData.lastName)
+					}
+				});
+			}
+		}
+	});
+	maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
+		var recruitDetails = '<div>classStanding: ' + data.classStanding + '</div>' +
+		'<div>dateAdded: ' + data.dateAdded + '</div>' +
+		'<div>gpa: ' + data.gpa + '</div>' +
+		'<div>lifeExperiences: ' + data.lifeExperiences + '</div>' +
+		'<div>DEFCON: ' + data.recruitEngagementLevelId + '</div>' +
+		'<div>recruitSourceId: <span id="recruitSourceId">loading....</span></div>' +
+		'<div>rushListUserId: ' + data.rushListUserId + '</div>';
+		$('#recruitBlurbHolder').append(recruitDetails);
+		maxwellClient.getUserById(data['recruitSourceId'], function(userData){
+			if(userData){
+				$('#recruitSourceId').text(userData['firstName'] + ' ' + userData['lastName'])
+			}
+		});
+	});
+	
+}
 function setNewUserValues(){
 	$('#referredByMemberInput').chosen();
 	$('#kittenSubmitButton').click(submitUser);
@@ -259,6 +373,8 @@ function getDatas(dataOptions){
 		}
 	});
 }
+
+//TODO: UNWIND ME AND USE CLIENTS, PLEASE
 function submitUser(){
 	var errorList = new Array();
 	var userData = new Object;
