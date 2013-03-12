@@ -1,7 +1,10 @@
 var associateClasses = new Array();
 var chapters = new Array();
 var userTypes = new Array();
+var recruitContactTypes = new Array();
+var recruitEngagementLevels = new Array();
 var metadataOnChangeEvents = new Array();
+var metadataInitialized = false;
 
 $(document).ready(function(){
 	initialSetup();
@@ -12,20 +15,22 @@ function initialSetup(){
 	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
 	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
 	initializeOnChangeHandlers();
-	initializeMetadata();
 	$('#newUser').click(function(){
 		$('#contentHolder').children().not('#createUsersHolder').hide();
+		//We shouldn't be trying to do this before login
+		//getNewUserData();
 		setNewUserValues();
-		getNewUserData();
 		$('#createUsersHolder').show();
 	});
 	$('#usersList').click(function(){
 		$('#contentHolder').children().not('#usersListHolder').hide();
-		populateUserTable();
+		//We shouldn't be trying to do this before login
+		//populateUserTable();
 		$('#usersListHolder').show();
 	});
 	$('#userTableTypeSelect').change(function(){
-		populateUserTable();
+		//We shouldn't be trying to do this before login
+		//populateUserTable();
 	});
 	$('#newEACMeeting').click(function(){
 		$('#contentHolder').children().not('#newEACMeetingHolder').hide();
@@ -33,7 +38,8 @@ function initialSetup(){
 	});
 	$('#recruitPage').click(function(){
 		$('#contentHolder').children().not('#recruitmentPageHolder').hide();
-		populateRecruitmentPage();
+		//We shouldn't be trying to do this before login
+		//populateRecruitmentPage();
 		$('#recruitmentPageHolder').show();
 	});
 	$('#submitEventButton').click(createEACMeeting);
@@ -58,6 +64,11 @@ function doLoginByPassword(){
 				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
 				var tmpTtl = phiAuthClient.tokenResponse.ttl;
 				setRefreshTimer(tmpRefreshToken, tmpTtl);
+				
+				if(!metadataInitialized){
+					metadataInitialized = true;
+					initializeMetadata();
+				}
 			},function(data,statusCode,responseHandler){
 				$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
 				$("#loginFormPassword").val(null);
@@ -112,7 +123,6 @@ function initializeOnChangeHandlers(){
 				associateClassString += '<option value="' + associateClassObject.associateClassId + '">' + associateClassObject.name + '</option>';
 			}
 		}
-		//console.log(associateClassString);
 		//associateClassString += '<option value="' + data[i]['associateClassId'] + '" selected>' + data[i]['name'] + '</option>';
 		$('#associateClassInput').html(associateClassString);
 		/*.chosen().change(function(){
@@ -131,7 +141,6 @@ function initializeOnChangeHandlers(){
 				chapterString += '<option value="' + chapterObject.chapterId + '">' + chapterObject.name + '</option>';
 			}
 		}
-		//console.log(chapterString);
 		//chapterString += '<option value="' + data[i]['chapterId'] + '" selected>' + data[i]['name'] + '</option>';
 		$('#chapterNameInput').html(chapterString);
 		/*.chosen().change(function(){
@@ -150,7 +159,6 @@ function initializeOnChangeHandlers(){
 				userTypeString += '<option value="' + userTypeObject.userTypeId + '">' + userTypeObject.name + '</option>';
 			}
 		}
-		//console.log(userTypeString);
 		//userTypeString += '<option value="' + data[i]['userTypeId'] + '" selected>' + data[i]['name'] + '</option>';
 		$('#userTypeInput').html(userTypeString);
 		/*.chosen().change(function(){
@@ -158,6 +166,12 @@ function initializeOnChangeHandlers(){
 		});*/
 		$("#userTypeInput").val(41);
 	};
+	
+	//RecruitContactType event handlers
+	recruitContactTypes.onChange = new Array();
+	
+	//RecruitEngagementLevel event handlers
+	recruitEngagementLevels.onChange = new Array();
 }
 function triggerMetadataOnChangeHandlers(object){
 	for(var i = 0; i < object.onChange.length; i++){
@@ -169,7 +183,6 @@ function initializeMetadata(){
 		var tempAssociateClassArray = new Array();
 		for(var i = 0; i < data.length; i++){
 			tempAssociateClassArray[data[i].associateClassId] = data[i];
-			//addAssociateClassMapping(data[i].associateClassId,data[i]);
 		}
 		setAssociateClasses(tempAssociateClassArray);
 	});
@@ -177,7 +190,6 @@ function initializeMetadata(){
 		var tempChapterArray = new Array();
 		for(var i = 0; i < data.length; i++){
 			tempChapterArray[data[i].chapterId] = data[i];
-			//addChapterMapping(data[i].chapterId,data[i]);
 		}
 		setChapters(tempChapterArray);
 	});
@@ -185,15 +197,29 @@ function initializeMetadata(){
 		var tempUserTypeArray = new Array();
 		for(var i = 0; i < data.length; i++){
 			tempUserTypeArray[data[i].userTypeId] = data[i];
-			//addUserTypeMapping(data[i].userTypeId,data[i]);
 		}
 		setUserTypes(tempUserTypeArray);
 	});
+	maxwellClient.getRecruitContactTypes(function(data){
+		var tempRecruitContactTypeArray = new Array();
+		for(var i = 0; i < data.length; i++){
+			tempRecruitContactTypeArray[data[i].recruitContactTypeId] = data[i];
+		}
+		setRecruitContactTypes(tempRecruitContactTypeArray);
+	});
+	maxwellClient.getRecruitEngagementLevels(function(data){
+		var tempRecruitEngagementLevelArray = new Array();
+		for(var i = 0; i < data.length; i++){
+			tempRecruitEngagementLevelArray[data[i].recruitEngagementLevelId] = data[i];
+		}
+		setRecruitEngagementLevels(tempRecruitEngagementLevelArray);
+	});
 }
 function getNewUserData(){
-	getDatas({'referredBy': true, referredByID: 1});
+	//I don't know what this is, but it's certainly not the right way to be doing whatever it is
+	/*getDatas({'referredBy': true, referredByID: 1});
 	getDatas({'referredBy': true, referredByID: 2});
-	getDatas({'referredBy': true, referredByID: 3});
+	getDatas({'referredBy': true, referredByID: 3});*/
 }
 function populateUserTable(){
 	maxwellClient.getUsersByType($('#userTableTypeSelect').val(), function(data){
@@ -507,4 +533,16 @@ function setUserTypes(userTypes){
 	this.userTypes = userTypes;
 	this.userTypes.onChange = tempOnChange;
 	triggerMetadataOnChangeHandlers(this.userTypes);
+}
+function setRecruitContactTypes(recruitContactTypes){
+	var tempOnChange = this.recruitContactTypes.onChange;
+	this.recruitContactTypes = recruitContactTypes;
+	this.recruitContactTypes.onChange = tempOnChange;
+	triggerMetadataOnChangeHandlers(this.recruitContactTypes);
+}
+function setRecruitEngagementLevels(recruitEngagementLevels){
+	var tempOnChange = this.recruitEngagementLevels.onChange;
+	this.recruitEngagementLevels = recruitEngagementLevels;
+	this.recruitEngagementLevels.onChange = tempOnChange;
+	triggerMetadataOnChangeHandlers(this.recruitEngagementLevels);
 }
