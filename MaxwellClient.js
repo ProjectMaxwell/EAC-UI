@@ -19,10 +19,11 @@ var maxwellClient = {
 		this.chaptersEndpoint = "/chapters";
 		this.userTypesEndpoint = "/users/userTypes";
 		this.eacMeetingsEndpoint = "/EAC/meet-ups";
-		this.recruitInfoEndpoint = "/users/%s/recruitInfo";
+		this.recruitInfoEndpoint = "/recruits/%s/recruitInfo";
 		this.recruitContactEndpoint = "/recruitContact";
 		this.recruitContactTypesEndpoint = "/recruitContact/recruitContactTypes";
 		this.recruitEngagementLevelsEndpoint = "/recruits/recruitEngagementLevels";
+		this.recruitCommentsEndpoint = "/recruits/%s/recruitComments";
 	},
 	/**
 	 * Set the access token to be used as authorization when making requests to the server
@@ -276,8 +277,20 @@ var maxwellClient = {
 		});
 	},
 	getRecruitEngagementLevels: function(successCallback){
-		this.get(this.recruitEngagementLevelsEndpoint, successCallback, function(data,response){
+		this.get(this.recruitEngagementLevelsEndpoint, successCallback, function(data,responseHandler){
 			console.log("Could not retrieve recruit engagement levels.  " + data);
+		});
+	},
+	addRecruitComment: function(recruitCommentObject,successCallback){
+		var path = this.recruitCommentsEndpoint.replace("%s",recruitCommentObject.recruitUserId);
+		this.post(path, recruitCommentObject, successCallback, function(data,responseHandler){
+			console.log("Could not add recruit comment due to exception.  " + data);
+		});
+	},
+	getRecruitCommentsByRecruitUserId: function(recruitUserId,successCallback){
+		var path = this.recruitCommentsEndpoint.replace("%s",recruitUserId);
+		this.get(path, successCallback, function(data,responseHandler){
+			console.log("Could not add recruit comment due to exception.  " + data);
 		});
 	}
 
