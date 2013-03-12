@@ -3,12 +3,12 @@ var chapters = new Array();
 var userTypes = new Array();
 var recruitContactTypes = new Array();
 var recruitEngagementLevels = new Array();
+var usersByType = new Array();
 var metadataOnChangeEvents = new Array();
 var metadataInitialized = false;
 
 $(document).ready(function(){
 	initialSetup();
-	$('#recruitPage').click();
 	$("#loginPane").lightbox_me();
 });
 function initialSetup(){
@@ -17,20 +17,17 @@ function initialSetup(){
 	initializeOnChangeHandlers();
 	$('#newUser').click(function(){
 		$('#contentHolder').children().not('#createUsersHolder').hide();
-		//We shouldn't be trying to do this before login
-		//getNewUserData();
+		getNewUserData();
 		setNewUserValues();
 		$('#createUsersHolder').show();
 	});
 	$('#usersList').click(function(){
 		$('#contentHolder').children().not('#usersListHolder').hide();
-		//We shouldn't be trying to do this before login
-		//populateUserTable();
+		populateUserTable();
 		$('#usersListHolder').show();
 	});
 	$('#userTableTypeSelect').change(function(){
-		//We shouldn't be trying to do this before login
-		//populateUserTable();
+		populateUserTable();
 	});
 	$('#newEACMeeting').click(function(){
 		$('#contentHolder').children().not('#newEACMeetingHolder').hide();
@@ -38,8 +35,7 @@ function initialSetup(){
 	});
 	$('#recruitPage').click(function(){
 		$('#contentHolder').children().not('#recruitmentPageHolder').hide();
-		//We shouldn't be trying to do this before login
-		//populateRecruitmentPage();
+		populateRecruitmentPage();
 		$('#recruitmentPageHolder').show();
 	});
 	$('#submitEventButton').click(createEACMeeting);
@@ -214,6 +210,11 @@ function initializeMetadata(){
 		}
 		setRecruitEngagementLevels(tempRecruitEngagementLevelArray);
 	});
+	
+
+	//Moved here temporarily to default the recruit page to the front and populate it
+	//This is not a good long-term way of doing things, however
+	$('#recruitPage').click();
 }
 function getNewUserData(){
 	//I don't know what this is, but it's certainly not the right way to be doing whatever it is
