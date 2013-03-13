@@ -3,7 +3,9 @@ var chapters = new Array();
 var userTypes = new Array();
 var recruitContactTypes = new Array();
 var recruitEngagementLevels = new Array();
-var usersByType = new Array();
+var usersByType = new Array(); //This is a 2-dimensional array.  Key = user type id, value = array of users of that type
+var userInfoByUserId = new Array();
+var recruitInfoByUserId = new Array();
 var metadataOnChangeEvents = new Array();
 var metadataInitialized = false;
 
@@ -23,11 +25,11 @@ function initialSetup(){
 	});
 	$('#usersList').click(function(){
 		$('#contentHolder').children().not('#usersListHolder').hide();
-		populateUserTable();
+		retrieveAndPopulateUserTable($('#userTableTypeSelect').val());
 		$('#usersListHolder').show();
 	});
 	$('#userTableTypeSelect').change(function(){
-		populateUserTable();
+		retrieveAndPopulateUserTable($('#userTableTypeSelect').val());
 	});
 	$('#newEACMeeting').click(function(){
 		$('#contentHolder').children().not('#newEACMeetingHolder').hide();
@@ -160,7 +162,6 @@ function initializeOnChangeHandlers(){
 		/*.chosen().change(function(){
 			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
 		});*/
-		$("#userTypeInput").val(41);
 	};
 	
 	//RecruitContactType event handlers
@@ -195,6 +196,11 @@ function initializeMetadata(){
 			tempUserTypeArray[data[i].userTypeId] = data[i];
 		}
 		setUserTypes(tempUserTypeArray);
+
+		//Pre-instantiate the arrays in our users array
+		$(userTypes).each(function(index){
+			window.usersByType[index] = new Array();
+		});
 	});
 	maxwellClient.getRecruitContactTypes(function(data){
 		var tempRecruitContactTypeArray = new Array();
@@ -210,7 +216,6 @@ function initializeMetadata(){
 		}
 		setRecruitEngagementLevels(tempRecruitEngagementLevelArray);
 	});
-	
 
 	//Moved here temporarily to default the recruit page to the front and populate it
 	//This is not a good long-term way of doing things, however
@@ -221,6 +226,22 @@ function getNewUserData(){
 	/*getDatas({'referredBy': true, referredByID: 1});
 	getDatas({'referredBy': true, referredByID: 2});
 	getDatas({'referredBy': true, referredByID: 3});*/
+}
+/**
+ * This function is used to make sure we aren't repeatedly hitting the server to retrieve users lists that we already have
+ * @param userType
+ */
+function retrieveAndPopulateUserTable(userType){
+	//In the future, we may need to do an ETag check here instead of just checking for null
+	//Otherwise we might get concurrent modification problems
+	if(usersByType[userType] == null || usersByType[userType].length == 0){
+		maxwellClient.getUsersByType(userType, function(data, responseHandler){
+			usersByType[userType] = data;
+			populateUserTable2(usersByType[userType]);
+		});
+	}else{
+		populateUserTable2(usersByType[userType]);
+	}
 }
 function populateUserTable(){
 	maxwellClient.getUsersByType($('#userTableTypeSelect').val(), function(data){
@@ -236,6 +257,18 @@ function populateUserTable(){
 		$('#usersListBody').empty().append(newUserText);
 	});
 	
+}
+function populateUserTable2(data){
+	var newUserText = '';
+	for(var i = 0; i < data.length; i++){
+		var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
+		var email = data[i].email == null ? '' : data[i].email;
+		newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
+		'<td><div class="userTableAssociateClass">' + associateClasses[associateClassId].name + '</div></td>' +
+		'<td><divclass="userTableEmailAddy">' + email + '</div></td>' +
+		'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
+	}
+	$('#usersListBody').empty().append(newUserText);
 }
 function populateRecruitmentPage(){
 	maxwellClient.getUsersByType(5, function(data){
@@ -294,7 +327,8 @@ function loadRecruitDetails(recruitID){
 		'<div>recruitSourceId: <span id="recruitSourceId">loading....</span></div>' +
 		'<div>rushListUserId: ' + data.rushListUserId + '</div>';
 		$('#recruitBlurbHolder').append(recruitDetails);
-		maxwellClient.getUserById(data['recruitSourceId'], function(userData){
+		console.log("Getting user info for recruit with id '" + recruitID + "'.");
+		maxwellClient.getUserById(recruitID, function(userData){
 			if(userData){
 				$('#recruitSourceId').text(userData['firstName'] + ' ' + userData['lastName'])
 			}
@@ -416,12 +450,12 @@ function submitUser(){
 	userData['yearGraduated'] = $('#yearGraduatedInput').val() || null;
 	if($('#userTypeInput').val() == 1 || $('#userTypeInput').val() == 2){
 		if($('#associateClassInput').val() == 0){
-			errorList.push("Undergrads must have an Associate Class.")
+			errorList.push("Undergrads must have an Associate Class.");
 		}else{
-			userData['associateClassId'] = $('#associateClassInput').val()
+			userData['associateClassId'] = $('#associateClassInput').val();
 		}
 	}else{
-		userData['associateClassId'] = $('#associateClassInput').val()
+		userData['associateClassId'] = $('#associateClassInput').val();
 	}
 	
 	userData['userTypeId'] = $('#userTypeInput').val() || null;
@@ -437,7 +471,8 @@ function submitUser(){
 	
 	userData['referredById'] = $('#referredByMemberInput').val() || null;
 
-	if(errorList.length == 0){
+	
+	/*if(errorList.length == 0){
 		var userPin = prompt("WHAT YOU PIN NUMBA, DOCTA JONES?")
 	}
 	if(userPin != null && userPin.length != 0 && !isNaN(userPin)){
@@ -448,16 +483,21 @@ function submitUser(){
 		if(checkTryAgain){
 			submitUser();
 		}
-	}else{
-		var errorString = "Fix yo goddamn shit: \n";
+	}else{*/
+	if(errorList.length > 0){
+		var errorString = "Please resolve the following profile issues: \n";
 		for(var i = 0; i < errorList.length; i++){
 			errorString += (i+1) + ": " + errorList[i] + "\n";
 		}
 		alert(errorString);
+	}else{
+		maxwellClient.createUser(userData, function(data, responseHandler){
+			console.log(data);
+		});
 	}
 }
 function getUserToken(userData, pinNumber, passwordWord){
-	var tokenDeets = {
+	/*var tokenDeets = {
 		"grantType": "PASSWORD",
 		"username": pinNumber.toString(),
 		"password": passwordWord,
@@ -478,10 +518,11 @@ function getUserToken(userData, pinNumber, passwordWord){
 			alert('NooooooOOOOOooOOOoOOooOOOOoOOOooooooo!');
 			console.log(data);
 		}
-	});
+	});*/
+	postDatas(userData, null);
 }
 function postDatas(userData, accessToken){
-	userData = JSON.stringify(userData);
+	/*userData = JSON.stringify(userData);
 	console.log(userData)
 	$.ajax({
 		dataType: "json",
@@ -500,7 +541,7 @@ function postDatas(userData, accessToken){
 			alert('Something went wrong. Oops.');
 			console.log(data);
 		}
-	});
+	});*/
 }
 function createEACMeeting(){
 	var eventDate = $('#eventDate').val();
