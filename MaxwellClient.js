@@ -24,6 +24,7 @@ var maxwellClient = {
 		this.recruitContactTypesEndpoint = "/recruitContact/recruitContactTypes";
 		this.recruitEngagementLevelsEndpoint = "/recruits/recruitEngagementLevels";
 		this.recruitCommentsEndpoint = "/recruits/%s/recruitComments";
+		this.recruitSourcesEndpoint = "/recruits/recruitSources";
 	},
 	/**
 	 * Set the access token to be used as authorization when making requests to the server
@@ -291,6 +292,11 @@ var maxwellClient = {
 		var path = this.recruitCommentsEndpoint.replace("%s",recruitUserId);
 		this.get(path, successCallback, function(data,responseHandler){
 			console.log("Could not add recruit comment due to exception.  " + data);
+		});
+	},
+	getRecruitSources: function(successCallback){
+		this.get(this.recruitSourcesEndpoint, successCallback, function(data, responseHandler){
+			console.log("Could not retrieve recruit sources.  " + data);
 		});
 	}
 

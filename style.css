@@ -162,3 +162,24 @@ input::-webkit-inner-spin-button {
 #recruitsDetailsHolder > div{
 	margin: 20px;
 }
+
+
+/** Glaring colors and borders to show different recruitment sections are here */
+.recruitContactItem{
+	border: 3px solid black;
+}
+.recruitCommentItem{
+	border: 3px solid black;
+}
+#recruitBlurbUserData{
+	background-color: rgba(255, 0, 0, .25);
+}
+#recruitBlurbRecruitData{
+	background-color: rgba(0, 255, 0, .25);
+}
+#recruitsContactHistoryList{
+	background-color: rgba(0, 0, 255, .25);
+}
+#recruitCommentsHolder{
+	background-color: rgba(128, 128, 128, .25);
+}

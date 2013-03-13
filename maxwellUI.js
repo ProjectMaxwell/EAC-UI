@@ -3,6 +3,7 @@ var chapters = new Array();
 var userTypes = new Array();
 var recruitContactTypes = new Array();
 var recruitEngagementLevels = new Array();
+var recruitSources = new Array();
 var usersByType = new Array(); //This is a 2-dimensional array.  Key = user type id, value = array of users of that type
 var userInfoByUserId = new Array();
 var recruitInfoByUserId = new Array();
@@ -40,11 +41,14 @@ function initialSetup(){
 		retrieveAndPopulateRecruitTable();
 		$('#recruitmentPageHolder').show();
 	});
-	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').hide();
+	$('#recruitsDetailsHolder').hide();
 	$('#submitEventButton').click(createEACMeeting);
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
 }
 
+/*********************************************************************************************
+******************************* Authentication Helpers ***************************************
+**********************************************************************************************/
 /**
  * Use PhiAuth to attempt a password grant.
  * If a token is successfully retrieved, add it to maxwellClient, and set the refresh countdown
@@ -111,6 +115,11 @@ function refreshToken(token){
 	});
 }
 
+
+/*********************************************************************************************
+************************************ Cache Helpers *******************************************
+**********************************************************************************************/
+
 function initializeOnChangeHandlers(){
 	//Associate Class event handlers
 	associateClasses.onChange = new Array();
@@ -170,6 +179,9 @@ function initializeOnChangeHandlers(){
 	
 	//RecruitEngagementLevel event handlers
 	recruitEngagementLevels.onChange = new Array();
+	
+	//RecruitSource event handlers
+	recruitSources.onChange = new Array();
 }
 function triggerMetadataOnChangeHandlers(object){
 	if(object.onChange == null || object.onChange == undefined){
@@ -220,11 +232,20 @@ function initializeMetadata(){
 		}
 		setRecruitEngagementLevels(tempRecruitEngagementLevelArray);
 	});
+	maxwellClient.getRecruitSources(function(data){
+		var tempRecruitSourceArray = new Array();
+		for(var i = 0; i < data.length; i++){
+			tempRecruitSourceArray[data[i].recruitSourceId] = data[i];
+		}
+		setRecruitSources(tempRecruitSourceArray);
+	});
 
 	//Moved here temporarily to default the recruit page to the front and populate it
 	//This is not a good long-term way of doing things, however
 	$('#recruitPage').click();
 }
+
+
 function getNewUserData(){
 	//I don't know what this is, but it's certainly not the right way to be doing whatever it is
 	/*getDatas({'referredBy': true, referredByID: 1});
@@ -289,7 +310,7 @@ function populateRecruitTable(){
 	var data = usersByType[5];
 	var recruitListText = '';
 	for(var i = 0; i < data.length; i++){
-		recruitListText += '<li class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
+		recruitListText += '<li class="recruitsListItem" onClick="loadRecruitDetails(' + data[i]['userId'] + ');"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
 	}
 	/*if(data.length != 0){
 		loadRecruitDetails(data[0]['userId']);
@@ -308,27 +329,49 @@ function populateRecruitmentPage(){
 		$('#recruitsNameList').empty().append(recruitListText);
 	});
 }
-function loadRecruitDetails(recruitID){
-	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').show();
-	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').empty();
-	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitID, function(data){
+function loadRecruitDetails(recruitId){
+	$('#recruitsDetailsHolder').show();
+	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').empty();
+	retrieveUserIfNull(recruitId,function(userObject){
+		var userDetails = '<div>name: ' + userObject.firstName + ' ' + userObject.lastName + '</div>';
+		if(userObject.email){userDetails +='<div>email: ' + userObject.email + '</div>';}
+		if(userObject.dateOfBirth){userDetails +='<div>dateOfBirth: ' + userObject.dateOfBirth + '</div>';}
+		if(userObject.highschool){userDetails +='<div>highschool: ' + userObject.highschool + '</div>';}
+		if(userObject.phoneNumber){userDetails +='<div>phoneNumber: ' + userObject.phoneNumber + '</div>';}
+		if(userObject.facebookId){userDetails +='<div>facebookId: ' + userObject.facebookId + '</div>';}
+		if(userObject.linkedInId){userDetails +='<div>linkedInId: ' + userObject.linkedInId + '</div>';}
+		if(userObject.twitterId){userDetails +='<div>twitterId: ' + userObject.twitterId + '</div>';}
+		if(userObject.googleAccountId){userDetails +='<div>googleAccountId: ' + userObject.googleAccountId + '</div>';}
+
+		$('#recruitBlurbUserData').append(userDetails);
+	});
+	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
+	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
+		var recruitDetails = '<div>recruitSourceId: ' + recruitSources[recruitObject.recruitSourceId].name +'</div>' +
+		'<div>recruitEngagementLevel: ' + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div>';
+		if(recruitObject.classStanding){recruitDetails += '<div>classStanding: ' + recruitObject.classStanding + '</div>';}
+		if(recruitObject.dateAdded){recruitDetails += '<div>dateAdded: ' + recruitObject.dateAdded + '</div>';}
+		if(recruitObject.gpa){recruitDetails += '<div>gpa: ' + recruitObject.gpa + '</div>';}
+		if(recruitObject.rushListUserId){recruitDetails += '<div>rushListUserId: ' + recruitObject.rushListUserId + '</div>';}
+		if(recruitObject.lifeExperiences){recruitDetails += '<div>lifeExperiences: ' + recruitObject.lifeExperiences + '</div>';}
+		if(recruitObject.lookingFor){recruitDetails += '<div>lookingFor: ' + recruitObject.lookingFor + '</div>';}
+		if(recruitObject.expectations){recruitDetails += '<div>expectations: ' + recruitObject.expectations + '</div>';}
+		if(recruitObject.extracurriculars){recruitDetails += '<div>extracurriculars: ' + recruitObject.extracurriculars + '</div>';}
+		$('#recruitBlurbRecruitData').append(recruitDetails);
+	});
+	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitId, function(data){
 		if(data.length == 0){
-			$('#recruitsContactHistoryListHolder').append('<div>Could not retrieve any recruit information</div>');
+			$('#recruitsContactHistoryListHolder').append('<div>Recruit has not been contacted yet.</div>');
 		}else{
 			var recruitContactUL = $('<ul id="recruitsContactHistoryList"></ul>');
 			var recruitListText = '';
 			var recruitContactors = [];
 			for(var i = 0; i < data.length; i++){
-				if(data[i]['notes']){
-					var contactNotes = data[i]['notes'];
-				}else{
-					var contactNotes = "Nope.";
-				}
 				recruitListText += '<li class="recruitContactItem"><div class="recruitContactItemInner">' +
 					'<div class="recruitContactTimestamp">Time was: ' + data[i]['contactTimestamp'] + '</div>' +
 					'<div class="recruitContactRecruitor">Contacter was: <span class="recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span></div>' +
-					'<div class="recruitContactMethod">Contacted method: ' + data[i]['recruitContactTypeId'] + '</div>' +
-					'<div class="recruitContactNotes">Notes: ' + contactNotes + '</div>' +
+					'<div class="recruitContactMethod">Contacted method: ' + recruitContactTypes[data[i]['recruitContactTypeId']].name + '</div>' +
+					'<div class="recruitContactNotes">Notes: ' + (data[i]['notes'] == null ? '' : data[i]['notes']) + '</div>' +
 					'</div></li>';
 
 				if($.inArray(data[i]['recruitContactorUserId'], recruitContactors) == -1){
@@ -338,27 +381,38 @@ function loadRecruitDetails(recruitID){
 			recruitContactUL.append(recruitListText);
 			$('#recruitsContactHistoryListHolder').append(recruitContactUL);
 			for(var i = 0; i < recruitContactors.length; i++){
-				maxwellClient.getUserById(recruitContactors[i], function(userData){
-					if(userData){
-						$('.recruitContactorUserId-' + userData['userId']).text(userData.firstName + ' ' + userData.lastName)
-					}
+				retrieveUserIfNull(recruitContactors[i],function(userObject){
+					$('.recruitContactorUserId-' + userObject['userId']).text(userObject.firstName + ' ' + userObject.lastName);
 				});
 			}
 		}
 	});
-	maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
-		var recruitDetails = '<div>classStanding: ' + data.classStanding + '</div>' +
-		'<div>dateAdded: ' + data.dateAdded + '</div>' +
-		'<div>gpa: ' + data.gpa + '</div>' +
-		'<div>lifeExperiences: ' + data.lifeExperiences + '</div>' +
-		'<div>recruitSourceId: <span id="recruitSourceId">loading....</span></div>' +
-		'<div>rushListUserId: ' + data.rushListUserId + '</div>';
-		$('#recruitBlurbHolder').append(recruitDetails);
-		maxwellClient.getUserById(recruitID, function(userData){
-			if(userData){
-				$('#recruitSourceId').text(userData['firstName'] + ' ' + userData['lastName'])
-			}
-		});
+	maxwellClient.getRecruitCommentsByRecruitUserId(recruitId, function(data, responseHandler){
+		if(data == null || data.length == 0){
+			$('#recruitCommentsHolder').append('<div>There are no comments about this recruit yet.</div>');
+		}else{
+			var recruitCommentsUL = $('<ul id="recruitCommentsList"></ul>');
+			$('#recruitCommentsHolder').append(recruitCommentsUL);
+			$(data).each(function(index){
+				var recruitCommentId = this.recruitCommentId;
+				recruitCommentId2 = this.recruitCommentId;
+				
+				var recruitCommentText = '<li class="recruitCommentItem" id="recruitComment-' + this.recruitCommentId + '">';
+				recruitCommentText += '<div class="recruitCommenterUserId">commenter: <span>' + this.commenterUserId + '</span></div>';
+				recruitCommentText += '<div>timestamp: ' + this.dateCreated + '</div>';
+				recruitCommentText += '<div>comment: ' + this.comment + '</div>';
+				recruitCommentText += '</li>';
+				
+				$('#recruitCommentsList').append(recruitCommentText);
+
+				retrieveUserIfNull(this.commenterUserId, function(userObject){
+					var myString = "CommentId = " + recruitCommentId;
+					var selectorString = '#recruitComment-' + recruitCommentId + ' > .recruitCommenterUserId > span';
+					var myObj = $(selectorString);
+					myObj.text(userObject.firstName + ' ' + userObject.lastName);
+				});
+			});
+		}
 	});
 	
 }
@@ -369,7 +423,7 @@ function setNewUserValues(){
 		console.log($(this).val())
 	});*/
 }
-function getDatas(dataOptions){
+/*function getDatas(dataOptions){
 	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/"
 	if(dataOptions['associateClass']){
 		getURL += "associateClasses";
@@ -458,9 +512,8 @@ function getDatas(dataOptions){
 			$('#chapterNameInput').append(userTypeString).chosen();
 		}
 	});
-}
+}*/
 
-//TODO: UNWIND ME AND USE CLIENTS, PLEASE
 function submitUser(){
 	var errorList = new Array();
 	var userData = new Object;
@@ -522,8 +575,23 @@ function submitUser(){
 		});
 	}
 }
-function getUserToken(userData, pinNumber, passwordWord){
-	/*var tokenDeets = {
+function createEACMeeting(){
+	var eventDate = $('#eventDate').val();
+	var eventLocation = $('#eventLocation').val();
+	var eventMapLink = $('#eventGoogleMaps').val();
+	var eventWebSite = $('#eventWebsite').val();
+	var eacObject = new Object();
+	eacObject.location = eventLocation.length < 1 ? null : eventLocation;
+	eacObject.date = eventDate.length < 1 ? null : eventDate;
+	eacObject.googleMaps = eventMapLink.length < 1 ? null : eventMapLink;
+	eacObject.website = eventWebSite.length < 1 ? null : eventWebSite;
+	maxwellClient.createEACMeeting(eacObject, function(responseObject, responseHandler){
+		console.log(responseObject);
+		$('.createEACMeetingInput').val('');
+	});
+}
+/*function getUserToken(userData, pinNumber, passwordWord){
+	var tokenDeets = {
 		"grantType": "PASSWORD",
 		"username": pinNumber.toString(),
 		"password": passwordWord,
@@ -544,11 +612,11 @@ function getUserToken(userData, pinNumber, passwordWord){
 			alert('NooooooOOOOOooOOOoOOooOOOOoOOOooooooo!');
 			console.log(data);
 		}
-	});*/
+	});
 	postDatas(userData, null);
 }
 function postDatas(userData, accessToken){
-	/*userData = JSON.stringify(userData);
+	userData = JSON.stringify(userData);
 	console.log(userData)
 	$.ajax({
 		dataType: "json",
@@ -567,23 +635,13 @@ function postDatas(userData, accessToken){
 			alert('Something went wrong. Oops.');
 			console.log(data);
 		}
-	});*/
-}
-function createEACMeeting(){
-	var eventDate = $('#eventDate').val();
-	var eventLocation = $('#eventLocation').val();
-	var eventMapLink = $('#eventGoogleMaps').val();
-	var eventWebSite = $('#eventWebsite').val();
-	var eacObject = new Object();
-	eacObject.location = eventLocation.length < 1 ? null : eventLocation;
-	eacObject.date = eventDate.length < 1 ? null : eventDate;
-	eacObject.googleMaps = eventMapLink.length < 1 ? null : eventMapLink;
-	eacObject.website = eventWebSite.length < 1 ? null : eventWebSite;
-	maxwellClient.createEACMeeting(eacObject, function(responseObject, responseHandler){
-		console.log(responseObject);
-		$('.createEACMeetingInput').val('');
 	});
-}
+}*/
+
+//TODO: It might actually be possible to genericize many of these setters with a 2-param function (currArray, newArray)
+/*********************************************************************************************
+*************************** Cache-friendly Metadata setters **********************************
+**********************************************************************************************/
 function setAssociateClasses(associateClasses){
 	var tempOnChange = this.associateClasses.onChange;
 	this.associateClasses = associateClasses;
@@ -614,9 +672,53 @@ function setRecruitEngagementLevels(recruitEngagementLevels){
 	this.recruitEngagementLevels.onChange = tempOnChange;
 	triggerMetadataOnChangeHandlers(this.recruitEngagementLevels);
 }
+function setRecruitSources(recruitSources){
+	var tempOnChange = this.recruitSources.onChange;
+	this.recruitSources = recruitSources;
+	this.recruitSources.onChange = tempOnChange;
+	triggerMetadataOnChangeHandlers(this.recruitSources);
+}
 function setUsersByType(userTypeId, users){
-	var tempOnChange = this.usersByType[userTypeId].onChange;
+	if(this.usersByType[userTypeId] != null){
+		var tempOnChange = this.usersByType[userTypeId].onChange;
+	}else{
+		tempOnChange = null;
+	}
 	this.usersByType[userTypeId] = users;
 	this.usersByType[userTypeId].onChange = tempOnChange;
 	triggerMetadataOnChangeHandlers(this.usersByType[userTypeId]);
+}
+/**
+ * We have an interesting situation where we purposely don't pull full info for each user at startup
+ * However, that means we need to be retrieving that info at runtime where necessary.
+ * The cost of making this call could become prohibitive if we're doing it repeatedly.
+ * This method basically acts as a pass-through for a callback, which is why it's generic.
+ * It's only function is to check for an existing user object, if-null pull it down, and then trigger the provided callback.
+ * @param userId - The id of the user we need more info about 
+ * @param additionalCallback - the function to trigger after deciding we have up-to-date info, or pulling new info
+ */
+function retrieveUserIfNull(userId, additionalCallback){
+	if(this.userInfoByUserId[userId] != null){
+		additionalCallback(this.userInfoByUserId[userId]);
+	}else{
+		maxwellClient.getUserById(userId, function(data, responseHandler){
+			this.userInfoByUserId[userId] = data;
+			additionalCallback(this.userInfoByUserId[userId]);
+		});
+	}
+}
+/**
+ * SEE: comments from retrieveUserIfNull(userId, additionalCallback)
+ * @param userId - The id of the user we need recruit info about
+ * @param additionalCallback -  the function to trigger after deciding we have up-to-date info, or pulling new info
+ */
+function retrieveRecruitInfoIfNull(userId, additionalCallback){
+	if(this.recruitInfoByUserId[userId] != null){
+		additionalCallback(this.recruitInfoByUserId[userId]);
+	}else{
+		maxwellClient.getRecruitInfoByUserId(userId, function(data, responseHandler){
+			this.recruitInfoByUserId[userId] = data;
+			additionalCallback(this.recruitInfoByUserId[userId]);
+		});
+	}
 }
