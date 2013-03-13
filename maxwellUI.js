@@ -37,9 +37,10 @@ function initialSetup(){
 	});
 	$('#recruitPage').click(function(){
 		$('#contentHolder').children().not('#recruitmentPageHolder').hide();
-		populateRecruitmentPage();
+		retrieveAndPopulateRecruitTable();
 		$('#recruitmentPageHolder').show();
 	});
+	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').hide();
 	$('#submitEventButton').click(createEACMeeting);
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
 }
@@ -171,6 +172,9 @@ function initializeOnChangeHandlers(){
 	recruitEngagementLevels.onChange = new Array();
 }
 function triggerMetadataOnChangeHandlers(object){
+	if(object.onChange == null || object.onChange == undefined){
+		return;
+	}
 	for(var i = 0; i < object.onChange.length; i++){
 		object.onChange[i]();
 	}
@@ -236,14 +240,14 @@ function retrieveAndPopulateUserTable(userType){
 	//Otherwise we might get concurrent modification problems
 	if(usersByType[userType] == null || usersByType[userType].length == 0){
 		maxwellClient.getUsersByType(userType, function(data, responseHandler){
-			usersByType[userType] = data;
-			populateUserTable2(usersByType[userType]);
+			setUsersByType(userType, data);
+			populateUserTable(userType);
 		});
 	}else{
-		populateUserTable2(usersByType[userType]);
+		populateUserTable(userType);
 	}
 }
-function populateUserTable(){
+/*function populateUserTable(){
 	maxwellClient.getUsersByType($('#userTableTypeSelect').val(), function(data){
 		var newUserText = '';
 		for(var i = 0; i < data.length; i++){
@@ -257,8 +261,9 @@ function populateUserTable(){
 		$('#usersListBody').empty().append(newUserText);
 	});
 	
-}
-function populateUserTable2(data){
+}*/
+function populateUserTable(userType){
+	var data = usersByType[userType];
 	var newUserText = '';
 	for(var i = 0; i < data.length; i++){
 		var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
@@ -269,6 +274,27 @@ function populateUserTable2(data){
 		'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
 	}
 	$('#usersListBody').empty().append(newUserText);
+}
+function retrieveAndPopulateRecruitTable(){
+	if(usersByType[5] == null || usersByType[5].length == 0){
+		maxwellClient.getUsersByType(5, function(data, responseHandler){
+			setUsersByType(5, data);
+			populateRecruitTable();
+		});
+	}else{
+		populateRecruitTable();
+	}
+}
+function populateRecruitTable(){
+	var data = usersByType[5];
+	var recruitListText = '';
+	for(var i = 0; i < data.length; i++){
+		recruitListText += '<li class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
+	}
+	/*if(data.length != 0){
+		loadRecruitDetails(data[0]['userId']);
+	}*/
+	$('#recruitsNameList').empty().append(recruitListText);
 }
 function populateRecruitmentPage(){
 	maxwellClient.getUsersByType(5, function(data){
@@ -283,6 +309,7 @@ function populateRecruitmentPage(){
 	});
 }
 function loadRecruitDetails(recruitID){
+	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').show();
 	$('#recruitBlurbHolder, #recruitsContactHistoryListHolder').empty();
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitID, function(data){
 		if(data.length == 0){
@@ -327,7 +354,6 @@ function loadRecruitDetails(recruitID){
 		'<div>recruitSourceId: <span id="recruitSourceId">loading....</span></div>' +
 		'<div>rushListUserId: ' + data.rushListUserId + '</div>';
 		$('#recruitBlurbHolder').append(recruitDetails);
-		console.log("Getting user info for recruit with id '" + recruitID + "'.");
 		maxwellClient.getUserById(recruitID, function(userData){
 			if(userData){
 				$('#recruitSourceId').text(userData['firstName'] + ' ' + userData['lastName'])
@@ -587,4 +613,10 @@ function setRecruitEngagementLevels(recruitEngagementLevels){
 	this.recruitEngagementLevels = recruitEngagementLevels;
 	this.recruitEngagementLevels.onChange = tempOnChange;
 	triggerMetadataOnChangeHandlers(this.recruitEngagementLevels);
+}
+function setUsersByType(userTypeId, users){
+	var tempOnChange = this.usersByType[userTypeId].onChange;
+	this.usersByType[userTypeId] = users;
+	this.usersByType[userTypeId].onChange = tempOnChange;
+	triggerMetadataOnChangeHandlers(this.usersByType[userTypeId]);
 }
