@@ -160,7 +160,7 @@ input::-webkit-inner-spin-button {
 	right: 0px;
 }
 #recruitsDetailsHolder > div{
-	margin: 20px;
+	margin: 5px;
 }
 
 
@@ -182,4 +182,12 @@ input::-webkit-inner-spin-button {
 }
 #recruitCommentsHolder{
 	background-color: rgba(128, 128, 128, .25);
+}
+
+.recruitSocialIcon{
+	width: 24px;
+	height: 24px;
+}
+#recruitFacebookIcon{
+	background: url('image/sprite.png') -102px 0px;
 }

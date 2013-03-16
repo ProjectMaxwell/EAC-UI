@@ -333,16 +333,18 @@ function loadRecruitDetails(recruitId){
 	$('#recruitsDetailsHolder').show();
 	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').empty();
 	retrieveUserIfNull(recruitId,function(userObject){
-		var userDetails = '<div>name: ' + userObject.firstName + ' ' + userObject.lastName + '</div>';
-		if(userObject.email){userDetails +='<div>email: ' + userObject.email + '</div>';}
-		if(userObject.dateOfBirth){userDetails +='<div>dateOfBirth: ' + userObject.dateOfBirth + '</div>';}
-		if(userObject.highschool){userDetails +='<div>highschool: ' + userObject.highschool + '</div>';}
-		if(userObject.phoneNumber){userDetails +='<div>phoneNumber: ' + userObject.phoneNumber + '</div>';}
-		if(userObject.facebookId){userDetails +='<div>facebookId: ' + userObject.facebookId + '</div>';}
-		if(userObject.linkedInId){userDetails +='<div>linkedInId: ' + userObject.linkedInId + '</div>';}
-		if(userObject.twitterId){userDetails +='<div>twitterId: ' + userObject.twitterId + '</div>';}
-		if(userObject.googleAccountId){userDetails +='<div>googleAccountId: ' + userObject.googleAccountId + '</div>';}
-
+		var userDetails = '<div id="recruitTopDivision"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
+		if(userObject.facebookId){userDetails +='<a href="' + userObject.facebookId + '" target="_blank"><div class="recruitFacebookIcon recruitSocialIcon"></div>';}
+		if(userObject.linkedInId){userDetails +='<a href="' + userObject.linkedInId + '" target="_blank"><div class="recruitLinkedInIcon recruitSocialIcon"></div>';}
+		if(userObject.twitterId){userDetails +='<a href="' + userObject.twitterId + '" target="_blank"><div class="recruitTwitterIcon recruitSocialIcon"></div>';}
+		if(userObject.googleAccountId){userDetails +='<a href="' + userObject.googleAccountId + '" target="_blank"><div class="recruitGoogleIcon recruitSocialIcon"></div>';}
+		userDetails += '</div><div id="recruitMiddleDivision">';
+		if(userObject.phoneNumber){userDetails +='<div class="recruitPhoneNumber" title="' + userObject.phoneNumber + '"><a href="tel:' + userObject.phoneNumber + '">' + userObject.phoneNumber + '</a></div>';}
+		if(userObject.email){userDetails +='<div class="recruitEmailAddress"><a href="mailto:' + userObject.email + '">' + userObject.email + '</a></div>';}
+		userDetails += '</div><div id="recruitbottomDivision">';
+		if(userObject.dateOfBirth){userDetails +='<div><span class="recruitDOBLabel">DOB:</span> ' + userObject.dateOfBirth + '</div>';}
+		if(userObject.highschool){userDetails +='<div><span class="recruitHSLabel">HS</span>: ' + userObject.highschool + '</div>';}
+		userDetails += '</div>';
 		$('#recruitBlurbUserData').append(userDetails);
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
