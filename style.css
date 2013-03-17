@@ -132,7 +132,6 @@ input::-webkit-inner-spin-button {
 	background: white;
 	z-index: 10;
 	position: absolute;
-	width: 229px;
 }
 #recruitmentPageHolder{
 	display: none;
@@ -148,8 +147,11 @@ input::-webkit-inner-spin-button {
 	line-height: 35px;
 	position: relative;
 }
+.recruitsListItem > div{
+	width: 229px;
+}
 .recruitsListItem:hover > div{
-	background: grey;
+	text-decoration: underline;
 }
 .recruitsListItem > div{
 	padding: 0px 5px;
@@ -173,12 +175,11 @@ input::-webkit-inner-spin-button {
 	height: 35px;
 }
 #recruitmiddleDivision{
-	height: 25px;
 	margin-top: 17px;
 }
 #recruitBottomDivision{
 	max-height: 25px;
-	margin-top: 10px;
+	clear: both;
 }
 #recruitName{
 	margin-top: 5px;
@@ -216,6 +217,9 @@ input::-webkit-inner-spin-button {
 .recruitDOBLabelHolder, .recruitHSLabelHolder{
 	display: inline-block;
 	margin-left: 20px;
+}
+#recruitBottomDivision > div{
+	margin-top: 10px;
 }
 #recruitBottomDivision > div:first-child{
 	margin-left: 0px;

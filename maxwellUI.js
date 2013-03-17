@@ -398,17 +398,17 @@ function loadRecruitDetails(recruitId){
 			for(var i = 0; i < data.length; i++){
 				recruitListText += '<li id="recruitComment-' + this.recruitCommentId + '">';
 				if(data[i]['recruitContactTypeId'] == 1){
-					var contactTypeClass = "Text";
+					var contactTypeClass = 'Text';
 				}else if(data[i]['recruitContactTypeId'] == 2){
-					var contactTypeClass = "Email";
+					var contactTypeClass = 'Email';
 				}else if(data[i]['recruitContactTypeId'] == 3){
-					var contactTypeClass = "SocialMedia";
+					var contactTypeClass = 'SocialMedia';
 				}else if(data[i]['recruitContactTypeId'] == 4){
-					var contactTypeClass = "Phone";
+					var contactTypeClass = 'Phone';
 				}else if(data[i]['recruitContactTypeId'] == 5){
-					var contactTypeClass = "Voicemail";
+					var contactTypeClass = 'Voicemail';
 				}
-				recruitListText += '<div class="contactVia' + contactTypeClass + ' contactViaIcon"></div><div class="recruitContactInnerHolder"><div class="contactHeader"><span class="recruitContactor recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span> via ' + recruitContactTypes[data[i]['recruitContactTypeId']].name + ' at ' + data[i]['contactTimestamp'] + '</div>' +
+				recruitListText += '<div class="contactVia' + contactTypeClass + ' contactViaIcon" title="Via ' + contactTypeClass + '"></div><div class="recruitContactInnerHolder"><div class="contactHeader"><span class="recruitContactor recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span> via ' + recruitContactTypes[data[i]['recruitContactTypeId']].name + ' at ' + data[i]['contactTimestamp'] + '</div>' +
 				'<div class="recruitContactNote">' + (data[i]['notes'] == null ? '' : data[i]['notes']) + '</div>' +
 				'</div></li>';
 
