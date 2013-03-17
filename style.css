@@ -150,7 +150,7 @@ input::-webkit-inner-spin-button {
 	position: relative;
 }
 .recruitsListItem > div{
-	width: 229px;
+	width: 239px;
 }
 .recruitsListItem:hover > div{
 	text-decoration: underline;
@@ -303,4 +303,9 @@ input::-webkit-inner-spin-button {
 .recruitCommentItem{
 	min-height: 61px;
 	font-size: 14px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .recruitsListItem > div{
+		width: 229px;
+	}
 }
