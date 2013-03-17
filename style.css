@@ -273,6 +273,12 @@ input::-webkit-inner-spin-button {
 	margin-top: 5px;
 	margin-left: 20px;
 }
+.contactHeader{
+	font-size: 10px;
+}
+.recruitContactorUserId{
+	font-size: 14px;
+}
 .recruitCommentInnerHolder{
 	margin-top: 5px;
 	margin-left: 61px;
