@@ -408,7 +408,7 @@ function loadRecruitDetails(recruitId){
 				}else if(data[i]['recruitContactTypeId'] == 5){
 					var contactTypeClass = "Voicemail";
 				}
-				recruitListText += '<div class="contactVia' + contactTypeClass + ' contactViaIcon"></div><div class="recruitContactInnerHolder"><div class="contactHeader"><span class="recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span> via ' + recruitContactTypes[data[i]['recruitContactTypeId']].name + ' at ' + data[i]['contactTimestamp'] + '</div>' +
+				recruitListText += '<div class="contactVia' + contactTypeClass + ' contactViaIcon"></div><div class="recruitContactInnerHolder"><div class="contactHeader"><span class="recruitContactor recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span> via ' + recruitContactTypes[data[i]['recruitContactTypeId']].name + ' at ' + data[i]['contactTimestamp'] + '</div>' +
 				'<div class="recruitContactNote">' + (data[i]['notes'] == null ? '' : data[i]['notes']) + '</div>' +
 				'</div></li>';
 
