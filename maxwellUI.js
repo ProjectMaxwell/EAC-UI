@@ -394,13 +394,23 @@ function loadRecruitDetails(recruitId){
 			recruitContactUL.prepend('<div class="recruitDivider"></div>');
 			var recruitListText = '';
 			var recruitContactors = [];
+			var recruitListText = '';
 			for(var i = 0; i < data.length; i++){
-				recruitListText += '<li class="recruitContactItem"><div class="recruitContactItemInner">' +
-					'<div class="recruitContactTimestamp">Time was: ' + data[i]['contactTimestamp'] + '</div>' +
-					'<div class="recruitContactRecruitor">Contacter was: <span class="recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span></div>' +
-					'<div class="recruitContactMethod">Contacted method: ' + recruitContactTypes[data[i]['recruitContactTypeId']].name + '</div>' +
-					'<div class="recruitContactNotes">Notes: ' + (data[i]['notes'] == null ? '' : data[i]['notes']) + '</div>' +
-					'</div></li>';
+				recruitListText += '<li id="recruitComment-' + this.recruitCommentId + '">';
+				if(data[i]['recruitContactTypeId'] == 1){
+					var contactTypeClass = "Text";
+				}else if(data[i]['recruitContactTypeId'] == 2){
+					var contactTypeClass = "Email";
+				}else if(data[i]['recruitContactTypeId'] == 3){
+					var contactTypeClass = "SocialMedia";
+				}else if(data[i]['recruitContactTypeId'] == 4){
+					var contactTypeClass = "Phone";
+				}else if(data[i]['recruitContactTypeId'] == 5){
+					var contactTypeClass = "Voicemail";
+				}
+				recruitListText += '<div class="contactVia' + contactTypeClass + ' contactViaIcon"></div><div class="recruitContactInnerHolder"><div class="commentHeader"><span class="recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span> via ' + recruitContactTypes[data[i]['recruitContactTypeId']].name + ' at ' + data[i]['contactTimestamp'] + '</div>' +
+				'<div class="recruitContactNote">' + (data[i]['notes'] == null ? '' : data[i]['notes']) + '</div>' +
+				'</div></li>';
 
 				if($.inArray(data[i]['recruitContactorUserId'], recruitContactors) == -1){
 					recruitContactors.push(data[i]['recruitContactorUserId']);
@@ -417,26 +427,26 @@ function loadRecruitDetails(recruitId){
 	});
 	maxwellClient.getRecruitCommentsByRecruitUserId(recruitId, function(data, responseHandler){
 		if(data == null || data.length == 0){
-			$('#recruitCommentsHolder').append('<div>There are no comments about this recruit yet.</div>');
+			$('#recruitCommentsHolder').append('<div class="recruitDivider"></div><div>There are no comments about this recruit yet.</div>');
 		}else{
 			var recruitCommentsUL = $('<ul id="recruitCommentsList"></ul>');
+			recruitCommentsUL.prepend('<div class="recruitDivider"></div>');
+
 			$('#recruitCommentsHolder').append(recruitCommentsUL);
 			$(data).each(function(index){
 				var recruitCommentId = this.recruitCommentId;
 				recruitCommentId2 = this.recruitCommentId;
 				
-				var recruitCommentText = '<li class="recruitCommentItem" id="recruitComment-' + this.recruitCommentId + '">';
-				recruitCommentText += '<div class="recruitCommenterUserId">commenter: <span>' + this.commenterUserId + '</span></div>';
-				recruitCommentText += '<div>timestamp: ' + this.dateCreated + '</div>';
-				recruitCommentText += '<div>comment: ' + this.comment + '</div>';
-				recruitCommentText += '</li>';
+				var recruitCommentText = '<li class="recruitCommentItem" id="recruitComment-' + this.recruitCommentId + '">' +
+				'<div class="recruitCommentImage"></div>' +
+				'<div class="recruitCommentInnerHolder"><div class="commentHeader"><span class="commentUser">' + this.commenterUserId + '</span> at ' + this.dateCreated + '</div>' +
+				'<div class="recruitCommentActual">' + this.comment + '</div>' +
+				'</div></li>';
 				
 				$('#recruitCommentsList').append(recruitCommentText);
 
 				retrieveUserIfNull(this.commenterUserId, function(userObject){
-					var myString = "CommentId = " + recruitCommentId;
-					var selectorString = '#recruitComment-' + recruitCommentId + ' > .recruitCommenterUserId > span';
-					var myObj = $(selectorString);
+					var myObj = $('#recruitComment-' + recruitCommentId + ' .commentUser');
 					myObj.text(userObject.firstName + ' ' + userObject.lastName);
 				});
 			});

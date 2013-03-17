@@ -132,7 +132,7 @@ input::-webkit-inner-spin-button {
 	background: white;
 	z-index: 10;
 	position: absolute;
-	width: 237px;
+	width: 229px;
 }
 #recruitmentPageHolder{
 	display: none;
@@ -140,9 +140,6 @@ input::-webkit-inner-spin-button {
 }
 #recruitsNameListHolder{
 	width: 24%;
-	height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
 	float: left;
 }
 .recruitsListItem{
@@ -251,5 +248,49 @@ input::-webkit-inner-spin-button {
 	margin-right: 0px;
 }
 .recruitLargeData{
+	font-size: 14px;
+}
+.contactViaIcon{
+	width: 16px;
+	height: 16px;
+	float: left;
+	margin-top: 2px;
+}
+.contactViaText{
+	background: url('images/sprite.png') -207px 0px;
+}
+.contactViaEmail{
+	background: url('images/sprite.png') -188px 0px;
+}
+.contactViaSocialMedia{
+	background: url('images/sprite.png') -150px 0px;
+}
+.contactViaPhone{
+	background: url('images/sprite.png') -169px 0px;
+}
+.contactViaVoicemail{
+	background: url('images/sprite.png') -132px 0px;
+}
+.recruitContactInnerHolder{
+	margin-top: 5px;
+	margin-left: 20px;
+}
+.recruitCommentInnerHolder{
+	margin-top: 5px;
+	margin-left: 61px;
+}
+.recruitCommentImage{
+	width: 50px;
+	height: 50px;
+	border: 1px solid black;
+	background: url('images/sprite.png') -1px -42px;
+	float: left;
+	margin: 0px 5px 5px 0px;
+}
+.recruitCommentHeader{
+	font-size: 10px;
+}
+.recruitCommentItem{
+	min-height: 61px;
 	font-size: 14px;
 }
