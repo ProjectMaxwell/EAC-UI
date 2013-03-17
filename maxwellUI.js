@@ -43,6 +43,7 @@ function initialSetup(){
 	});
 	$('#recruitsDetailsHolder').hide();
 	$('#submitEventButton').click(createEACMeeting);
+	$('#recordRecruitContactButton').click(recordRecruitContact);
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
 }
 
@@ -176,6 +177,20 @@ function initializeOnChangeHandlers(){
 	
 	//RecruitContactType event handlers
 	recruitContactTypes.onChange = new Array();
+	recruitContactTypes.onChange[0] = function(){ 
+		var recruitContactTypeString = '';
+		for(var i = 0; i < recruitContactTypes.length; i++){
+			var recruitContactTypeObject = recruitContactTypes[i];
+			if(recruitContactTypeObject !== undefined){
+				recruitContactTypeString += '<option value="' + recruitContactTypeObject.recruitContactTypeId + '">' + recruitContactTypeObject.name + '</option>';
+			}
+		}
+		console.log(recruitContactTypeString);
+		$('#contactTypeInput').html(recruitContactTypeString);
+		/*.chosen().change(function(){
+			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
+		});*/
+	};
 	
 	//RecruitEngagementLevel event handlers
 	recruitEngagementLevels.onChange = new Array();
@@ -334,6 +349,7 @@ function loadRecruitDetails(recruitId){
 	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').empty();
 	retrieveUserIfNull(recruitId,function(userObject){
 		var userDetails = '<div>name: ' + userObject.firstName + ' ' + userObject.lastName + '</div>';
+		userDetails += '<input type="hidden" id="recruitUserId" value="' + userObject.userId +'"/>';
 		if(userObject.email){userDetails +='<div>email: ' + userObject.email + '</div>';}
 		if(userObject.dateOfBirth){userDetails +='<div>dateOfBirth: ' + userObject.dateOfBirth + '</div>';}
 		if(userObject.highschool){userDetails +='<div>highschool: ' + userObject.highschool + '</div>';}
@@ -528,7 +544,7 @@ function submitUser(){
 	userData['yearInitiated'] = $('#yearInitiatedInput').val() || null;
 	userData['yearGraduated'] = $('#yearGraduatedInput').val() || null;
 	if($('#userTypeInput').val() == 1 || $('#userTypeInput').val() == 2){
-		if($('#associateClassInput').val() == 0){
+		if($('#associateClassInput').val() == 5){
 			errorList.push("Undergrads must have an Associate Class.");
 		}else{
 			userData['associateClassId'] = $('#associateClassInput').val();
@@ -590,53 +606,22 @@ function createEACMeeting(){
 		$('.createEACMeetingInput').val('');
 	});
 }
-/*function getUserToken(userData, pinNumber, passwordWord){
-	var tokenDeets = {
-		"grantType": "PASSWORD",
-		"username": pinNumber.toString(),
-		"password": passwordWord,
-		"clientId": "MAXWELL_WEB_CLIENT" 
-	}
-	tokenDeets = JSON.stringify(tokenDeets);
-	$.ajax({
-		dataType: "json",
-		type: "POST",
-		url: "http://evergreenalumniclub.com:7080/PhiAuth/rest/token",
-		data: tokenDeets,
-		contentType: "application/json",
-		success: function(data){
-			alert("yashimash");
-			postDatas(userData, data.accessToken)
-		},
-		error: function(data){
-			alert('NooooooOOOOOooOOOoOOooOOOOoOOOooooooo!');
-			console.log(data);
-		}
+function recordRecruitContact(){
+	var notes = $('#contactNotes').val();
+	var recruitContactObject = new Object();
+	console.log("DO FORM VALIDATION");
+	recruitContactObject.recruitUserId = $('#recruitUserId').val();
+	recruitContactObject.recruitContactorUserId = phiAuthClient.tokenResponse.userId;
+	recruitContactObject.contactTimestamp = $('#contactTimestampInput').val();
+	recruitContactObject.recruitContactTypeId = $('#contactTypeInput').val();
+	recruitContactObject.notes = notes.length < 1 ? null : notes;
+	console.log(recruitContactObject);
+		maxwellClient.recordRecruitContact(recruitContactObject, function(responseObject, responseHandler){
+		console.log(responseObject);
+		$('.recordRecruitContactInput').val('');
+		loadRecruitDetails(recruitContactObject.recruitUserId);
 	});
-	postDatas(userData, null);
 }
-function postDatas(userData, accessToken){
-	userData = JSON.stringify(userData);
-	console.log(userData)
-	$.ajax({
-		dataType: "json",
-		type: "POST",
-		headers: {
-			"Authorization": accessToken
-		},
-		url: "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/users",
-		data: userData,
-		contentType: "application/json",
-		success: function(){
-			alert("Excelsior");
-			$(".newUserInput").val('');
-		},
-		error: function(data){
-			alert('Something went wrong. Oops.');
-			console.log(data);
-		}
-	});
-}*/
 
 //TODO: It might actually be possible to genericize many of these setters with a 2-param function (currArray, newArray)
 /*********************************************************************************************
