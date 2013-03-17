@@ -13,6 +13,7 @@ var metadataInitialized = false;
 $(document).ready(function(){
 	initialSetup();
 	$("#loginPane").lightbox_me();
+	joelLogin();
 });
 function initialSetup(){
 	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
@@ -291,7 +292,7 @@ function populateUserTable(userType){
 		var email = data[i].email == null ? '' : data[i].email;
 		newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
 		'<td><div class="userTableAssociateClass">' + associateClasses[associateClassId].name + '</div></td>' +
-		'<td><divclass="userTableEmailAddy">' + email + '</div></td>' +
+		'<td><div class="userTableEmailAddy">' + email + '</div></td>' +
 		'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
 	}
 	$('#usersListBody').empty().append(newUserText);
@@ -341,24 +342,26 @@ function loadRecruitDetails(recruitId){
 		userDetails += '</div><div id="recruitMiddleDivision">';
 		if(userObject.phoneNumber){userDetails +='<div class="recruitPhoneNumber" title="' + userObject.phoneNumber + '"><a href="tel:' + userObject.phoneNumber + '">' + userObject.phoneNumber + '</a></div>';}
 		if(userObject.email){userDetails +='<div class="recruitEmailAddress"><a href="mailto:' + userObject.email + '">' + userObject.email + '</a></div>';}
-		userDetails += '</div><div id="recruitbottomDivision">';
-		if(userObject.dateOfBirth){userDetails +='<div><span class="recruitDOBLabel">DOB:</span> ' + userObject.dateOfBirth + '</div>';}
-		if(userObject.highschool){userDetails +='<div><span class="recruitHSLabel">HS</span>: ' + userObject.highschool + '</div>';}
-		userDetails += '</div>';
+		userDetails += '</div><div id="recruitBottomDivision">';
+		if(userObject.dateOfBirth){userDetails +='<div class="recruitDOBLabelHolder"><span class="recruitDOBLabel">DOB:</span> ' + userObject.dateOfBirth + '</div>';}
+		if(userObject.highschool){userDetails +='<div class="recruitHSLabelHolder"><span class="recruitHSLabel">HS:</span> ' + userObject.highschool + '</div>';}
+		userDetails += '</div><div class="recruitDivider"></div>';
 		$('#recruitBlurbUserData').append(userDetails);
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
-		var recruitDetails = '<div>recruitSourceId: ' + recruitSources[recruitObject.recruitSourceId].name +'</div>' +
-		'<div>recruitEngagementLevel: ' + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div>';
-		if(recruitObject.classStanding){recruitDetails += '<div>classStanding: ' + recruitObject.classStanding + '</div>';}
-		if(recruitObject.dateAdded){recruitDetails += '<div>dateAdded: ' + recruitObject.dateAdded + '</div>';}
-		if(recruitObject.gpa){recruitDetails += '<div>gpa: ' + recruitObject.gpa + '</div>';}
-		if(recruitObject.rushListUserId){recruitDetails += '<div>rushListUserId: ' + recruitObject.rushListUserId + '</div>';}
-		if(recruitObject.lifeExperiences){recruitDetails += '<div>lifeExperiences: ' + recruitObject.lifeExperiences + '</div>';}
-		if(recruitObject.lookingFor){recruitDetails += '<div>lookingFor: ' + recruitObject.lookingFor + '</div>';}
-		if(recruitObject.expectations){recruitDetails += '<div>expectations: ' + recruitObject.expectations + '</div>';}
-		if(recruitObject.extracurriculars){recruitDetails += '<div>extracurriculars: ' + recruitObject.extracurriculars + '</div>';}
+		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
+		var recruitDetails = '<div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Referral:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
+		'<div class="recruitSmallLabel">Defcon:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
+		if(recruitObject.classStanding){recruitDetails += '<div class="recruitSmallLabel">Class:<br /><div class="recruitLargeData">' + normalTab + recruitObject.classStanding + '</div></div>';}
+		if(recruitObject.dateAdded){recruitDetails += '<div class="recruitSmallLabel">dateAdded:<br /><div class="recruitLargeData">' + normalTab + recruitObject.dateAdded + '</div></div>';}
+		if(recruitObject.gpa){recruitDetails += '<div class="recruitSmallLabel">GPA:<br /><div class="recruitLargeData">' + normalTab + recruitObject.gpa + '</div></div>';}
+		if(recruitObject.rushListUserId){recruitDetails += '<div class="recruitSmallLabel">Rush List ID:<br /><div class="recruitLargeData">' + normalTab + recruitObject.rushListUserId + '</div></div>';}
+		recruitDetails += '</div><div id="recruitInfoAreaBottom">';
+		if(recruitObject.lifeExperiences){recruitDetails += '<div class="recruitSmallLabel">lifeExperiences:<br /><div class="recruitLargeData">' + normalTab + recruitObject.lifeExperiences + '</div></div>';}
+		if(recruitObject.lookingFor){recruitDetails += '<div class="recruitSmallLabel">lookingFor:<br /><div class="recruitLargeData">' + normalTab + recruitObject.lookingFor + '</div></div>';}
+		if(recruitObject.expectations){recruitDetails += '<div class="recruitSmallLabel">expectations:<br /><div class="recruitLargeData">' + normalTab + recruitObject.expectations + '</div></div>';}
+		if(recruitObject.extracurriculars){recruitDetails += '<div class="recruitSmallLabel">extracurriculars:<br /><div class="recruitLargeData">' + normalTab + recruitObject.extracurriculars + '</div></div>';}
 		$('#recruitBlurbRecruitData').append(recruitDetails);
 	});
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitId, function(data){
@@ -723,4 +726,12 @@ function retrieveRecruitInfoIfNull(userId, additionalCallback){
 			additionalCallback(this.recruitInfoByUserId[userId]);
 		});
 	}
+}
+function joelLogin(){
+	$('#loginFormUsername').val(85940);
+	$('#loginFormPassword').val("password");
+	$('#submitPasswordLoginButton').click();
+	setTimeout(function(){
+		loadRecruitDetails(78);
+	}, 2000);
 }
