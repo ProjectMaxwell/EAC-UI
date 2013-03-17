@@ -353,7 +353,7 @@ function loadRecruitDetails(recruitId){
 	$('li.recruitsListItem').removeClass('selectedRecruitListItem');
 	$('#recruitsListItem' + recruitId).addClass('selectedRecruitListItem');
 	$('#recruitsDetailsHolder').show();
-	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').empty();
+	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').children().not('#recordRecruitContactHolder, #addRecruitCommentHolder').remove();
 	retrieveUserIfNull(recruitId,function(userObject){
 		var userDetails = '<div id="recruitTopDivision"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
 		userDetails += '<input type="hidden" id="recruitUserId" value="' + userObject.userId +'"/>';
@@ -388,10 +388,9 @@ function loadRecruitDetails(recruitId){
 	});
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitId, function(data){
 		if(data.length == 0){
-			$('#recruitsContactHistoryListHolder').append('<div class="recruitDivider"></div><div>Recruit has not been contacted yet.</div>');
+			$('#recruitsContactHistoryListHolder').append('<div>Recruit has not been contacted yet.</div>');
 		}else{
 			var recruitContactUL = $('<ul id="recruitsContactHistoryList"></ul>');
-			recruitContactUL.prepend('<div class="recruitDivider"></div>');
 			var recruitListText = '';
 			var recruitContactors = [];
 			var recruitListText = '';
@@ -417,7 +416,7 @@ function loadRecruitDetails(recruitId){
 				}
 			}
 			recruitContactUL.append(recruitListText);
-			$('#recruitsContactHistoryListHolder').append(recruitContactUL);
+			$('#recruitsContactHistoryListHolder').prepend(recruitContactUL);
 			for(var i = 0; i < recruitContactors.length; i++){
 				retrieveUserIfNull(recruitContactors[i],function(userObject){
 					$('.recruitContactorUserId-' + userObject['userId']).text(userObject.firstName + ' ' + userObject.lastName);
@@ -427,12 +426,11 @@ function loadRecruitDetails(recruitId){
 	});
 	maxwellClient.getRecruitCommentsByRecruitUserId(recruitId, function(data, responseHandler){
 		if(data == null || data.length == 0){
-			$('#recruitCommentsHolder').append('<div class="recruitDivider"></div><div>There are no comments about this recruit yet.</div>');
+			$('#recruitCommentsHolder').append('<div>There are no comments about this recruit yet.</div>');
 		}else{
 			var recruitCommentsUL = $('<ul id="recruitCommentsList"></ul>');
-			recruitCommentsUL.prepend('<div class="recruitDivider"></div>');
 
-			$('#recruitCommentsHolder').append(recruitCommentsUL);
+			$('#recruitCommentsHolder').prepend(recruitCommentsUL);
 			$(data).each(function(index){
 				var recruitCommentId = this.recruitCommentId;
 				recruitCommentId2 = this.recruitCommentId;
