@@ -373,7 +373,7 @@ function loadRecruitDetails(recruitId){
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
 		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
-		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Referral:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
+		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Source:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
 		'<div class="recruitSmallLabel">Defcon:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
 		if(recruitObject.classStanding){recruitDetails += '<div class="recruitSmallLabel">Class:<br /><div class="recruitLargeData">' + normalTab + recruitObject.classStanding + '</div></div>';}
 		if(recruitObject.dateAdded){recruitDetails += '<div class="recruitSmallLabel">dateAdded:<br /><div class="recruitLargeData">' + normalTab + recruitObject.dateAdded + '</div></div>';}
@@ -388,7 +388,7 @@ function loadRecruitDetails(recruitId){
 	});
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitId, function(data){
 		if(data.length == 0){
-			$('#recruitsContactHistoryListHolder').append('<div>Recruit has not been contacted yet.</div>');
+			$('#recruitsContactHistoryListHolder').prepend('<div>Recruit has not been contacted yet.</div>');
 		}else{
 			var recruitContactUL = $('<ul id="recruitsContactHistoryList"></ul>');
 			var recruitListText = '';
@@ -426,7 +426,7 @@ function loadRecruitDetails(recruitId){
 	});
 	maxwellClient.getRecruitCommentsByRecruitUserId(recruitId, function(data, responseHandler){
 		if(data == null || data.length == 0){
-			$('#recruitCommentsHolder').append('<div>There are no comments about this recruit yet.</div>');
+			$('#recruitCommentsHolder').prepend('<div>There are no comments about this recruit yet.</div>');
 		}else{
 			var recruitCommentsUL = $('<ul id="recruitCommentsList"></ul>');
 
