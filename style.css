@@ -171,7 +171,6 @@ input::-webkit-inner-spin-button {
 
 #recruitTopDivision{
 	height: 35px;
-	margin-top: 10px;
 }
 #recruitmiddleDivision{
 	height: 25px;
@@ -238,8 +237,7 @@ input::-webkit-inner-spin-button {
 }
 .recruitSmallLabel{
 	font-size: 10px;
-	min-width: 140px;
-	margin-right: 5px;
+	margin-right: 25px;
 }
 #recruitInfoAreaTop > .recruitSmallLabel{
 	float: left;
