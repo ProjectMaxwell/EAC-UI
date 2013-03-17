@@ -124,31 +124,38 @@ input::-webkit-inner-spin-button {
 }
 
 /*Recruits tab*/
+.selectedRecruitListItem > div{
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	border-right: 1px solid white;
+	border-left: 1px solid black;
+	background: white;
+	z-index: 10;
+	position: absolute;
+	width: 237px;
+}
 #recruitmentPageHolder{
 	display: none;
 	position: relative;
-	border: 1px solid black;
 }
 #recruitsNameListHolder{
 	width: 25%;
 	height: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
-	border-right: 1px solid black;
 }
 .recruitsListItem{
 	cursor: pointer;
 	height: 35px;
 	line-height: 35px;
-	border-bottom: 1px solid black;
+	position: relative;
 }
-.recruitsListItem:hover{
+.recruitsListItem:hover > div{
 	background: grey;
 }
 .recruitsListItem > div{
-	margin: 0px 5px;
+	padding: 0px 5px;
 	white-space: nowrap;
-	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
@@ -159,9 +166,10 @@ input::-webkit-inner-spin-button {
 	overflow: auto;
 	top: 0px;
 	right: 0px;
+	border: 1px solid black;
 }
 #recruitsDetailsHolder > div{
-	margin: 5px;
+	margin: 5px 10px;
 }
 
 #recruitTopDivision{
@@ -170,10 +178,10 @@ input::-webkit-inner-spin-button {
 }
 #recruitmiddleDivision{
 	height: 25px;
-	margin-top: 5px;
+	margin-top: 17px;
 }
 #recruitBottomDivision{
-	height: 25px;
+	max-height: 25px;
 	margin-top: 10px;
 }
 #recruitName{
@@ -220,13 +228,13 @@ input::-webkit-inner-spin-button {
 	font-weight: bold;
 }
 .recruitDivider{
-	width: 92%;
+	width: 95%;
 	height: 1px;
 	background: black;
 	margin: 10px auto;
 }
 #recruitInfoAreaTop{
-	height: 50px;
+	max-height: 50px;
 }
 #recruitInfoAreaBottom > .recruitSmallLabel{
 	width: 100%;

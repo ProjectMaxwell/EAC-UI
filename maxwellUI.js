@@ -311,7 +311,7 @@ function populateRecruitTable(){
 	var data = usersByType[5];
 	var recruitListText = '';
 	for(var i = 0; i < data.length; i++){
-		recruitListText += '<li class="recruitsListItem" onClick="loadRecruitDetails(' + data[i]['userId'] + ');"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
+		recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem" onClick="loadRecruitDetails(' + data[i]['userId'] + ');"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
 	}
 	/*if(data.length != 0){
 		loadRecruitDetails(data[0]['userId']);
@@ -322,7 +322,8 @@ function populateRecruitmentPage(){
 	maxwellClient.getUsersByType(5, function(data){
 		var recruitListText = '';
 		for(var i = 0; i < data.length; i++){
-			recruitListText += '<li class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
+			console.log
+			recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
 		}
 		if(data.length != 0){
 			loadRecruitDetails(data[0]['userId']);
@@ -331,6 +332,8 @@ function populateRecruitmentPage(){
 	});
 }
 function loadRecruitDetails(recruitId){
+	$('li.recruitsListItem').removeClass('selectedRecruitListItem');
+	$('#recruitsListItem' + recruitId).addClass('selectedRecruitListItem');
 	$('#recruitsDetailsHolder').show();
 	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').empty();
 	retrieveUserIfNull(recruitId,function(userObject){
@@ -345,13 +348,13 @@ function loadRecruitDetails(recruitId){
 		userDetails += '</div><div id="recruitBottomDivision">';
 		if(userObject.dateOfBirth){userDetails +='<div class="recruitDOBLabelHolder"><span class="recruitDOBLabel">DOB:</span> ' + userObject.dateOfBirth + '</div>';}
 		if(userObject.highschool){userDetails +='<div class="recruitHSLabelHolder"><span class="recruitHSLabel">HS:</span> ' + userObject.highschool + '</div>';}
-		userDetails += '</div><div class="recruitDivider"></div>';
+		userDetails += '</div>';
 		$('#recruitBlurbUserData').append(userDetails);
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
 		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
-		var recruitDetails = '<div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Referral:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
+		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Referral:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
 		'<div class="recruitSmallLabel">Defcon:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
 		if(recruitObject.classStanding){recruitDetails += '<div class="recruitSmallLabel">Class:<br /><div class="recruitLargeData">' + normalTab + recruitObject.classStanding + '</div></div>';}
 		if(recruitObject.dateAdded){recruitDetails += '<div class="recruitSmallLabel">dateAdded:<br /><div class="recruitLargeData">' + normalTab + recruitObject.dateAdded + '</div></div>';}
