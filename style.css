@@ -44,16 +44,16 @@ li{
 	font-weight: bold;
 }
 .userTableFullName{
-	width: 205px;
+	width: 235px;
 }
 .userTableAssociateClass{
 	width: 125px;
 }
 .userTableEmailAddy{
-	width: 105px;
+	width: 305px;
 }
 .userTablePhoneNumber{
-	width: 105px;
+	width: 125px;
 }
 .sectionSelector{
 	display: inline-block;

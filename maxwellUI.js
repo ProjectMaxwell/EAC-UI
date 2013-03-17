@@ -189,7 +189,6 @@ function initializeOnChangeHandlers(){
 				recruitContactTypeString += '<option value="' + recruitContactTypeObject.recruitContactTypeId + '">' + recruitContactTypeObject.name + '</option>';
 			}
 		}
-		console.log(recruitContactTypeString);
 		$('#contactTypeInput').html(recruitContactTypeString);
 		/*.chosen().change(function(){
 			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
