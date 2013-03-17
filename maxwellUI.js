@@ -45,6 +45,7 @@ function initialSetup(){
 	$('#recruitsDetailsHolder').hide();
 	$('#submitEventButton').click(createEACMeeting);
 	$('#recordRecruitContactButton').click(recordRecruitContact);
+	$('#addRecruitCommentButton').click(addRecruitComment);
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
 }
 
@@ -636,6 +637,23 @@ function recordRecruitContact(){
 		console.log(responseObject);
 		$('.recordRecruitContactInput').val('');
 		loadRecruitDetails(recruitContactObject.recruitUserId);
+	});
+}
+function addRecruitComment(){
+	var comment = $('#recruitComment').val();
+	var recruitCommentObject = new Object();
+	if(!comment || comment.length < 1){
+		alert("Comment may not be null.");
+		return;
+	}
+	recruitCommentObject.recruitUserId = $('#recruitUserId').val();
+	recruitCommentObject.commenterUserId = phiAuthClient.tokenResponse.userId;
+	recruitCommentObject.comment = comment;
+	console.log(recruitCommentObject);
+		maxwellClient.addRecruitComment(recruitCommentObject, function(responseObject, responseHandler){
+		console.log(responseObject);
+		$('.recordRecruitCommentInput').val('');
+		loadRecruitDetails(recruitCommentObject.recruitUserId);
 	});
 }
 
