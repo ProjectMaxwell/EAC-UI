@@ -369,9 +369,10 @@ function loadRecruitDetails(recruitId){
 	});
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitId, function(data){
 		if(data.length == 0){
-			$('#recruitsContactHistoryListHolder').append('<div>Recruit has not been contacted yet.</div>');
+			$('#recruitsContactHistoryListHolder').append('<div class="recruitDivider"></div><div>Recruit has not been contacted yet.</div>');
 		}else{
 			var recruitContactUL = $('<ul id="recruitsContactHistoryList"></ul>');
+			recruitContactUL.prepend('<div class="recruitDivider"></div>');
 			var recruitListText = '';
 			var recruitContactors = [];
 			for(var i = 0; i < data.length; i++){

@@ -139,10 +139,11 @@ input::-webkit-inner-spin-button {
 	position: relative;
 }
 #recruitsNameListHolder{
-	width: 25%;
+	width: 24%;
 	height: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
+	float: left;
 }
 .recruitsListItem{
 	cursor: pointer;
@@ -161,8 +162,7 @@ input::-webkit-inner-spin-button {
 }
 #recruitsDetailsHolder{
 	width: 75%;
-	position: absolute;
-	height: 100%;
+	margin-left: 25%;
 	overflow: auto;
 	top: 0px;
 	right: 0px;
@@ -234,7 +234,7 @@ input::-webkit-inner-spin-button {
 	margin: 10px auto;
 }
 #recruitInfoAreaTop{
-	max-height: 50px;
+	height: 40px;
 }
 #recruitInfoAreaBottom > .recruitSmallLabel{
 	width: 100%;
@@ -242,8 +242,10 @@ input::-webkit-inner-spin-button {
 .recruitSmallLabel{
 	font-size: 10px;
 	min-width: 140px;
-	float: left;
 	margin-right: 5px;
+}
+#recruitInfoAreaTop > .recruitSmallLabel{
+	float: left;
 }
 #recruitInfoAreaTop > .recruitSmallLabel:last-child{
 	margin-right: 0px;
