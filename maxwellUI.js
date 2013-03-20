@@ -13,7 +13,7 @@ var metadataInitialized = false;
 $(document).ready(function(){
 	initialSetup();
 	var refreshToken = getRefreshTokenCookie();
-		if(refreshTokenCookie){
+		if(refreshToken){
 			phiAuthClient.refreshToken(refreshToken,function(data, status, responseHandler){
 				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
 				console.log("Refreshed token from cookie.");
