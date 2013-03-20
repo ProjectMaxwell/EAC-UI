@@ -13,7 +13,7 @@ var metadataInitialized = false;
 $(document).ready(function(){
 	initialSetup();
 	$("#loginPane").lightbox_me();
-	joelLogin();
+//	joelLogin();
 });
 function initialSetup(){
 	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
@@ -756,3 +756,26 @@ function joelLogin(){
 		loadRecruitDetails(78);
 	}, 2000);
 }
+function setRefreshTokenCookie(value)
+{
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate() + 1);
+	var c_value=escape(value) + "; expires="+exdate.toUTCString();
+	console.log(c_value);
+	document.cookie="RefreshToken=" + c_value;
+}
+function getRefreshTokenCookie()
+{
+	var i,x,y,ARRcookies=document.cookie.split(";");
+	for (i=0;i<ARRcookies.length;i++)
+	{
+	  x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+	  y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+	  x=x.replace(/^\s+|\s+$/g,"");
+	  if (x=="RefreshToken")
+	    {
+		  console.log(y);
+	    return unescape(y);
+	    }
+	  }
+	}
