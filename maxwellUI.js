@@ -12,6 +12,8 @@ var metadataInitialized = false;
 
 $(document).ready(function(){
 	initialSetup();
+	var refreshTokenCookie = getRefreshTokenCookie();
+	console.log(refreshTokenCookie == null ? "Refresh Token was null" : refreshTokenCookie); 
 	$("#loginPane").lightbox_me();
 //	joelLogin();
 });
@@ -761,7 +763,6 @@ function setRefreshTokenCookie(value)
 	var exdate=new Date();
 	exdate.setDate(exdate.getDate() + 1);
 	var c_value=escape(value) + "; expires="+exdate.toUTCString();
-	console.log(c_value);
 	document.cookie="RefreshToken=" + c_value;
 }
 function getRefreshTokenCookie()
