@@ -349,8 +349,8 @@ input::-webkit-inner-spin-button {
 }
 #recruitsContactHistoryListHolder > .addItemHolder{
 	width: 250px;
-	height: 145px;
-	top: -155px;
+	height: 115px;
+	top: -125px;
 }
 #recordRecruitContactButton, #addRecruitCommentButton{
 	margin: 0px 20px;

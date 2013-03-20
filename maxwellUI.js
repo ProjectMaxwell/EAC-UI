@@ -404,7 +404,7 @@ function loadRecruitDetails(recruitId){
 	$('#recruitsDetailsHolder').show();
 	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').children().not('#recordRecruitContactHolder, #addRecruitCommentHolder, .addItemButtonHolder, .addItemHolder').remove();
 	$('.addItemButtonHolder, .addItemHolder').removeAttr('style');
-	$('.addItemHolder').find('input, textarea').val('	');
+	$('.addItemHolder').find('input, textarea').val('');
 	retrieveUserIfNull(recruitId,function(userObject){
 		var userDetails = '<div id="recruitTopDivision"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
 		userDetails += '<input type="hidden" id="recruitUserId" value="' + userObject.userId +'"/>';
@@ -600,7 +600,7 @@ function recordRecruitContact(){
 	console.log("DO FORM VALIDATION");
 	recruitContactObject.recruitUserId = $('#recruitUserId').val();
 	recruitContactObject.recruitContactorUserId = phiAuthClient.tokenResponse.userId;
-	recruitContactObject.contactTimestamp = new Date().getTime();
+	recruitContactObject.contactTimestamp = parseInt(new Date().getTime()/1000);
 	recruitContactObject.recruitContactTypeId = $('#contactTypeInput').val();
 	recruitContactObject.notes = notes.length < 1 ? null : notes;
 	console.log(recruitContactObject);
