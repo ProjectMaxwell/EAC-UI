@@ -84,6 +84,7 @@ function doLoginByPassword(){
 				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
 				
 				$(".loginFormInput").val(null);
+				setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
 				//These variables are here because this is an asynchronous wait timer,
 				//and phiAuthClient is liable to change in the time before the timer is triggered
 				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
