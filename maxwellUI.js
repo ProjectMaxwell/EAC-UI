@@ -12,8 +12,32 @@ var metadataInitialized = false;
 
 $(document).ready(function(){
 	initialSetup();
-	$("#loginPane").lightbox_me();
-	joelLogin();
+	var refreshToken = getRefreshTokenCookie();
+		if(refreshToken){
+			phiAuthClient.refreshToken(refreshToken,function(data, status, responseHandler){
+				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+				console.log("Refreshed token from cookie.");
+				setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
+				//These variables are here because this is an asynchronous wait timer,
+				//and phiAuthClient is liable to change in the time before the timer is triggered
+				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
+				var tmpTtl = phiAuthClient.tokenResponse.ttl;
+				setRefreshTimer(tmpRefreshToken, tmpTtl);
+				
+				if(!metadataInitialized){
+					metadataInitialized = true;
+					initializeMetadata();
+				}
+			},function(data,status,responseHandler){
+				console.log("Refresh token from cookie not valid.");
+				$("#loginPane").lightbox_me();
+			});
+	}else{
+		console.log("No refresh token cookie.");
+		$("#loginPane").lightbox_me();
+	}
+	//$("#loginPane").lightbox_me();
+//	joelLogin();
 });
 function initialSetup(){
 	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
@@ -65,6 +89,7 @@ function doLoginByPassword(){
 				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
 				
 				$(".loginFormInput").val(null);
+				setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
 				//These variables are here because this is an asynchronous wait timer,
 				//and phiAuthClient is liable to change in the time before the timer is triggered
 				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
@@ -108,6 +133,7 @@ function setRefreshTimer(token, seconds){
 function refreshToken(token){
 	phiAuthClient.refreshToken(token,function(data, status, responseHandler){
 		maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+		setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
 		//These variables are here because this is an asynchronous wait timer,
 		//and phiAuthClient is liable to change in the time before the timer is triggered
 		var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
@@ -371,9 +397,10 @@ function loadRecruitDetails(recruitId){
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
+		console.log(recruitObject.recruitSourceId);
 		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
 		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Source:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
-		'<div class="recruitSmallLabel">Defcon:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
+		'<div class="recruitSmallLabel">Involvement Level:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
 		if(recruitObject.classStanding){recruitDetails += '<div class="recruitSmallLabel">Class:<br /><div class="recruitLargeData">' + normalTab + recruitObject.classStanding + '</div></div>';}
 		if(recruitObject.dateAdded){recruitDetails += '<div class="recruitSmallLabel">dateAdded:<br /><div class="recruitLargeData">' + normalTab + recruitObject.dateAdded + '</div></div>';}
 		if(recruitObject.gpa){recruitDetails += '<div class="recruitSmallLabel">GPA:<br /><div class="recruitLargeData">' + normalTab + recruitObject.gpa + '</div></div>';}
@@ -468,96 +495,6 @@ function setNewUserValues(){
 		console.log($(this).val())
 	});*/
 }
-/*function getDatas(dataOptions){
-	var getURL = "http://evergreenalumniclub.com:7080/ProjectMaxwell/rest/"
-	if(dataOptions['associateClass']){
-		getURL += "associateClasses";
-	}else if(dataOptions['userTypes']){
-		getURL += "users/userTypes"
-	}else if(dataOptions['referredBy']){
-		getURL += "users?userType=" + dataOptions['referredByID'];
-	}else if(dataOptions['chapters']){
-		getURL += "chapters";
-	}else{
-		getURL += "users?userType=3";
-	}
-	$.getJSON(getURL)
-	.success(function(data){
-		if(dataOptions['associateClass']){
-			var associateClassString = '';
-			for(var i = 0; i < data.length - 1; i++){
-				associateClassString += '<option value="' + data[i]['associateClassId'] + '">' + data[i]['name'] + '</option>';
-			}
-			associateClassString += '<option value="' + data[i]['associateClassId'] + '" selected>' + data[i]['name'] + '</option>';
-			$('#associateClassInput').append(associateClassString).	chosen().change(function(){
-				var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
-			});
-		}else if(dataOptions['userTypes']){
-			var userTypeString = '';
-			for(var i = 0; i < data.length; i++){
-				userTypeString += '<option value="' + data[i]['userTypeId'] + '">' + data[i]['name'] + '</option>';
-			}
-			$('#userTypeInput').append(userTypeString).chosen().change(function(){
-				if($(this).val() == 5){
-					$('#yearInitiatedInput').attr('disabled', 'true').val('');
-					$('#yearGraduatedInput').attr('disabled', 'true').val('');
-					$('#pinNumberInput').attr('disabled', 'true').val('');
-
-					$('#associateClassInput').attr('disabled', 'true');
-					$('#associateClassInput')[0].selectedIndex = 0;
-					$('#associateClassInput').trigger("liszt:updated");
-
-					$('#chapterNameInput').attr('disabled', 'true');
-					$('#chapterNameInput')[0].selectedIndex = 0;
-					$('#chapterNameInput').trigger("liszt:updated");
-				}else if($(this).val() == 1 || $(this).val() == 2){
-					$('#associateClassInput')[0].selectedIndex = 0;
-					$('#chapterNameInput').attr('disabled', 'true');
-					$('#chapterNameInput')[0].selectedIndex = 0;
-					$('#associateClassInput').trigger("liszt:updated");
-					$('#chapterNameInput').trigger("liszt:updated");
-				}else{
-					$('#yearInitiatedInput').removeAttr('disabled');
-					$('#yearGraduatedInput').removeAttr('disabled');
-					$('#associateClassInput').removeAttr('disabled');
-					$('#pinNumberInput').removeAttr('disabled');
-					$('#chapterNameInput').removeAttr('disabled');
-					$('#associateClassInput').trigger("liszt:updated");
-					$('#chapterNameInput').trigger("liszt:updated");
-				}
-			});
-		}else if(dataOptions['referredBy']){
-			var referredByString = '';
-			if(dataOptions['referredByID'] == 1){
-				referredByString += '<optgroup label="Associate">';
-			}else if(dataOptions['referredByID'] == 2){
-				referredByString += '<optgroup label="Initiate">';
-			}else if(dataOptions['referredByID'] == 3){
-				referredByString += '<optgroup label="Alumnus">';
-			}
-			for(var i = 0; i < data.length; i++){
-				referredByString += '<option value="' + data[i]['userId'] + '">' + data[i]['firstName'] + ' ' + data[i]['lastName'] + '</option>';
-			}
-			referredByString += '</optgroup>';
-			if(dataOptions['referredByID'] == 3){
-				referredByString += '<optgroup label="Other">' +
-				'<option value="" selected>No one</option>'+
-				'</optgroup>';
-			}
-			$('#referredByMemberInput').append(referredByString).trigger("liszt:updated");
-		}else if(dataOptions['chapters']){
-			var userTypeString = '';
-			for(var i = 0; i < data.length; i++){
-				if(data[i]['chapterId'] == 41){
-					userTypeString += '<option value="' + data[i]['chapterId'] + '" selected>' + data[i]['name'] + '</option>';
-				}else{
-					userTypeString += '<option value="' + data[i]['chapterId'] + '">' + data[i]['name'] + '</option>';
-				}
-			}
-			$('#chapterNameInput').append(userTypeString).chosen();
-		}
-	});
-}*/
 
 function submitUser(){
 	var errorList = new Array();
@@ -758,11 +695,23 @@ function retrieveRecruitInfoIfNull(userId, additionalCallback){
 		});
 	}
 }
-function joelLogin(){
-	$('#loginFormUsername').val(85940);
-	$('#loginFormPassword').val("password");
-	$('#submitPasswordLoginButton').click();
-	setTimeout(function(){
-		loadRecruitDetails(78);
-	}, 2000);
+function setRefreshTokenCookie(value){
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate() + 1);
+	var c_value=escape(value) + "; expires="+exdate.toUTCString();
+	document.cookie="RefreshToken=" + c_value;
+}
+function getRefreshTokenCookie(){
+	var i,x,y,ARRcookies=document.cookie.split(";");
+	for (i=0;i<ARRcookies.length;i++)
+	{
+		x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+		y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+		x=x.replace(/^\s+|\s+$/g,"");
+		if (x=="RefreshToken")
+		{
+			console.log(y);
+			return unescape(y);
+		}
+	}
 }
