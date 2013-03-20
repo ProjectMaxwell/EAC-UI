@@ -352,7 +352,7 @@ function loadRecruitDetails(recruitId){
 	$('li.recruitsListItem').removeClass('selectedRecruitListItem');
 	$('#recruitsListItem' + recruitId).addClass('selectedRecruitListItem');
 	$('#recruitsDetailsHolder').show();
-	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').children().not('#recordRecruitContactHolder, #addRecruitCommentHolder').remove();
+	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').children().not('#recordRecruitContactHolder, #addRecruitCommentHolder, .addItemButtonHolder, .addItemHolder').remove();
 	retrieveUserIfNull(recruitId,function(userObject){
 		var userDetails = '<div id="recruitTopDivision"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
 		userDetails += '<input type="hidden" id="recruitUserId" value="' + userObject.userId +'"/>';
@@ -416,6 +416,17 @@ function loadRecruitDetails(recruitId){
 			}
 			recruitContactUL.append(recruitListText);
 			$('#recruitsContactHistoryListHolder').prepend(recruitContactUL);
+			$('#recordRecruitContactButton').click(recordRecruitContact);
+			$('#recruitsContactHistoryListHolder').find('.addItemButtonHolder').click(function(){
+				console.log('click')
+				$(this).animate({
+					top: '-40px'
+				}, 250, function(){
+					$('#recruitsContactHistoryListHolder').find('.addItemHolder').animate({
+						top: '0px'
+					}, 250);
+				});
+			})
 			for(var i = 0; i < recruitContactors.length; i++){
 				retrieveUserIfNull(recruitContactors[i],function(userObject){
 					$('.recruitContactorUserId-' + userObject['userId']).text(userObject.firstName + ' ' + userObject.lastName);
@@ -449,7 +460,6 @@ function loadRecruitDetails(recruitId){
 			});
 		}
 	});
-	
 }
 function setNewUserValues(){
 	$('#referredByMemberInput').chosen();
