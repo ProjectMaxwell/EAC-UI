@@ -13,8 +13,25 @@ var metadataInitialized = false;
 $(document).ready(function(){
 	initialSetup();
 	var refreshTokenCookie = getRefreshTokenCookie();
-	console.log(refreshTokenCookie == null ? "Refresh Token was null" : refreshTokenCookie); 
-	$("#loginPane").lightbox_me();
+		if(refreshTokenCookie){
+			phiAuthClient.refreshToken(token,function(data, status, responseHandler){
+				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+				console.log("Refreshed token from cookie.");
+				setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
+				//These variables are here because this is an asynchronous wait timer,
+				//and phiAuthClient is liable to change in the time before the timer is triggered
+				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
+				var tmpTtl = phiAuthClient.tokenResponse.ttl;
+				setRefreshTimer(tmpRefreshToken, tmpTtl);
+			},function(data,status,responseHandler){
+				console.log("Refresh token from cookie not valid.");
+				$("#loginPane").lightbox_me();
+			});
+	}else{
+		console.log("No refresh token cookie.");
+		$("#loginPane").lightbox_me();
+	}
+	//$("#loginPane").lightbox_me();
 //	joelLogin();
 });
 function initialSetup(){
