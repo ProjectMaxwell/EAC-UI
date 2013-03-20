@@ -400,7 +400,7 @@ function loadRecruitDetails(recruitId){
 		console.log(recruitObject.recruitSourceId);
 		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
 		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Source:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
-		'<div class="recruitSmallLabel">Defcon:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
+		'<div class="recruitSmallLabel">Involvement Level:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
 		if(recruitObject.classStanding){recruitDetails += '<div class="recruitSmallLabel">Class:<br /><div class="recruitLargeData">' + normalTab + recruitObject.classStanding + '</div></div>';}
 		if(recruitObject.dateAdded){recruitDetails += '<div class="recruitSmallLabel">dateAdded:<br /><div class="recruitLargeData">' + normalTab + recruitObject.dateAdded + '</div></div>';}
 		if(recruitObject.gpa){recruitDetails += '<div class="recruitSmallLabel">GPA:<br /><div class="recruitLargeData">' + normalTab + recruitObject.gpa + '</div></div>';}
