@@ -128,6 +128,7 @@ function setRefreshTimer(token, seconds){
 function refreshToken(token){
 	phiAuthClient.refreshToken(token,function(data, status, responseHandler){
 		maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+		setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
 		//These variables are here because this is an asynchronous wait timer,
 		//and phiAuthClient is liable to change in the time before the timer is triggered
 		var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
