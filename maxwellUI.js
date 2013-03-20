@@ -23,6 +23,11 @@ $(document).ready(function(){
 				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
 				var tmpTtl = phiAuthClient.tokenResponse.ttl;
 				setRefreshTimer(tmpRefreshToken, tmpTtl);
+				
+				if(!metadataInitialized){
+					metadataInitialized = true;
+					initializeMetadata();
+				}
 			},function(data,status,responseHandler){
 				console.log("Refresh token from cookie not valid.");
 				$("#loginPane").lightbox_me();
@@ -392,6 +397,7 @@ function loadRecruitDetails(recruitId){
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
+		console.log(recruitObject.recruitSourceId);
 		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
 		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Source:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
 		'<div class="recruitSmallLabel">Defcon:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
@@ -769,33 +775,23 @@ function retrieveRecruitInfoIfNull(userId, additionalCallback){
 		});
 	}
 }
-function joelLogin(){
-	$('#loginFormUsername').val(85940);
-	$('#loginFormPassword').val("password");
-	$('#submitPasswordLoginButton').click();
-	setTimeout(function(){
-		loadRecruitDetails(78);
-	}, 2000);
-}
-function setRefreshTokenCookie(value)
-{
+function setRefreshTokenCookie(value){
 	var exdate=new Date();
 	exdate.setDate(exdate.getDate() + 1);
 	var c_value=escape(value) + "; expires="+exdate.toUTCString();
 	document.cookie="RefreshToken=" + c_value;
 }
-function getRefreshTokenCookie()
-{
+function getRefreshTokenCookie(){
 	var i,x,y,ARRcookies=document.cookie.split(";");
 	for (i=0;i<ARRcookies.length;i++)
 	{
-	  x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-	  y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-	  x=x.replace(/^\s+|\s+$/g,"");
-	  if (x=="RefreshToken")
-	    {
-		  console.log(y);
-	    return unescape(y);
-	    }
-	  }
+		x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+		y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+		x=x.replace(/^\s+|\s+$/g,"");
+		if (x=="RefreshToken")
+		{
+			console.log(y);
+			return unescape(y);
+		}
 	}
+}
