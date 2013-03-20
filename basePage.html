@@ -27,7 +27,7 @@
 		<div id="navHolder">
 			<div class="sectionSelector" id="usersList">Users List</div>
 			<div class="sectionSelector" id="newUser">New Users</div>
-			<div class="sectionSelector" id="newEACMeeting">New EAC Meeting</div>
+			<div class="sectionSelector" id="newEACMeeting" style="display: none;">New EAC Meeting</div>
 			<div class="sectionSelector" id="recruitPage">Recruitment</div>
 		</div>
 		<div id="contentHolder">
@@ -49,17 +49,19 @@
 						<div class="addItemHolder">
 							<div>Date: <input class="recordRecruitContactInput" type="text" id="contactTimestampInput" /></div>
 								<div>Contact type: <select id="contactTypeInput" class="recordRecruitContactInput"></select></div>
-							<div>Notes: <textarea class="recordRecruitContactInput" id="contactNotes"></textarea></div>
+							<div id="recruitContactNotesHolder">Notes: <textarea class="recordRecruitContactInput" id="contactNotes"value=""></textarea></div>
 							<div id="recordRecruitContactButton">Submit</div>
 						</div>
 					</div>
 					<div class="recruitDivider"></div>
 					<div id="recruitCommentsHolder">
-						<div id="addRecruitCommentHolder">
-							<div class="normalInputHolder">
-								Comment: <br /><textarea class="recordRecruitCommentInput" id="recruitComment"></textarea>
-							</div>
-							<div id="addRecruitCommentButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+						<div class="addItemButtonHolder">
+							<div class="addIcon"></div><div class="addItemLabel">Add</div>
+						</div>
+						<div class="addItemHolder">
+							<div>Date: <input class="recordRecruitContactInput" type="text" id="contactTimestampInput" /></div>
+							<div id="recruitsNewCommentTextHolder">Comment: <textarea class="recordRecruitContactInput" id="recruitComment" value=""></textarea></div>
+							<div id="addRecruitCommentButton">Submit</div>
 						</div>
 					</div>
 				</div>
@@ -149,8 +151,5 @@
 			</div>
 		</div>
 	</div>
-	<script type="text/javascript">
-
-	</script>
 </body>
 </html>
