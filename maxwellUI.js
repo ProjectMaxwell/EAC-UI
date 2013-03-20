@@ -68,9 +68,29 @@ function initialSetup(){
 	});
 	$('#recruitsDetailsHolder').hide();
 	$('#submitEventButton').click(createEACMeeting);
-	$('#recordRecruitContactButton').click(recordRecruitContact);
-	$('#addRecruitCommentButton').click(addRecruitComment);
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
+
+
+	$('#recordRecruitContactButton').click(recordRecruitContact);
+		$('#recruitsContactHistoryListHolder').find('.addItemButtonHolder').click(function(){
+			$(this).animate({
+				top: '-40px'
+			}, 250, function(){
+				$('#recruitsContactHistoryListHolder').find('.addItemHolder').animate({
+					top: '0px'
+				}, 250);
+			});
+		})
+	$('#addRecruitCommentButton').click(addRecruitComment);
+		$('#recruitCommentsHolder').find('.addItemButtonHolder').click(function(){
+			$(this).animate({
+				top: '-40px'
+			}, 250, function(){
+				$('#recruitCommentsHolder').find('.addItemHolder').animate({
+					top: '0px'
+				}, 250);
+			});
+		})
 }
 
 /*********************************************************************************************
@@ -356,10 +376,14 @@ function populateRecruitTable(){
 	for(var i = 0; i < data.length; i++){
 		recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem" onClick="loadRecruitDetails(' + data[i]['userId'] + ');"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
 	}
-	/*if(data.length != 0){
-		loadRecruitDetails(data[0]['userId']);
-	}*/
 	$('#recruitsNameList').empty().append(recruitListText);
+	if(data.length != 0){
+		$('#recruitsNameList').children().first().click();
+		$('.addItemButtonHolder').show();
+	}else{
+		$('.addItemButtonHolder').hide();
+	}
+	$('.recordRecruitContactInput').val('');
 }
 function populateRecruitmentPage(){
 	maxwellClient.getUsersByType(5, function(data){
@@ -379,6 +403,8 @@ function loadRecruitDetails(recruitId){
 	$('#recruitsListItem' + recruitId).addClass('selectedRecruitListItem');
 	$('#recruitsDetailsHolder').show();
 	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').children().not('#recordRecruitContactHolder, #addRecruitCommentHolder, .addItemButtonHolder, .addItemHolder').remove();
+	$('.addItemButtonHolder, .addItemHolder').removeAttr('style');
+	$('.addItemHolder').find('input, textarea').val('');
 	retrieveUserIfNull(recruitId,function(userObject){
 		var userDetails = '<div id="recruitTopDivision"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
 		userDetails += '<input type="hidden" id="recruitUserId" value="' + userObject.userId +'"/>';
@@ -443,17 +469,7 @@ function loadRecruitDetails(recruitId){
 			}
 			recruitContactUL.append(recruitListText);
 			$('#recruitsContactHistoryListHolder').prepend(recruitContactUL);
-			$('#recordRecruitContactButton').click(recordRecruitContact);
-			$('#recruitsContactHistoryListHolder').find('.addItemButtonHolder').click(function(){
-				console.log('click')
-				$(this).animate({
-					top: '-40px'
-				}, 250, function(){
-					$('#recruitsContactHistoryListHolder').find('.addItemHolder').animate({
-						top: '0px'
-					}, 250);
-				});
-			})
+			
 			for(var i = 0; i < recruitContactors.length; i++){
 				retrieveUserIfNull(recruitContactors[i],function(userObject){
 					$('.recruitContactorUserId-' + userObject['userId']).text(userObject.firstName + ' ' + userObject.lastName);
@@ -479,6 +495,7 @@ function loadRecruitDetails(recruitId){
 				'</div></li>';
 				
 				$('#recruitCommentsList').append(recruitCommentText);
+
 
 				retrieveUserIfNull(this.commenterUserId, function(userObject){
 					var myObj = $('#recruitComment-' + recruitCommentId + ' .commentUser');
@@ -583,13 +600,13 @@ function recordRecruitContact(){
 	console.log("DO FORM VALIDATION");
 	recruitContactObject.recruitUserId = $('#recruitUserId').val();
 	recruitContactObject.recruitContactorUserId = phiAuthClient.tokenResponse.userId;
-	recruitContactObject.contactTimestamp = $('#contactTimestampInput').val();
+	recruitContactObject.contactTimestamp = parseInt(new Date().getTime()/1000);
 	recruitContactObject.recruitContactTypeId = $('#contactTypeInput').val();
 	recruitContactObject.notes = notes.length < 1 ? null : notes;
 	console.log(recruitContactObject);
 		maxwellClient.recordRecruitContact(recruitContactObject, function(responseObject, responseHandler){
 		console.log(responseObject);
-		$('.recordRecruitContactInput').val('');
+		$('#contactNotes').val('');
 		loadRecruitDetails(recruitContactObject.recruitUserId);
 	});
 }
@@ -606,7 +623,7 @@ function addRecruitComment(){
 	console.log(recruitCommentObject);
 		maxwellClient.addRecruitComment(recruitCommentObject, function(responseObject, responseHandler){
 		console.log(responseObject);
-		$('.recordRecruitCommentInput').val('');
+		$('#recruitComment').val('');
 		loadRecruitDetails(recruitCommentObject.recruitUserId);
 	});
 }
