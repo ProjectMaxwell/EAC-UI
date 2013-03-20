@@ -285,6 +285,10 @@ input::-webkit-inner-spin-button {
 .recruitContactor{
 	font-size: 14px;
 }
+#recruitCommentsHolder, #recruitsContactHistoryListHolder{
+	position: relative;
+	overflow: hidden;
+}
 .recruitCommentInnerHolder{
 	margin-top: 5px;
 	margin-left: 61px;
@@ -304,6 +308,45 @@ input::-webkit-inner-spin-button {
 	min-height: 61px;
 	font-size: 14px;
 }
+.addItemButtonHolder{
+	width: 80px;
+	height: 35px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	border: 1px solid black;
+	cursor: pointer;
+	opacity: 0.5;
+}
+.addItemButtonHolder:hover{
+	opacity: 1;
+}
+.addIcon{
+	margin-top: 5px;
+	margin-left: 5px;
+	width: 24px;
+	height: 24px;
+	background: url('images/sprite.png') -70px -31px;
+	float: left;
+}
+.addItemLabel{
+	margin-top: 5px;
+	margin-left: 31px;
+	font-size: 20px;
+}
+.addItemHolder{
+	width: 320px;
+	height: 100px;
+	position: absolute;
+	top: -100px;
+	right: 0px;
+}
+#submitNewContactItem{
+	cursor: pointer;
+}
+
+
+
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .recruitsListItem > div{
 		width: 229px;
