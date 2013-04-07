@@ -71,6 +71,12 @@ function initialSetup(){
 	$('#recordRecruitContactButton').click(recordRecruitContact);
 	$('#addRecruitCommentButton').click(addRecruitComment);
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
+	$('#loginFormUsername, #loginFormPassword').on('keyup', function(e){
+		var code = (e.keyCode ? e.keyCode : e.which);
+		if(code == 13 && $('#loginFormUsername').val() != "" && $('#loginFormPassword').val() != ""){
+			doLoginByPassword();
+		}
+	});
 }
 
 /*********************************************************************************************
