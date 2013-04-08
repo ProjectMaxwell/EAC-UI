@@ -68,8 +68,29 @@ function initialSetup(){
 	});
 	$('#recruitsDetailsHolder').hide();
 	$('#submitEventButton').click(createEACMeeting);
+	$('#submitPasswordLoginButton').click(doLoginByPassword);
+
+
 	$('#recordRecruitContactButton').click(recordRecruitContact);
+		$('#recruitsContactHistoryListHolder').find('.addItemButtonHolder').click(function(){
+			$(this).animate({
+				top: '-40px'
+			}, 250, function(){
+				$('#recruitsContactHistoryListHolder').find('.addItemHolder').animate({
+					top: '0px'
+				}, 250);
+			});
+		})
 	$('#addRecruitCommentButton').click(addRecruitComment);
+	$('#recruitCommentsHolder').find('.addItemButtonHolder').click(function(){
+		$(this).animate({
+			top: '-40px'
+		}, 250, function(){
+			$('#recruitCommentsHolder').find('.addItemHolder').animate({
+				top: '0px'
+			}, 250);
+		});
+	})
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
 	$('#loginFormUsername, #loginFormPassword').on('keyup', function(e){
 		var code = (e.keyCode ? e.keyCode : e.which);
@@ -369,6 +390,9 @@ function populateRecruitTable(){
 	});
 	if(data.length != 0){
 		loadRecruitDetails(data[0]['userId']);
+		$('.addItemButtonHolder').show();
+	}else{
+		$('.addItemButtonHolder').hide();
 	}
 }
 function populateRecruitmentPage(){
@@ -394,6 +418,8 @@ function loadRecruitDetails(recruitId){
 	$('li.recruitsListItem').removeClass('selectedRecruitListItem');
 	$('#recruitsListItem' + recruitId).addClass('selectedRecruitListItem');
 	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').children().not('#recordRecruitContactHolder, #addRecruitCommentHolder, .addItemButtonHolder, .addItemHolder').remove();
+	$('.addItemButtonHolder, .addItemHolder').removeAttr('style');
+	$('.addItemHolder').find('input, textarea').val('');
 	retrieveUserIfNull(recruitId,function(userObject){
 		var userDetails = '<div id="recruitTopDivision"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
 		userDetails += '<input type="hidden" id="recruitUserId" value="' + userObject.userId +'"/>';
@@ -471,6 +497,7 @@ function loadRecruitDetails(recruitId){
 					}, 250);
 				});
 			})
+
 			for(var i = 0; i < recruitContactors.length; i++){
 				retrieveUserIfNull(recruitContactors[i],function(userObject){
 					$('.recruitContactorUserId-' + userObject['userId']).text(userObject.firstName + ' ' + userObject.lastName);
@@ -498,6 +525,7 @@ function loadRecruitDetails(recruitId){
 				'</div></li>';
 				
 				$('#recruitCommentsList').append(recruitCommentText);
+
 
 				retrieveUserIfNull(this.commenterUserId, function(userObject){
 					var myObj = $('#recruitComment-' + recruitCommentId + ' .commentUser');
@@ -612,12 +640,12 @@ function recordRecruitContact(){
 	console.log("DO FORM VALIDATION");
 	recruitContactObject.recruitUserId = $('#recruitUserId').val();
 	recruitContactObject.recruitContactorUserId = phiAuthClient.tokenResponse.userId;
-	recruitContactObject.contactTimestamp = $('#contactTimestampInput').val();
+	recruitContactObject.contactTimestamp = parseInt(new Date().getTime()/1000);
 	recruitContactObject.recruitContactTypeId = $('#contactTypeInput').val();
 	recruitContactObject.notes = notes.length < 1 ? null : notes;
 	maxwellClient.recordRecruitContact(recruitContactObject, function(responseObject, responseHandler){
 		console.log(responseObject);
-		$('.recordRecruitContactInput').val('');
+		$('#contactNotes').val('');
 		loadRecruitDetails(recruitContactObject.recruitUserId);
 	});
 }
@@ -634,7 +662,7 @@ function addRecruitComment(){
 	console.log(recruitCommentObject);
 		maxwellClient.addRecruitComment(recruitCommentObject, function(responseObject, responseHandler){
 		console.log(responseObject);
-		$('.recordRecruitCommentInput').val('');
+		$('#recruitComment').val('');
 		loadRecruitDetails(recruitCommentObject.recruitUserId);
 	});
 }
