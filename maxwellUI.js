@@ -496,8 +496,8 @@ function loadRecruitDetails(recruitId){
 						top: '0px'
 					}, 250);
 				});
-			})
-			alert(2)
+			});
+
 			for(var i = 0; i < recruitContactors.length; i++){
 				retrieveUserIfNull(recruitContactors[i],function(userObject){
 					$('.recruitContactorUserId-' + userObject['userId']).text(userObject.firstName + ' ' + userObject.lastName);
