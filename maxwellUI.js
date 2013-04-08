@@ -82,15 +82,22 @@ function initialSetup(){
 			});
 		})
 	$('#addRecruitCommentButton').click(addRecruitComment);
-		$('#recruitCommentsHolder').find('.addItemButtonHolder').click(function(){
-			$(this).animate({
-				top: '-40px'
-			}, 250, function(){
-				$('#recruitCommentsHolder').find('.addItemHolder').animate({
-					top: '0px'
-				}, 250);
-			});
-		})
+	$('#recruitCommentsHolder').find('.addItemButtonHolder').click(function(){
+		$(this).animate({
+			top: '-40px'
+		}, 250, function(){
+			$('#recruitCommentsHolder').find('.addItemHolder').animate({
+				top: '0px'
+			}, 250);
+		});
+	})
+	$('#submitPasswordLoginButton').click(doLoginByPassword);
+	$('#loginFormUsername, #loginFormPassword').on('keyup', function(e){
+		var code = (e.keyCode ? e.keyCode : e.which);
+		if(code == 13 && $('#loginFormUsername').val() != "" && $('#loginFormPassword').val() != ""){
+			doLoginByPassword();
+		}
+	});
 }
 
 /*********************************************************************************************
