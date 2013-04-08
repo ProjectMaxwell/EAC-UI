@@ -11,6 +11,7 @@ var metadataOnChangeEvents = new Array();
 var metadataInitialized = false;
 
 $(document).ready(function(){
+	bradyCat();
 	initialSetup();
 	var refreshToken = getRefreshTokenCookie();
 		if(refreshToken){
@@ -39,6 +40,22 @@ $(document).ready(function(){
 	//$("#loginPane").lightbox_me();
 //	joelLogin();
 });
+function bradyCat(){
+	var betweenNums = 10;
+	if(Math.floor(Math.random()*betweenNums+1) == 1){
+		$('body').css('background', 'none');
+		var bradyCat = '<style>' +
+		'#bradyHolder{ width: 100%; height: 100%; position: fixed; z-index: 0;}' +
+		'</style>' +
+		'<div id="bradyHolder"></div>';
+		$('body').append('<div id="bradyBack"></div>');
+		var columns = $('#bradyBack').width()/200;
+		var rows = $('#bradyBack').height()/150;
+		for(var i = 0; i < rows; i++){
+			
+		}
+	};
+}
 function initialSetup(){
 	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
 	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
