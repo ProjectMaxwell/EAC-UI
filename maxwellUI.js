@@ -94,7 +94,7 @@ function doLoginByPassword(){
 				$("#loginPane").trigger("close");
 				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
 				
-				$(".loginFormInput").val(null);
+				$(".loginFormInput").val("");
 				setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
 				//These variables are here because this is an asynchronous wait timer,
 				//and phiAuthClient is liable to change in the time before the timer is triggered
@@ -108,7 +108,7 @@ function doLoginByPassword(){
 				}
 			},function(data,statusCode,responseHandler){
 				$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
-				$("#loginFormPassword").val(null);
+				$("#loginFormPassword").val("");
 			});
 }
 
@@ -360,12 +360,16 @@ function populateRecruitTable(){
 	var data = usersByType[5];
 	var recruitListText = '';
 	for(var i = 0; i < data.length; i++){
-		recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem" onClick="loadRecruitDetails(' + data[i]['userId'] + ');"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
+		recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
 	}
-	/*if(data.length != 0){
-		loadRecruitDetails(data[0]['userId']);
-	}*/
+	
 	$('#recruitsNameList').empty().append(recruitListText);
+	$('#recruitsNameList').find('li').click(function(){
+		loadRecruitDetails($(this).attr('id').substring(16));
+	});
+	if(data.length != 0){
+		loadRecruitDetails(data[0]['userId']);
+	}
 }
 function populateRecruitmentPage(){
 	maxwellClient.getUsersByType(5, function(data){
@@ -381,9 +385,14 @@ function populateRecruitmentPage(){
 	});
 }
 function loadRecruitDetails(recruitId){
+	var recruitFirstBlurbCheck = false;
+	var recruitSecondBlurbCheck = false;
+	var recruitContactCheck = false;
+	var recruitsCommentCheck = false;
+	$('#recruitsDetailsHolder').hide();
+	$('#recruitsListItem' + recruitId + ' > div').css('border-right', '1px solid black');
 	$('li.recruitsListItem').removeClass('selectedRecruitListItem');
 	$('#recruitsListItem' + recruitId).addClass('selectedRecruitListItem');
-	$('#recruitsDetailsHolder').show();
 	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').children().not('#recordRecruitContactHolder, #addRecruitCommentHolder, .addItemButtonHolder, .addItemHolder').remove();
 	retrieveUserIfNull(recruitId,function(userObject){
 		var userDetails = '<div id="recruitTopDivision"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
@@ -400,10 +409,11 @@ function loadRecruitDetails(recruitId){
 		if(userObject.highschool){userDetails +='<div class="recruitHSLabelHolder"><span class="recruitHSLabel">HS:</span> ' + userObject.highschool + '</div>';}
 		userDetails += '</div>';
 		$('#recruitBlurbUserData').append(userDetails);
+		recruitFirstBlurbCheck = true;
+		showRecruitDetails();
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
-		console.log(recruitObject.recruitSourceId);
 		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
 		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Source:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
 		'<div class="recruitSmallLabel">Involvement Level:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
@@ -417,6 +427,8 @@ function loadRecruitDetails(recruitId){
 		if(recruitObject.expectations){recruitDetails += '<div class="recruitSmallLabel">expectations:<br /><div class="recruitLargeData">' + normalTab + recruitObject.expectations + '</div></div>';}
 		if(recruitObject.extracurriculars){recruitDetails += '<div class="recruitSmallLabel">extracurriculars:<br /><div class="recruitLargeData">' + normalTab + recruitObject.extracurriculars + '</div></div>';}
 		$('#recruitBlurbRecruitData').append(recruitDetails);
+		recruitSecondBlurbCheck = true;
+		showRecruitDetails();
 	});
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitId, function(data){
 		if(data.length == 0){
@@ -451,7 +463,6 @@ function loadRecruitDetails(recruitId){
 			$('#recruitsContactHistoryListHolder').prepend(recruitContactUL);
 			$('#recordRecruitContactButton').click(recordRecruitContact);
 			$('#recruitsContactHistoryListHolder').find('.addItemButtonHolder').click(function(){
-				console.log('click')
 				$(this).animate({
 					top: '-40px'
 				}, 250, function(){
@@ -466,6 +477,8 @@ function loadRecruitDetails(recruitId){
 				});
 			}
 		}
+		recruitContactCheck = true;
+		showRecruitDetails();
 	});
 	maxwellClient.getRecruitCommentsByRecruitUserId(recruitId, function(data, responseHandler){
 		if(data == null || data.length == 0){
@@ -492,7 +505,17 @@ function loadRecruitDetails(recruitId){
 				});
 			});
 		}
+		recruitsCommentCheck = true;
+		showRecruitDetails();
 	});
+	function showRecruitDetails(){
+		console.log($('#recruitsDetailsHolder').is('visible'));
+		if(recruitFirstBlurbCheck && recruitSecondBlurbCheck && recruitContactCheck && recruitsCommentCheck){
+			$('#recruitsDetailsHolder').show();
+			$('#recruitsListItem' + recruitId + ' > div').css('border-right', '');
+			console.log($('#recruitsListItem' + recruitId + ' > div'))
+		}
+	}
 }
 function setNewUserValues(){
 	$('#referredByMemberInput').chosen();
@@ -592,8 +615,7 @@ function recordRecruitContact(){
 	recruitContactObject.contactTimestamp = $('#contactTimestampInput').val();
 	recruitContactObject.recruitContactTypeId = $('#contactTypeInput').val();
 	recruitContactObject.notes = notes.length < 1 ? null : notes;
-	console.log(recruitContactObject);
-		maxwellClient.recordRecruitContact(recruitContactObject, function(responseObject, responseHandler){
+	maxwellClient.recordRecruitContact(recruitContactObject, function(responseObject, responseHandler){
 		console.log(responseObject);
 		$('.recordRecruitContactInput').val('');
 		loadRecruitDetails(recruitContactObject.recruitUserId);
