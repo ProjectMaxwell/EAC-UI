@@ -43,17 +43,31 @@ $(document).ready(function(){
 function bradyCat(){
 	var betweenNums = 10;
 	if(Math.floor(Math.random()*betweenNums+1) == 1){
+		var imageWidth = 200;
+		var imageHeight = 150;
 		$('body').css('background', 'none');
 		var bradyCat = '<style>' +
-		'#bradyHolder{ width: 100%; height: 100%; position: fixed; z-index: 0;}' +
+		'#bradyHolder{ width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: -1; overflow: hidden;}' +
+		'.bradyRow{ height: ' + imageHeight + '; position: relative; overflow: hidden;}' +
+		'.bradyImage{ display: block; position: absolute; width: ' + imageWidth + '; height: ' + imageHeight + '; top: 0px; }' +
 		'</style>' +
 		'<div id="bradyHolder"></div>';
-		$('body').append('<div id="bradyBack"></div>');
-		var columns = $('#bradyBack').width()/200;
-		var rows = $('#bradyBack').height()/150;
+		$('body').append(bradyCat);
+		var columns = ($('body').width()/200) + 1;
+		var rows = ($('body').height()/150) + 1;
+		console.log(columns);
+		console.log(rows)
+		var bradyText = '';
 		for(var i = 0; i < rows; i++){
-			
+			bradyText += '<div class="bradyRow">';
+			for(var m = 0; m < columns; m++){
+				console.log(i)
+				bradyText += '<img class="bradyImage" style="left: ' + (m*imageWidth) + 'px;" src="https://students.washington.edu/phitau/images/brady_kiteh_small.jpg" />';
+			}
+			bradyText += '</div>';
 		}
+		bradyText += '</div>';
+		$('#bradyHolder').append(bradyText);
 	};
 }
 function initialSetup(){
