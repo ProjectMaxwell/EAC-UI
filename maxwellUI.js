@@ -47,11 +47,11 @@ function bradyCat(){
 		var imageHeight = 150;
 		$('body').css('background', 'none');
 		var bradyCat = '<style>' +
-		'#bradyHolder{ width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: -1; overflow: hidden;}' +
-		'.bradyRow{ height: ' + imageHeight + '; position: relative; overflow: hidden;}' +
-		'.bradyImage{ display: block; position: absolute; width: ' + imageWidth + '; height: ' + imageHeight + '; top: 0px; }' +
-		'</style>' +
-		'<div id="bradyHolder"></div>';
+			'#bradyHolder{ width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: -1; overflow: hidden;}' +
+			'.bradyRow{ height: ' + imageHeight + '; position: relative; overflow: hidden;}' +
+			'.bradyImage{ display: block; position: absolute; width: ' + imageWidth + '; height: ' + imageHeight + '; top: 0px; }' +
+			'</style>' +
+			'<div id="bradyHolder"></div>';
 		$('body').append(bradyCat);
 		var columns = ($('body').width()/200) + 1;
 		var rows = ($('body').height()/150) + 1;
