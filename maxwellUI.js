@@ -76,7 +76,6 @@ function initialSetup(){
 	initializeOnChangeHandlers();
 	$('#newUser').click(function(){
 		$('#contentHolder').children().not('#createUsersHolder').hide();
-		getNewUserData();
 		setNewUserValues();
 		$('#createUsersHolder').show();
 	});
@@ -347,13 +346,6 @@ function initializeMetadata(){
 	$('#recruitPage').click();
 }
 
-
-function getNewUserData(){
-	//I don't know what this is, but it's certainly not the right way to be doing whatever it is
-	/*getDatas({'referredBy': true, referredByID: 1});
-	getDatas({'referredBy': true, referredByID: 2});
-	getDatas({'referredBy': true, referredByID: 3});*/
-}
 /**
  * This function is used to make sure we aren't repeatedly hitting the server to retrieve users lists that we already have
  * @param userType
@@ -444,7 +436,8 @@ function loadRecruitDetails(recruitId){
 	var recruitSecondBlurbCheck = false;
 	var recruitContactCheck = false;
 	var recruitsCommentCheck = false;
-	$('#recruitsDetailsHolder').hide();
+	var recruitsDetailsHolder = $('#recruitsDetailsHolder');
+	recruitsDetailsHolder.hide();
 	$('#recruitsListItem' + recruitId + ' > div').css('border-right', '1px solid black');
 	$('li.recruitsListItem').removeClass('selectedRecruitListItem');
 	$('#recruitsListItem' + recruitId).addClass('selectedRecruitListItem');
@@ -568,22 +561,41 @@ function loadRecruitDetails(recruitId){
 		showRecruitDetails();
 	});
 	function showRecruitDetails(){
-		console.log($('#recruitsDetailsHolder').is('visible'));
 		if(recruitFirstBlurbCheck && recruitSecondBlurbCheck && recruitContactCheck && recruitsCommentCheck){
-			$('#recruitsDetailsHolder').show();
+			var selectedRecruit = $('.selectedRecruitListItem');
+			recruitsDetailsHolder.css('opacity', 0).show();
+			//Stretches the box to line up with a user if the user is low on the list.
+			if($('.selectedRecruitListItem').offset().top + $('.selectedRecruitListItem').height() > $('#recruitsDetailsHolder').offset().top + $('#recruitsDetailsHolder').height()){
+				recruitsDetailsHolder.css('height', selectedRecruit.offset().top + selectedRecruit.height() - recruitsDetailsHolder.offset().top);
+			}
+			recruitsDetailsHolder.css('opacity', 1);
 			$('#recruitsListItem' + recruitId + ' > div').css('border-right', '');
-			console.log($('#recruitsListItem' + recruitId + ' > div'))
+			console.log($('#recruitsListItem' + recruitId + ' > div'));
+			$('html, body').animate({scrollTop:0}, 'slow');
 		}
 	}
 }
-function setNewUserValues(){
-	$('#referredByMemberInput').chosen();
-	$('#kittenSubmitButton').click(submitUser);
+function setNewUserValues(editUser){
+	if($('#referredByMemberInput').children().length != 0){
+		$('#referredByMemberInput').chosen();
+		$('#referredByMemberInput').parent().show();
+	}else{
+		$('#referredByMemberInput').parent().hide();
+	}
+	
+	if(editUser){
+		$('#submitNewUserButton').click(editUser);
+	}else{
+		$('#submitNewUserButton').click(submitUser);
+	}
+	
 	/*$('#associateClassInput').chosen().change(function(){
 		console.log($(this).val())
 	});*/
 }
-
+function editUser(){
+	//Maybe just do a submitUser and if X things are the same it updates instead of creates? I dunno.
+}
 function submitUser(){
 	var errorList = new Array();
 	var userData = new Object;
@@ -625,19 +637,6 @@ function submitUser(){
 	
 	userData['referredById'] = $('#referredByMemberInput').val() || null;
 
-	
-	/*if(errorList.length == 0){
-		var userPin = prompt("WHAT YOU PIN NUMBA, DOCTA JONES?")
-	}
-	if(userPin != null && userPin.length != 0 && !isNaN(userPin)){
-		var password = prompt("PASSWERD");
-		getUserToken(userData, userPin, password);
-	}else if(userPin != null){
-		var checkTryAgain = confirm("Pin has to be a number, fool. Try again?");
-		if(checkTryAgain){
-			submitUser();
-		}
-	}else{*/
 	if(errorList.length > 0){
 		var errorString = "Please resolve the following profile issues: \n";
 		for(var i = 0; i < errorList.length; i++){
@@ -647,6 +646,7 @@ function submitUser(){
 	}else{
 		maxwellClient.createUser(userData, function(data, responseHandler){
 			console.log(data);
+			$('#submitNewUserButton').unbind('click');
 		});
 	}
 }

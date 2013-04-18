@@ -83,7 +83,7 @@ li{
 #referredByMemberInput{
 	width: 500px;
 }
-.kittenSubmitButton{
+.submitNewUserButton{
 	cursor: pointer;
 	overflow: hidden;
 	width: 125px;
@@ -103,7 +103,7 @@ li{
 	-webkit-transition: all 350ms; /* Safari and Chrome */
 	-o-transition: all 350ms; /* Opera */
 }
-.kittenSubmitButton:hover{
+.submitNewUserButton:hover{
 	bottom: 2px;
 	border: 1px solid black;
 
@@ -111,7 +111,7 @@ li{
 	-webkit-box-shadow: 0px 0px 5px 6px #ccc;
 	box-shadow:         0px 0px 5px 6px #ccc;
 }
-.kittenSubmitButton:active{
+.submitNewUserButton:active{
 	transition: all 0ms;
 	-moz-transition: all 0ms; /* Firefox 4 */
 	-webkit-transition: all 0ms; /* Safari and Chrome */
@@ -141,12 +141,11 @@ input::-webkit-inner-spin-button {
 }
 #recruitsNameListHolder{
 	width: 24%;
-	float: left;
 }
 .recruitsListItem{
 	cursor: pointer;
-	height: 35px;
-	line-height: 35px;
+	height: 25px;
+	line-height: 25px;
 	position: relative;
 }
 .recruitsListItem > div{
@@ -164,7 +163,9 @@ input::-webkit-inner-spin-button {
 #recruitsDetailsHolder{
 	width: 75%;
 	margin-left: 25%;
+	padding-left: 8px;
 	overflow: auto;
+	position: absolute;
 	top: 0px;
 	right: 0px;
 	border: 1px solid black;
