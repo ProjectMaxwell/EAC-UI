@@ -128,6 +128,7 @@ function initialSetup(){
 			doLoginByPassword();
 		}
 	});
+	$('#createUserButton').click(submitUser);
 }
 
 /*********************************************************************************************
@@ -362,34 +363,61 @@ function retrieveAndPopulateUserTable(userType){
 		populateUserTable(userType);
 	}
 }
-/*function populateUserTable(){
-	maxwellClient.getUsersByType($('#userTableTypeSelect').val(), function(data){
-		var newUserText = '';
-		for(var i = 0; i < data.length; i++){
-			var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
-			var email = data[i].email == null ? '' : data[i].email;
-			newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
-			'<td><div class="userTableAssociateClass">' + associateClassId + '</div></td>' +
-			'<td><divclass="userTableEmailAddy">' + email + '</div></td>' +
-			'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
-		}
-		$('#usersListBody').empty().append(newUserText);
-	});
-	
-}*/
+
 function populateUserTable(userType){
 	var data = usersByType[userType];
 	var newUserText = '';
+	//Not sure if it's more efficient to append all table data at once, and then add onclick handlers in a second loop
+	//or to append table rows and onclick handlers in sequence
 	for(var i = 0; i < data.length; i++){
 		var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
 		var email = data[i].email == null ? '' : data[i].email;
-		newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
+		newUserText += '<tr id="userTable_user' + data[i].userId + '"><td><div class="userTableFullName"><a href="#">' + data[i].firstName + ' ' + data[i].lastName + '</a></div></td>' +
 		'<td><div class="userTableAssociateClass">' + associateClasses[associateClassId].name + '</div></td>' +
 		'<td><div class="userTableEmailAddy">' + email + '</div></td>' +
 		'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
 	}
 	$('#usersListBody').empty().append(newUserText);
+	
+	for(var i = 0; i < data.length; i++){
+/*		var userId = data[i].userId;
+		var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
+		$(userTableString).click(function(){
+			var tmpUser = tmpFunction(userId);
+			//alert(tmpUser);
+			viewUser(tmpUser,function(){
+				//populateUserTable(userType);
+				$('#contentHolder').children().not('#usersListHolder').hide();
+				$('#usersListHolder').show();
+			});
+		});*/
+		(function(userId){
+			var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
+			$(userTableString).click(function(){
+				alert(userId);
+				/*viewUser(userId,function(){
+					//populateUserTable(userType);
+					$('#contentHolder').children().not('#usersListHolder').hide();
+					$('#usersListHolder').show();
+				});*/
+			});
+		})(data[i].userId);
+	}
 }
+
+function makeUserReturnCallback(){
+	return function(tmpUserId){
+		alert(tmpUserId);
+		//return tmpUserId;
+		};
+}
+
+
+function viewUser(userId, returnButtonCallback){
+	alert("woot" + userId);
+	returnButtonCallback();
+}
+
 function retrieveAndPopulateRecruitTable(){
 	if(usersByType[5] == null || usersByType[5].length == 0){
 		maxwellClient.getUsersByType(5, function(data, responseHandler){

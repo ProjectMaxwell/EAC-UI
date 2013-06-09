@@ -385,6 +385,10 @@ input::-webkit-inner-spin-button {
 #recruitsCommentsHolder > textarea{
 	height: 50px;
 }
+#createUserButton{
+	border: 1px solid black;
+	width: 208px;
+}
 
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
