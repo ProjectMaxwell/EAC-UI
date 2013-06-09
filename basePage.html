@@ -37,13 +37,35 @@
 					</ul>
 				</div>
 				<div id="recruitsDetailsHolder">
-					<div id="recruitBlurbHolder"></div>
+					<div id="recruitBlurbHolder">
+						<div id="recruitBlurbUserData"></div>
+						<div id="recruitBlurbRecruitData"></div>
+					</div>
+					<div class="recruitDivider"></div>
 					<div id="recruitsContactHistoryListHolder">
+						<div class="addItemButtonHolder">
+							<div class="addIcon"></div><div class="addItemLabel">Add</div>
+						</div>
+						<div class="addItemHolder">
+							<div>Date: <input class="recordRecruitContactInput" type="text" id="contactTimestampInput" /></div>
+								<div>Contact type: <select id="contactTypeInput" class="recordRecruitContactInput"></select></div>
+							<div>Notes: <textarea class="recordRecruitContactInput" id="contactNotes"></textarea></div>
+							<div id="recordRecruitContactButton">Submit</div>
+						</div>
+					</div>
+					<div class="recruitDivider"></div>
+					<div id="recruitCommentsHolder">
+						<div id="addRecruitCommentHolder">
+							<div class="normalInputHolder">
+								Comment: <br /><textarea class="recordRecruitCommentInput" id="recruitComment"></textarea>
+							</div>
+							<div id="addRecruitCommentButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+						</div>
 					</div>
 				</div>
 			</div>
 			<div id="usersListHolder">
-				EAT SHIT AND DIE: <select id="userTableTypeSelect"><option value="1">Associate</option>
+				User Type: <select id="userTableTypeSelect"><option value="1">Associate</option>
 				<option value="2">Initiate</option>
 				<option value="3">Alumnus</option></select>
 				<table id="usersListTable">
@@ -107,7 +129,7 @@
 					Member Referred by: <select id="referredByMemberInput"></select>
 				</div>
 				<div id="submitHolder">
-					Enhance: <div id="kittenSubmitButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+					Create user: <div id="kittenSubmitButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
 				</div>
 			</div>	
 			<div id="newEACMeetingHolder">

@@ -1,17 +1,20 @@
 body{
 	background: url('http://evergreenalumniclub.com/images/xv.png');
+	font-family: "Lucida Sans Unicode" , "Lucida Grande" , Garuda , sans-serif;
 }
 ul{
 	-webkit-margin-before: 0px;
 	-webkit-margin-after: 0px;
 	-webkit-padding-start: 0px;
+	padding: 0px;
+	margin: 0px;
 }
 li{
 	list-style: none;
 }
 #container{
 	background: white;
-	width: 800px;
+	width: 1000px;
 	min-height: 500px;
 	margin: 50px auto;
 	padding: 10px;
@@ -41,16 +44,16 @@ li{
 	font-weight: bold;
 }
 .userTableFullName{
-	width: 205px;
+	width: 235px;
 }
 .userTableAssociateClass{
 	width: 125px;
 }
 .userTableEmailAddy{
-	width: 105px;
+	width: 305px;
 }
 .userTablePhoneNumber{
-	width: 105px;
+	width: 125px;
 }
 .sectionSelector{
 	display: inline-block;
@@ -123,42 +126,229 @@ input::-webkit-inner-spin-button {
 }
 
 /*Recruits tab*/
+.selectedRecruitListItem > div{
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	border-right: 1px solid white;
+	border-left: 1px solid black;
+	background: white;
+	z-index: 10;
+	position: absolute;
+}
 #recruitmentPageHolder{
 	display: none;
 	position: relative;
-	border: 1px solid black;
 }
 #recruitsNameListHolder{
-	width: 25%;
-	height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
-	border-right: 1px solid black;
+	width: 24%;
+	float: left;
 }
 .recruitsListItem{
 	cursor: pointer;
 	height: 35px;
 	line-height: 35px;
-	border-bottom: 1px solid black;
-}
-.recruitsListItem:hover{
-	background: grey;
+	position: relative;
 }
 .recruitsListItem > div{
-	margin: 0px 5px;
+	width: 239px;
+}
+.recruitsListItem:hover > div{
+	text-decoration: underline;
+}
+.recruitsListItem > div{
+	padding: 0px 5px;
 	white-space: nowrap;
-	width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 #recruitsDetailsHolder{
 	width: 75%;
-	position: absolute;
-	height: 100%;
+	margin-left: 25%;
 	overflow: auto;
 	top: 0px;
 	right: 0px;
+	border: 1px solid black;
 }
 #recruitsDetailsHolder > div{
-	margin: 20px;
+	margin: 5px 10px;
+}
+
+#recruitTopDivision{
+	height: 35px;
+}
+#recruitmiddleDivision{
+	margin-top: 17px;
+}
+#recruitBottomDivision{
+	max-height: 25px;
+	clear: both;
+}
+#recruitName{
+	margin-top: 5px;
+	font-size: 35px;
+	float: left;
+}
+.recruitSocialIcon{
+	width: 24px;
+	height: 24px;
+	float: right;
+	margin-top: 20px;
+	margin-right: 10px;
+}
+#recruitTopDivision > *:nth-child(2) > div{
+	margin-right: 0px;
+}
+.recruitFacebookIcon{
+	background: url('images/sprite.png') -102px 0px;
+}
+.recruitLinkedInIcon{
+	background: url('images/sprite.png') -34px 0px;
+}
+.recruitTwitterIcon{
+	background: url('images/sprite.png') -68px 0px;
+}
+.recruitGoogleIcon{
+	background: url('images/sprite.png') 0px 0px;
+}
+.recruitPhoneNumber{
+	float: left;
+}
+.recruitEmailAddress{
+	float:right
+}
+.recruitDOBLabelHolder, .recruitHSLabelHolder{
+	display: inline-block;
+	margin-left: 20px;
+}
+#recruitBottomDivision > div{
+	margin-top: 10px;
+}
+#recruitBottomDivision > div:first-child{
+	margin-left: 0px;
+}
+.recruitDOBLabel, .recruitHSLabel{
+	font-weight: bold;
+}
+.recruitDivider{
+	width: 95%;
+	height: 1px;
+	background: black;
+	margin: 10px auto;
+}
+#recruitInfoAreaTop{
+	height: 40px;
+}
+#recruitInfoAreaBottom > .recruitSmallLabel{
+	width: 100%;
+}
+.recruitSmallLabel{
+	font-size: 10px;
+	margin-right: 25px;
+}
+#recruitInfoAreaTop > .recruitSmallLabel{
+	float: left;
+}
+#recruitInfoAreaTop > .recruitSmallLabel:last-child{
+	margin-right: 0px;
+}
+.recruitLargeData{
+	font-size: 14px;
+}
+.contactViaIcon{
+	width: 16px;
+	height: 16px;
+	float: left;
+	margin-top: 2px;
+}
+.contactViaText{
+	background: url('images/sprite.png') -207px 0px;
+}
+.contactViaEmail{
+	background: url('images/sprite.png') -188px 0px;
+}
+.contactViaSocialMedia{
+	background: url('images/sprite.png') -150px 0px;
+}
+.contactViaPhone{
+	background: url('images/sprite.png') -169px 0px;
+}
+.contactViaVoicemail{
+	background: url('images/sprite.png') -132px 0px;
+}
+.recruitContactInnerHolder{
+	margin-top: 5px;
+	margin-left: 20px;
+}
+.contactHeader{
+	font-size: 10px;
+}
+.recruitContactor{
+	font-size: 14px;
+}
+#recruitCommentsHolder, #recruitsContactHistoryListHolder{
+	position: relative;
+	overflow: hidden;
+}
+.recruitCommentInnerHolder{
+	margin-top: 5px;
+	margin-left: 61px;
+}
+.recruitCommentImage{
+	width: 50px;
+	height: 50px;
+	border: 1px solid black;
+	background: url('images/sprite.png') 0px -34px;
+	float: left;
+	margin: 0px 5px 5px 0px;
+}
+.recruitCommentHeader{
+	font-size: 10px;
+}
+.recruitCommentItem{
+	min-height: 61px;
+	font-size: 14px;
+}
+.addItemButtonHolder{
+	width: 80px;
+	height: 35px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	border: 1px solid black;
+	cursor: pointer;
+	opacity: 0.5;
+}
+.addItemButtonHolder:hover{
+	opacity: 1;
+}
+.addIcon{
+	margin-top: 5px;
+	margin-left: 5px;
+	width: 24px;
+	height: 24px;
+	background: url('images/sprite.png') -70px -31px;
+	float: left;
+}
+.addItemLabel{
+	margin-top: 5px;
+	margin-left: 31px;
+	font-size: 20px;
+}
+.addItemHolder{
+	width: 320px;
+	height: 100px;
+	position: absolute;
+	top: -100px;
+	right: 0px;
+}
+#submitNewContactItem{
+	cursor: pointer;
+}
+
+
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .recruitsListItem > div{
+		width: 229px;
+	}
 }
