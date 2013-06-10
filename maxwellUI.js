@@ -11,7 +11,6 @@ var metadataOnChangeEvents = new Array();
 var metadataInitialized = false;
 
 $(document).ready(function(){
-	bradyCat();
 	initialSetup();
 	var refreshToken = getRefreshTokenCookie();
 		if(refreshToken){
@@ -37,10 +36,8 @@ $(document).ready(function(){
 		console.log("No refresh token cookie.");
 		$("#loginPane").lightbox_me();
 	}
-	//$("#loginPane").lightbox_me();
-//	joelLogin();
 });
-function bradyCat(){
+/*function bradyCat(){
 	var betweenNums = 10;
 	if(Math.floor(Math.random()*betweenNums+1) == 1){
 		var imageWidth = 200;
@@ -69,7 +66,7 @@ function bradyCat(){
 		bradyText += '</div>';
 		$('#bradyHolder').append(bradyText);
 	};
-}
+}*/
 function initialSetup(){
 	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
 	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
@@ -110,7 +107,7 @@ function initialSetup(){
 					top: '0px'
 				}, 250);
 			});
-		})
+		});
 	$('#addRecruitCommentButton').click(addRecruitComment);
 	$('#recruitCommentsHolder').find('.addItemButtonHolder').click(function(){
 		$(this).animate({
@@ -120,7 +117,7 @@ function initialSetup(){
 				top: '0px'
 			}, 250);
 		});
-	})
+	});
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
 	$('#loginFormUsername, #loginFormPassword').on('keyup', function(e){
 		var code = (e.keyCode ? e.keyCode : e.which);
@@ -380,42 +377,30 @@ function populateUserTable(userType){
 	$('#usersListBody').empty().append(newUserText);
 	
 	for(var i = 0; i < data.length; i++){
-/*		var userId = data[i].userId;
-		var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
-		$(userTableString).click(function(){
-			var tmpUser = tmpFunction(userId);
-			//alert(tmpUser);
-			viewUser(tmpUser,function(){
-				//populateUserTable(userType);
-				$('#contentHolder').children().not('#usersListHolder').hide();
-				$('#usersListHolder').show();
-			});
-		});*/
 		(function(userId){
 			var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
 			$(userTableString).click(function(){
-				alert(userId);
-				/*viewUser(userId,function(){
-					//populateUserTable(userType);
+				viewUser(userId,function(){
 					$('#contentHolder').children().not('#usersListHolder').hide();
 					$('#usersListHolder').show();
-				});*/
+				});
 			});
 		})(data[i].userId);
 	}
 }
 
-function makeUserReturnCallback(){
-	return function(tmpUserId){
-		alert(tmpUserId);
-		//return tmpUserId;
-		};
-}
-
-
 function viewUser(userId, returnButtonCallback){
-	alert("woot" + userId);
-	returnButtonCallback();
+	$('#viewUserHeader a.previous').click(returnButtonCallback);
+	$('#viewUserHeader a.edit').click(function(){alert("Switching view into edit mode.");});
+	var myObj = $('#userFormDiv');
+	$('#viewUserDiv').append(myObj);
+	myObj.show();
+	retrieveUserIfNull(userId,function(userObject){
+		$('#viewUserTitle').text("User: " + userObject.firstName + " " + userObject.lastName);
+//		populateUserEdit(userId);
+	});
+	$('#contentHolder').children().not('#viewUserHolder').hide();
+	$('#viewUserHolder').show();
 }
 
 function retrieveAndPopulateRecruitTable(){
@@ -450,7 +435,6 @@ function populateRecruitmentPage(){
 	maxwellClient.getUsersByType(5, function(data){
 		var recruitListText = '';
 		for(var i = 0; i < data.length; i++){
-			console.log
 			recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
 		}
 		if(data.length != 0){
@@ -492,7 +476,7 @@ function loadRecruitDetails(recruitId){
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
-		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
+		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;';
 		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Source:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
 		'<div class="recruitSmallLabel">Involvement Level:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
 		if(recruitObject.classStanding){recruitDetails += '<div class="recruitSmallLabel">Class:<br /><div class="recruitLargeData">' + normalTab + recruitObject.classStanding + '</div></div>';}
@@ -598,7 +582,6 @@ function loadRecruitDetails(recruitId){
 			}
 			recruitsDetailsHolder.css('opacity', 1);
 			$('#recruitsListItem' + recruitId + ' > div').css('border-right', '');
-			console.log($('#recruitsListItem' + recruitId + ' > div'));
 			$('html, body').animate({scrollTop:0}, 'slow');
 		}
 	}
@@ -808,7 +791,7 @@ function retrieveRecruitInfoIfNull(userId, additionalCallback){
 			this.recruitInfoByUserId[userId] = data;
 			additionalCallback(this.recruitInfoByUserId[userId]);
 		});
-	}
+	};
 }
 function setRefreshTokenCookie(value){
 	var exdate=new Date();

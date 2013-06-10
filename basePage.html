@@ -75,7 +75,7 @@
 						<tr>
 							<td><div class="userTableFullName">Full Name</div></td>
 							<td><div class="userTableAssociateClass">Associate Class</div></td>
-							<td><div class="userTableEmailAddy">Email Addy</div></td>
+							<td><div class="userTableEmailAddy">Email Address</div></td>
 							<td><div class="userTablePhoneNumber">Phone Number</div></td>
 						</tr>
 					</thead>
@@ -150,7 +150,36 @@
 				</div>
 				<div id="submitEventButton" class="submitNewUserButton"><img src="images/kittenGuestbook.gif" alt=""></div>
 			</div>
-			<div id="userHolder">
+			<div id="viewUserHolder">
+				<div id="viewUserHeader" class="wiz-buttons">
+					<div class="displayInline">
+						<a class="previous" href="#">
+					        <span class="arrow"></span>
+					        <span class="arrow-inner"></span>
+					        <span class="button">Return</span>
+					    </a>
+				    </div>
+				    <div id="viewUserTitle" class="displayInline">User: </div>
+					<div class="displayInline">
+						<a class="edit" href="#">
+					        <span class="button">Edit</span>
+					    </a>
+				    </div>
+				</div>
+				<div id="viewUserDiv"></div>
+			</div>
+			<div id="userFormDiv">
+				<div class="normalInputHolder">
+					First Name: <input class="newUserInput" type="text"  id="userFormFirstNameInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Last Name: <input class="newUserInput" type="text" id="userFormLastNameInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Email: <input class="newUserInput" type="email" id="userFormEmailAddressInput"/>
+				</div>
+				<input type="hidden" id="userFormCreateOrEdit" value="edit" />
+				<div id="userFormButton">Edit</div>
 			</div>
 		</div>
 	</div>
