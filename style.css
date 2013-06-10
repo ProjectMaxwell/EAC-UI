@@ -401,15 +401,32 @@ input::-webkit-inner-spin-button {
 	display: table;
 }
 
-.displayInline{
-	display: table-cell;
-}
-
 #viewUserTitle{
 	width: 79%;
 	text-align: center;
 	font-weight: bold;
 	font-size: 20px;
+}
+
+#userFormDiv{
+	display: none;
+}
+
+.userForm_edit{
+	display: none;
+}
+
+.userForm_create{
+	display: none;
+}
+
+#userFormButton{
+	border: 1px solid black;
+	width: 208px;
+}
+
+.displayInline{
+	display: table-cell;
 }
 
 /* Wiz Buttons */

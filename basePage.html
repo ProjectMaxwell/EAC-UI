@@ -161,7 +161,7 @@
 				    </div>
 				    <div id="viewUserTitle" class="displayInline">User: </div>
 					<div class="displayInline">
-						<a class="edit" href="#">
+						<a class="edit" id="viewUserEditButton" href="#">
 					        <span class="button">Edit</span>
 					    </a>
 				    </div>
@@ -170,15 +170,66 @@
 			</div>
 			<div id="userFormDiv">
 				<div class="normalInputHolder">
-					First Name: <input class="newUserInput" type="text"  id="userFormFirstNameInput"/>
+					First Name: <span class="userForm_view" id="userFormFirstNameSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormFirstNameInput"/>
 				</div>
 				<div class="normalInputHolder">
-					Last Name: <input class="newUserInput" type="text" id="userFormLastNameInput"/>
+					Last Name: <span class="userForm_view" id="userFormLastNameSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormLastNameInput"/>
 				</div>
 				<div class="normalInputHolder">
-					Email: <input class="newUserInput" type="email" id="userFormEmailAddressInput"/>
+					Email: <span class="userForm_view" id="userFormEmailAddressSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="email" id="userFormEmailAddressInput"/>
 				</div>
-				<input type="hidden" id="userFormCreateOrEdit" value="edit" />
+				<div class="normalInputHolder">
+					Year Initiated: <span class="userForm_view" id="userFormYearInitiatedSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormYearInitiatedInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Year Graduated: <span class="userForm_view" id="userFormYearGraduatedSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormYearGraduatedInput"/>
+				</div>
+				<div class="normalInputHolder">
+					Associate Class: <span class="userForm_view" id="userFormAssociateClassSpan"></span>
+					<select class="newUserInput userForm_create userForm_edit" id="userFormAssociateClassInput"></select>
+				</div>
+				<div class="normalInputHolder">
+					Chapter: <span class="userForm_view" id="userFormChapterSpan"></span>
+					<select class="newUserInput userForm_create userForm_edit" id="userFormChapterInput"></select>
+				</div>
+				<div class="normalInputHolder">
+					User Type: <span class="userForm_view" id="userFormUserTypeSpan"></span>
+					<select class="newUserInput userForm_create userForm_edit" id="userFormUserTypeInput"></select>
+				</div>
+				<div class="normalInputHolder">
+					Pin: <span class="userForm_view" id="userFormPinSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="number" id="userFormPinInput">
+				</div>
+				<div class="normalInputHolder">
+					Google Account URL: <span class="userForm_view" id="userFormGoogleSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="number" id="userFormGoogleInput">
+				</div>
+				<div class="normalInputHolder">
+					LinkedIn URL: <span class="userForm_view" id="userFormLinkedInSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormLinkedInInput">
+				</div>
+				<div class="normalInputHolder">
+					Facebook URL: <span class="userForm_view" id="userFormFacebookSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormFacebookInput">
+				</div>
+				<div class="normalInputHolder">
+					Twitter URL: <span class="userForm_view" id="userFormTwitterSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormTwitterInput">
+				</div>
+				<div class="normalInputHolder">
+					Highschool: <span class="userForm_view" id="userFormHighschoolSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormHighschoolInput">
+				</div>
+				<div class="normalInputHolder">
+					Date of Birth: <span class="userForm_view" id="userFormDateOfBirthSpan"></span>
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormDateOfBirthInput">
+				</div>
+				<input type="hidden" id="userFormCreateOrEdit" value="view" />
 				<div id="userFormButton">Edit</div>
 			</div>
 		</div>

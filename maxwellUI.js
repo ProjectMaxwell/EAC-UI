@@ -126,6 +126,8 @@ function initialSetup(){
 		}
 	});
 	$('#createUserButton').click(submitUser);
+	
+	//$('#userFormAssociateClassInput').chosen();
 }
 
 /*********************************************************************************************
@@ -222,6 +224,9 @@ function initializeOnChangeHandlers(){
 			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
 		});*/
 		$("#associateClassInput").val(associateClasses.length -1);
+		
+		$('#userFormAssociateClassInput').html(associateClassString);
+//		$("#userFormAssociateClassInput").trigger("liszt:updated");
 	};
 	
 	//Chapter event handlers
@@ -241,6 +246,8 @@ function initializeOnChangeHandlers(){
 			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
 		});*/
 		$("#chapterNameInput").val(41);
+		
+		$('#userFormChapterInput').html(chapterString);
 	};
 	
 	//UserType event handlers
@@ -258,6 +265,8 @@ function initializeOnChangeHandlers(){
 		/*.chosen().change(function(){
 			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
 		});*/
+		
+		$('#userFormUserTypeInput').html(userTypeString);
 	};
 	
 	//RecruitContactType event handlers
@@ -391,16 +400,112 @@ function populateUserTable(userType){
 
 function viewUser(userId, returnButtonCallback){
 	$('#viewUserHeader a.previous').click(returnButtonCallback);
-	$('#viewUserHeader a.edit').click(function(){alert("Switching view into edit mode.");});
+
+	//Move this one out of this function?
+	$('#viewUserHeader a.edit').click(function(){
+		if($('#userFormCreateOrEdit').val() == "view"){
+			updateUserFormMode(1);
+			$('#userFormCreateOrEdit').val("edit");
+			$('#viewUserEditButton .button').empty().append("Discard");
+		}else if($('#userFormCreateOrEdit').val() == "edit"){
+			updateUserFormMode(0);
+			$('#userFormCreateOrEdit').val("view");
+			$('#viewUserEditButton .button').empty().append("Edit");
+		}else{
+			console.log("User form is currently in unknown state and cannot be swapped.");
+		}
+	});
 	var myObj = $('#userFormDiv');
 	$('#viewUserDiv').append(myObj);
 	myObj.show();
 	retrieveUserIfNull(userId,function(userObject){
 		$('#viewUserTitle').text("User: " + userObject.firstName + " " + userObject.lastName);
-//		populateUserEdit(userId);
+		populateUserForm(userObject);
 	});
 	$('#contentHolder').children().not('#viewUserHolder').hide();
 	$('#viewUserHolder').show();
+}
+
+function populateUserForm(userObject){
+	console.log(userObject);
+	if(userObject.firstName){
+		$('#userFormFirstNameInput').empty().val(userObject.firstName);
+		$('#userFormFirstNameSpan').empty().append(userObject.firstName);
+	}
+	if(userObject.lastName){
+		$('#userFormLastNameInput').empty().val(userObject.lastName);
+		$('#userFormLastNameSpan').empty().append(userObject.lastName);
+	}
+	if(userObject.email){
+		$('#userFormEmailAddressInput').empty().val(userObject.email);
+		$('#userFormEmailAddressSpan').empty().append(userObject.email);
+	}
+	if(userObject.yearInitiated){
+		$('#userFormYearInitiatedInput').empty().val(userObject.yearInitiated);
+		$('#userFormYearInitiatedSpan').empty().append(userObject.yearInitiated);
+	}
+	if(userObject.yearGraduated){
+		$('#userFormYearGraduatedInput').empty().val(userObject.yearGraduated);
+		$('#userFormYearGraduatedSpan').empty().append(userObject.yearGraduated);
+	}
+	if(userObject.associateClassId){
+		$('#userFormAssociateClassInput').val(userObject.associateClassId);
+		$('#userFormAssociateClassSpan').empty().append(associateClasses[userObject.associateClassId].name);
+	}
+	if(userObject.chapterId){
+		$('#userFormChapterInput').val(userObject.chapterId);
+		$('#userFormChapterSpan').empty().append(chapters[userObject.chapterId].name);
+	}
+	if(userObject.userTypeId){
+		$('#userFormUserTypeInput').val(userObject.userTypeId);
+		$('#userFormUserTypeSpan').empty().append(userTypes[userObject.userTypeId].name);
+	}
+	if(userObject.pin){
+		$('#userFormPinInput').empty().val(userObject.pin);
+		$('#userFormPinSpan').empty().append(userObject.pin);
+	}
+	if(userObject.googleAccountId){
+		$('#userFormGoogleInput').empty().val(userObject.googleAccountId);
+		$('#userFormGoogleSpan').empty().append(userObject.googleAccountId);
+	}
+	if(userObject.facebookId){
+		$('#userFormFacebookInput').empty().val(userObject.facebookId);
+		$('#userFormFacebookSpan').empty().append(userObject.facebookId);
+	}
+	if(userObject.linkedInId){
+		$('#userFormLinkedInInput').empty().val(userObject.linkedInId);
+		$('#userFormLinkedInSpan').empty().append(userObject.linkedInId);
+	}
+	if(userObject.twitterId){
+		$('#userFormTwitterInput').empty().val(userObject.twitterId);
+		$('#userFormTwitterSpan').empty().append(userObject.twitterId);
+	}
+	if(userObject.highschool){
+		$('#userFormHighschoolInput').empty().val(userObject.highschool);
+		$('#userFormHighschoolSpan').empty().append(userObject.highschool);
+	}
+	if(userObject.dateOfBirth){
+		$('#userFormDateOfBirthInput').empty().val(userObject.dateOfBirth);
+		$('#userFormDateOfBirthSpan').empty().append(userObject.dateOfBirth);
+	}
+	if(userObject.userId){
+		$('#userFormUserIdInput').empty().val(userObject.userId);
+	}
+	
+}
+
+function updateUserFormMode(userFormMode){
+	if(userFormMode == 0){
+		$('#userFormDiv .userForm_create').hide();
+		$('#userFormDiv .userForm_edit').hide();
+		$('#userFormDiv .userForm_view').show();
+	}else if(userFormMode == 1){
+		$('#userFormDiv .userForm_create').hide();
+		$('#userFormDiv .userForm_view').hide();
+		$('#userFormDiv .userForm_edit').show();
+	}else{
+		console.log("Unknown mode for user form.");
+	}
 }
 
 function retrieveAndPopulateRecruitTable(){
