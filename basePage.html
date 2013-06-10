@@ -20,13 +20,13 @@
 			<div class="normalInputHolder">
 				Password: <input type="password" id="loginFormPassword" class="loginFormInput" />
 			</div>
-			<div id="submitPasswordLoginButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+			<div id="submitPasswordLoginButton" class="submitNewUserButton"><img src="images/kittenGuestbook.gif" alt=""></div>
 		</div>
 	</div>
 	<div id="container">
 		<div id="navHolder">
 			<div class="sectionSelector" id="usersList">Users List</div>
-			<div class="sectionSelector" id="newUser">New Users</div>
+			<div class="sectionSelector" id="newUser">New Recruits</div>
 			<div class="sectionSelector" id="newEACMeeting" style="display: none;">New EAC Meeting</div>
 			<div class="sectionSelector" id="recruitPage">Recruitment</div>
 		</div>
@@ -130,9 +130,10 @@
 				<div class="normalInputHolder">
 					Member Referred by: <select id="referredByMemberInput"></select>
 				</div>
-				<div id="submitHolder">
-					Create user: <div id="kittenSubmitButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+				<div class="addItemButtonHolder">
+					<div class="addIcon"></div><div class="addItemLabel">Add</div>
 				</div>
+				<div id="createUserButton">Submit</div>
 			</div>	
 			<div id="newEACMeetingHolder">
 				<div class="normalInputHolder">
@@ -147,7 +148,9 @@
 				<div class="normalInputHolder">
 					Event Date(Unix Timestamp): <input type="text" id="eventDate" class="createEACMeetingInput"/>
 				</div>
-				<div id="submitEventButton" class="kittenSubmitButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+				<div id="submitEventButton" class="submitNewUserButton"><img src="images/kittenGuestbook.gif" alt=""></div>
+			</div>
+			<div id="userHolder">
 			</div>
 		</div>
 	</div>

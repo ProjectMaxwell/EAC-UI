@@ -11,6 +11,7 @@ var metadataOnChangeEvents = new Array();
 var metadataInitialized = false;
 
 $(document).ready(function(){
+	bradyCat();
 	initialSetup();
 	var refreshToken = getRefreshTokenCookie();
 		if(refreshToken){
@@ -39,13 +40,42 @@ $(document).ready(function(){
 	//$("#loginPane").lightbox_me();
 //	joelLogin();
 });
+function bradyCat(){
+	var betweenNums = 10;
+	if(Math.floor(Math.random()*betweenNums+1) == 1){
+		var imageWidth = 200;
+		var imageHeight = 150;
+		$('body').css('background', 'none');
+		var bradyCat = '<style>' +
+			'#bradyHolder{ width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: -1; overflow: hidden;}' +
+			'.bradyRow{ height: ' + imageHeight + '; position: relative; overflow: hidden;}' +
+			'.bradyImage{ display: block; position: absolute; width: ' + imageWidth + '; height: ' + imageHeight + '; top: 0px; }' +
+			'</style>' +
+			'<div id="bradyHolder"></div>';
+		$('body').append(bradyCat);
+		var columns = ($('body').width()/200) + 1;
+		var rows = ($('body').height()/150) + 1;
+		console.log(columns);
+		console.log(rows)
+		var bradyText = '';
+		for(var i = 0; i < rows; i++){
+			bradyText += '<div class="bradyRow">';
+			for(var m = 0; m < columns; m++){
+				console.log(i)
+				bradyText += '<img class="bradyImage" style="left: ' + (m*imageWidth) + 'px;" src="https://students.washington.edu/phitau/images/brady_kiteh_small.jpg" />';
+			}
+			bradyText += '</div>';
+		}
+		bradyText += '</div>';
+		$('#bradyHolder').append(bradyText);
+	};
+}
 function initialSetup(){
 	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
 	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
 	initializeOnChangeHandlers();
 	$('#newUser').click(function(){
 		$('#contentHolder').children().not('#createUsersHolder').hide();
-		getNewUserData();
 		setNewUserValues();
 		$('#createUsersHolder').show();
 	});
@@ -82,15 +112,23 @@ function initialSetup(){
 			});
 		})
 	$('#addRecruitCommentButton').click(addRecruitComment);
-		$('#recruitCommentsHolder').find('.addItemButtonHolder').click(function(){
-			$(this).animate({
-				top: '-40px'
-			}, 250, function(){
-				$('#recruitCommentsHolder').find('.addItemHolder').animate({
-					top: '0px'
-				}, 250);
-			});
-		})
+	$('#recruitCommentsHolder').find('.addItemButtonHolder').click(function(){
+		$(this).animate({
+			top: '-40px'
+		}, 250, function(){
+			$('#recruitCommentsHolder').find('.addItemHolder').animate({
+				top: '0px'
+			}, 250);
+		});
+	})
+	$('#submitPasswordLoginButton').click(doLoginByPassword);
+	$('#loginFormUsername, #loginFormPassword').on('keyup', function(e){
+		var code = (e.keyCode ? e.keyCode : e.which);
+		if(code == 13 && $('#loginFormUsername').val() != "" && $('#loginFormPassword').val() != ""){
+			doLoginByPassword();
+		}
+	});
+	$('#createUserButton').click(submitUser);
 }
 
 /*********************************************************************************************
@@ -108,7 +146,7 @@ function doLoginByPassword(){
 				$("#loginPane").trigger("close");
 				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
 				
-				$(".loginFormInput").val(null);
+				$(".loginFormInput").val("");
 				setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
 				//These variables are here because this is an asynchronous wait timer,
 				//and phiAuthClient is liable to change in the time before the timer is triggered
@@ -122,7 +160,7 @@ function doLoginByPassword(){
 				}
 			},function(data,statusCode,responseHandler){
 				$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
-				$("#loginFormPassword").val(null);
+				$("#loginFormPassword").val("");
 			});
 }
 
@@ -309,13 +347,6 @@ function initializeMetadata(){
 	$('#recruitPage').click();
 }
 
-
-function getNewUserData(){
-	//I don't know what this is, but it's certainly not the right way to be doing whatever it is
-	/*getDatas({'referredBy': true, referredByID: 1});
-	getDatas({'referredBy': true, referredByID: 2});
-	getDatas({'referredBy': true, referredByID: 3});*/
-}
 /**
  * This function is used to make sure we aren't repeatedly hitting the server to retrieve users lists that we already have
  * @param userType
@@ -332,34 +363,61 @@ function retrieveAndPopulateUserTable(userType){
 		populateUserTable(userType);
 	}
 }
-/*function populateUserTable(){
-	maxwellClient.getUsersByType($('#userTableTypeSelect').val(), function(data){
-		var newUserText = '';
-		for(var i = 0; i < data.length; i++){
-			var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
-			var email = data[i].email == null ? '' : data[i].email;
-			newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
-			'<td><div class="userTableAssociateClass">' + associateClassId + '</div></td>' +
-			'<td><divclass="userTableEmailAddy">' + email + '</div></td>' +
-			'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
-		}
-		$('#usersListBody').empty().append(newUserText);
-	});
-	
-}*/
+
 function populateUserTable(userType){
 	var data = usersByType[userType];
 	var newUserText = '';
+	//Not sure if it's more efficient to append all table data at once, and then add onclick handlers in a second loop
+	//or to append table rows and onclick handlers in sequence
 	for(var i = 0; i < data.length; i++){
 		var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
 		var email = data[i].email == null ? '' : data[i].email;
-		newUserText += '<tr><td><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></td>' +
+		newUserText += '<tr id="userTable_user' + data[i].userId + '"><td><div class="userTableFullName"><a href="#">' + data[i].firstName + ' ' + data[i].lastName + '</a></div></td>' +
 		'<td><div class="userTableAssociateClass">' + associateClasses[associateClassId].name + '</div></td>' +
 		'<td><div class="userTableEmailAddy">' + email + '</div></td>' +
 		'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
 	}
 	$('#usersListBody').empty().append(newUserText);
+	
+	for(var i = 0; i < data.length; i++){
+/*		var userId = data[i].userId;
+		var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
+		$(userTableString).click(function(){
+			var tmpUser = tmpFunction(userId);
+			//alert(tmpUser);
+			viewUser(tmpUser,function(){
+				//populateUserTable(userType);
+				$('#contentHolder').children().not('#usersListHolder').hide();
+				$('#usersListHolder').show();
+			});
+		});*/
+		(function(userId){
+			var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
+			$(userTableString).click(function(){
+				alert(userId);
+				/*viewUser(userId,function(){
+					//populateUserTable(userType);
+					$('#contentHolder').children().not('#usersListHolder').hide();
+					$('#usersListHolder').show();
+				});*/
+			});
+		})(data[i].userId);
+	}
 }
+
+function makeUserReturnCallback(){
+	return function(tmpUserId){
+		alert(tmpUserId);
+		//return tmpUserId;
+		};
+}
+
+
+function viewUser(userId, returnButtonCallback){
+	alert("woot" + userId);
+	returnButtonCallback();
+}
+
 function retrieveAndPopulateRecruitTable(){
 	if(usersByType[5] == null || usersByType[5].length == 0){
 		maxwellClient.getUsersByType(5, function(data, responseHandler){
@@ -374,16 +432,19 @@ function populateRecruitTable(){
 	var data = usersByType[5];
 	var recruitListText = '';
 	for(var i = 0; i < data.length; i++){
-		recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem" onClick="loadRecruitDetails(' + data[i]['userId'] + ');"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
+		recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
 	}
+	
 	$('#recruitsNameList').empty().append(recruitListText);
+	$('#recruitsNameList').find('li').click(function(){
+		loadRecruitDetails($(this).attr('id').substring(16));
+	});
 	if(data.length != 0){
-		$('#recruitsNameList').children().first().click();
+		loadRecruitDetails(data[0]['userId']);
 		$('.addItemButtonHolder').show();
 	}else{
 		$('.addItemButtonHolder').hide();
 	}
-	$('.recordRecruitContactInput').val('');
 }
 function populateRecruitmentPage(){
 	maxwellClient.getUsersByType(5, function(data){
@@ -399,9 +460,15 @@ function populateRecruitmentPage(){
 	});
 }
 function loadRecruitDetails(recruitId){
+	var recruitFirstBlurbCheck = false;
+	var recruitSecondBlurbCheck = false;
+	var recruitContactCheck = false;
+	var recruitsCommentCheck = false;
+	var recruitsDetailsHolder = $('#recruitsDetailsHolder');
+	recruitsDetailsHolder.hide();
+	$('#recruitsListItem' + recruitId + ' > div').css('border-right', '1px solid black');
 	$('li.recruitsListItem').removeClass('selectedRecruitListItem');
 	$('#recruitsListItem' + recruitId).addClass('selectedRecruitListItem');
-	$('#recruitsDetailsHolder').show();
 	$('#recruitBlurbUserData, #recruitBlurbRecruitData, #recruitsContactHistoryListHolder, #recruitCommentsHolder').children().not('#recordRecruitContactHolder, #addRecruitCommentHolder, .addItemButtonHolder, .addItemHolder').remove();
 	$('.addItemButtonHolder, .addItemHolder').removeAttr('style');
 	$('.addItemHolder').find('input, textarea').val('');
@@ -420,10 +487,11 @@ function loadRecruitDetails(recruitId){
 		if(userObject.highschool){userDetails +='<div class="recruitHSLabelHolder"><span class="recruitHSLabel">HS:</span> ' + userObject.highschool + '</div>';}
 		userDetails += '</div>';
 		$('#recruitBlurbUserData').append(userDetails);
+		recruitFirstBlurbCheck = true;
+		showRecruitDetails();
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
-		console.log(recruitObject.recruitSourceId);
 		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
 		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Source:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
 		'<div class="recruitSmallLabel">Involvement Level:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
@@ -437,6 +505,8 @@ function loadRecruitDetails(recruitId){
 		if(recruitObject.expectations){recruitDetails += '<div class="recruitSmallLabel">expectations:<br /><div class="recruitLargeData">' + normalTab + recruitObject.expectations + '</div></div>';}
 		if(recruitObject.extracurriculars){recruitDetails += '<div class="recruitSmallLabel">extracurriculars:<br /><div class="recruitLargeData">' + normalTab + recruitObject.extracurriculars + '</div></div>';}
 		$('#recruitBlurbRecruitData').append(recruitDetails);
+		recruitSecondBlurbCheck = true;
+		showRecruitDetails();
 	});
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitId, function(data){
 		if(data.length == 0){
@@ -469,13 +539,25 @@ function loadRecruitDetails(recruitId){
 			}
 			recruitContactUL.append(recruitListText);
 			$('#recruitsContactHistoryListHolder').prepend(recruitContactUL);
-			
+			$('#recordRecruitContactButton').click(recordRecruitContact);
+			$('#recruitsContactHistoryListHolder').find('.addItemButtonHolder').click(function(){
+				$(this).animate({
+					top: '-40px'
+				}, 250, function(){
+					$('#recruitsContactHistoryListHolder').find('.addItemHolder').animate({
+						top: '0px'
+					}, 250);
+				});
+			});
+
 			for(var i = 0; i < recruitContactors.length; i++){
 				retrieveUserIfNull(recruitContactors[i],function(userObject){
 					$('.recruitContactorUserId-' + userObject['userId']).text(userObject.firstName + ' ' + userObject.lastName);
 				});
 			}
 		}
+		recruitContactCheck = true;
+		showRecruitDetails();
 	});
 	maxwellClient.getRecruitCommentsByRecruitUserId(recruitId, function(data, responseHandler){
 		if(data == null || data.length == 0){
@@ -503,16 +585,45 @@ function loadRecruitDetails(recruitId){
 				});
 			});
 		}
+		recruitsCommentCheck = true;
+		showRecruitDetails();
 	});
+	function showRecruitDetails(){
+		if(recruitFirstBlurbCheck && recruitSecondBlurbCheck && recruitContactCheck && recruitsCommentCheck){
+			var selectedRecruit = $('.selectedRecruitListItem');
+			recruitsDetailsHolder.css('opacity', 0).show();
+			//Stretches the box to line up with a user if the user is low on the list.
+			if($('.selectedRecruitListItem').offset().top + $('.selectedRecruitListItem').height() > $('#recruitsDetailsHolder').offset().top + $('#recruitsDetailsHolder').height()){
+				recruitsDetailsHolder.css('height', selectedRecruit.offset().top + selectedRecruit.height() - recruitsDetailsHolder.offset().top);
+			}
+			recruitsDetailsHolder.css('opacity', 1);
+			$('#recruitsListItem' + recruitId + ' > div').css('border-right', '');
+			console.log($('#recruitsListItem' + recruitId + ' > div'));
+			$('html, body').animate({scrollTop:0}, 'slow');
+		}
+	}
 }
-function setNewUserValues(){
-	$('#referredByMemberInput').chosen();
-	$('#kittenSubmitButton').click(submitUser);
+function setNewUserValues(editUser){
+	if($('#referredByMemberInput').children().length != 0){
+		$('#referredByMemberInput').chosen();
+		$('#referredByMemberInput').parent().show();
+	}else{
+		$('#referredByMemberInput').parent().hide();
+	}
+	
+	if(editUser){
+		$('#submitNewUserButton').click(editUser);
+	}else{
+		$('#submitNewUserButton').click(submitUser);
+	}
+	
 	/*$('#associateClassInput').chosen().change(function(){
 		console.log($(this).val())
 	});*/
 }
-
+function editUser(){
+	//Maybe just do a submitUser and if X things are the same it updates instead of creates? I dunno.
+}
 function submitUser(){
 	var errorList = new Array();
 	var userData = new Object;
@@ -554,19 +665,6 @@ function submitUser(){
 	
 	userData['referredById'] = $('#referredByMemberInput').val() || null;
 
-	
-	/*if(errorList.length == 0){
-		var userPin = prompt("WHAT YOU PIN NUMBA, DOCTA JONES?")
-	}
-	if(userPin != null && userPin.length != 0 && !isNaN(userPin)){
-		var password = prompt("PASSWERD");
-		getUserToken(userData, userPin, password);
-	}else if(userPin != null){
-		var checkTryAgain = confirm("Pin has to be a number, fool. Try again?");
-		if(checkTryAgain){
-			submitUser();
-		}
-	}else{*/
 	if(errorList.length > 0){
 		var errorString = "Please resolve the following profile issues: \n";
 		for(var i = 0; i < errorList.length; i++){
@@ -576,6 +674,7 @@ function submitUser(){
 	}else{
 		maxwellClient.createUser(userData, function(data, responseHandler){
 			console.log(data);
+			$('#submitNewUserButton').unbind('click');
 		});
 	}
 }
@@ -603,8 +702,7 @@ function recordRecruitContact(){
 	recruitContactObject.contactTimestamp = parseInt(new Date().getTime()/1000);
 	recruitContactObject.recruitContactTypeId = $('#contactTypeInput').val();
 	recruitContactObject.notes = notes.length < 1 ? null : notes;
-	console.log(recruitContactObject);
-		maxwellClient.recordRecruitContact(recruitContactObject, function(responseObject, responseHandler){
+	maxwellClient.recordRecruitContact(recruitContactObject, function(responseObject, responseHandler){
 		console.log(responseObject);
 		$('#contactNotes').val('');
 		loadRecruitDetails(recruitContactObject.recruitUserId);
