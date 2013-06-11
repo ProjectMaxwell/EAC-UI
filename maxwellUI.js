@@ -128,6 +128,29 @@ function initialSetup(){
 	$('#createUserButton').click(submitUser);
 	
 	//$('#userFormAssociateClassInput').chosen();
+	
+	$('#viewUserHeader a.edit .button').click(function(){
+		if($('#userFormCreateOrEdit').val() == "view"){
+			updateUserFormMode(1);
+			$('#userFormCreateOrEdit').val("edit");
+			$('#viewUserEditButton a.edit .button').empty().append("Discard");
+		}else if($('#userFormCreateOrEdit').val() == "edit"){
+			updateUserFormMode(0);
+			$('#userFormCreateOrEdit').val("view");
+			$('#viewUserEditButton a.edit .button').empty().append("Edit");
+		}else{
+			console.log("User form is currently in unknown state and cannot be swapped.");
+		}
+	});
+	$('#userFormButton').click(function(){
+		if($('#userFormCreateOrEdit').val() == "edit"){
+			console.log("Building edited profile.");
+			var userToEdit = buildUserToEdit();
+			console.log(userToEdit);
+		}else{
+			console.log("User form is not in edit mode, and therefore this button cannot be used.");
+		}
+	});
 }
 
 /*********************************************************************************************
@@ -378,10 +401,11 @@ function populateUserTable(userType){
 	for(var i = 0; i < data.length; i++){
 		var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
 		var email = data[i].email == null ? '' : data[i].email;
+		var phoneNumber = data[i].phoneNumber == null ? '' : data[i].phoneNumber;
 		newUserText += '<tr id="userTable_user' + data[i].userId + '"><td><div class="userTableFullName"><a href="#">' + data[i].firstName + ' ' + data[i].lastName + '</a></div></td>' +
 		'<td><div class="userTableAssociateClass">' + associateClasses[associateClassId].name + '</div></td>' +
 		'<td><div class="userTableEmailAddy">' + email + '</div></td>' +
-		'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
+		'<td><div class="userTablePhoneNumber">' + phoneNumber + '</div></td></tr>';
 	}
 	$('#usersListBody').empty().append(newUserText);
 	
@@ -401,33 +425,34 @@ function populateUserTable(userType){
 function viewUser(userId, returnButtonCallback){
 	$('#viewUserHeader a.previous').click(returnButtonCallback);
 
-	//Move this one out of this function?
-	$('#viewUserHeader a.edit').click(function(){
-		if($('#userFormCreateOrEdit').val() == "view"){
-			updateUserFormMode(1);
-			$('#userFormCreateOrEdit').val("edit");
-			$('#viewUserEditButton .button').empty().append("Discard");
-		}else if($('#userFormCreateOrEdit').val() == "edit"){
-			updateUserFormMode(0);
-			$('#userFormCreateOrEdit').val("view");
-			$('#viewUserEditButton .button').empty().append("Edit");
-		}else{
-			console.log("User form is currently in unknown state and cannot be swapped.");
-		}
-	});
+	//Set the form to be in "view" mode by default
+	updateUserFormMode(0);
+	$('#userFormCreateOrEdit').val("view");
+	$('#viewUserEditButton a.edit .button').empty().append("Edit");
+	
 	var myObj = $('#userFormDiv');
 	$('#viewUserDiv').append(myObj);
 	myObj.show();
 	retrieveUserIfNull(userId,function(userObject){
 		$('#viewUserTitle').text("User: " + userObject.firstName + " " + userObject.lastName);
+		$('input.newUserInput').val(null);
+		$('span.newUserSpan').empty();
+		$('select.newUserInput').val(0);
 		populateUserForm(userObject);
 	});
 	$('#contentHolder').children().not('#viewUserHolder').hide();
 	$('#viewUserHolder').show();
 }
 
+function buildUserToEdit(){
+	var userToEdit = new Object();
+	userToEdit.firstName = 'Erock';
+	userToEdit.lastName = 'Steady';
+	userToEdit.email = 'Erocksteady@evergreenalumniclub.com';
+	return userToEdit;
+}
+
 function populateUserForm(userObject){
-	console.log(userObject);
 	if(userObject.firstName){
 		$('#userFormFirstNameInput').empty().val(userObject.firstName);
 		$('#userFormFirstNameSpan').empty().append(userObject.firstName);
@@ -439,6 +464,10 @@ function populateUserForm(userObject){
 	if(userObject.email){
 		$('#userFormEmailAddressInput').empty().val(userObject.email);
 		$('#userFormEmailAddressSpan').empty().append(userObject.email);
+	}
+	if(userObject.phoneNumber){
+		$('#userFormPhoneNumberInput').empty().val(userObject.phoneNumber);
+		$('#userFormPhoneNumberSpan').empty().append(userObject.phoneNumber);
 	}
 	if(userObject.yearInitiated){
 		$('#userFormYearInitiatedInput').empty().val(userObject.yearInitiated);
