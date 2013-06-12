@@ -425,6 +425,11 @@ input::-webkit-inner-spin-button {
 	width: 208px;
 }
 
+#userFormButton.disabled{
+	border: 1px solid gray;
+	color: gray;
+}
+
 .displayInline{
 	display: table-cell;
 }

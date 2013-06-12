@@ -134,10 +134,14 @@ function initialSetup(){
 			updateUserFormMode(1);
 			$('#userFormCreateOrEdit').val("edit");
 			$('#viewUserEditButton a.edit .button').empty().append("Discard");
+			console.log("showing button as enabled");
+			$('#userFormButton').removeClass('disabled');
 		}else if($('#userFormCreateOrEdit').val() == "edit"){
 			updateUserFormMode(0);
 			$('#userFormCreateOrEdit').val("view");
 			$('#viewUserEditButton a.edit .button').empty().append("Edit");
+			console.log("showing button as disabled");
+			$('#userFormButton').addClass('disabled');
 		}else{
 			console.log("User form is currently in unknown state and cannot be swapped.");
 		}
@@ -146,9 +150,11 @@ function initialSetup(){
 		if($('#userFormCreateOrEdit').val() == "edit"){
 			console.log("Building edited profile.");
 			var userToEdit = buildUserToEdit();
+			//TODO: probably do some clientside validation here
 			console.log(userToEdit);
+			maxwellClient.updateUser(userToEdit, updateAfterUserEdit);
 		}else{
-			console.log("User form is not in edit mode, and therefore this button cannot be used.");
+			console.log("User form is not in edit mode, and no other modes are currently supported, and therefore this button cannot be used.");
 		}
 	});
 }
@@ -429,6 +435,7 @@ function viewUser(userId, returnButtonCallback){
 	updateUserFormMode(0);
 	$('#userFormCreateOrEdit').val("view");
 	$('#viewUserEditButton a.edit .button').empty().append("Edit");
+	$('#userFormButton').addClass('disabled');
 	
 	var myObj = $('#userFormDiv');
 	$('#viewUserDiv').append(myObj);
@@ -446,10 +453,29 @@ function viewUser(userId, returnButtonCallback){
 
 function buildUserToEdit(){
 	var userToEdit = new Object();
-	userToEdit.firstName = 'Erock';
-	userToEdit.lastName = 'Steady';
-	userToEdit.email = 'Erocksteady@evergreenalumniclub.com';
+	if($('#userFormFirstNameInput').val() && $('#userFormFirstNameInput').val() != ''){userToEdit.firstName = $('#userFormFirstNameInput').val();}
+	if($('#userFormLastNameInput').val() && $('#userFormLastNameInput').val() != ''){userToEdit.lastName = $('#userFormLastNameInput').val();}
+	if($('#userFormEmailAddressInput').val() && $('#userFormEmailAddressInput').val() != ''){userToEdit.email = $('#userFormEmailAddressInput').val();}
+	if($('#userFormPhoneNumberInput').val() && $('#userFormPhoneNumberInput').val() != ''){userToEdit.phoneNumber = $('#userFormPhoneNumberInput').val();}
+	if($('#userFormYearInitiatedInput').val() && $('#userFormYearInitiatedInput').val() != ''){userToEdit.yearInitiated = $('#userFormYearInitiatedInput').val();}
+	if($('#userFormYearGraduatedInput').val() && $('#userFormYearGraduatedInput').val() != ''){userToEdit.yearGraduated = $('#userFormYearGraduatedInput').val();}
+	if($('#userFormChapterInput').val() && $('#userFormChapterInput').val() != 0){userToEdit.chapterId = $('#userFormChapterInput').val();}
+	if($('#userFormAssociateClassInput').val() && $('#userFormAssociateClassInput').val() != 0){userToEdit.associateClassId = $('#userFormAssociateClassInput').val();}
+	if($('#userFormPinInput').val() && $('#userFormPinInput').val() != ''){userToEdit.pin = $('#userFormPinInput').val();}
+	if($('#userFormLinkedInInput').val() && $('#userFormLinkedInInput').val() != ''){userToEdit.linkedInId = $('#userFormLinkedInInput').val();}
+	if($('#userFormFacebookInput').val() && $('#userFormFacebookInput').val() != ''){userToEdit.facebookId = $('#userFormFacebookInput').val();}
+	if($('#userFormTwitterInput').val() && $('#userFormTwitterInput').val() != ''){userToEdit.twitterId = $('#userFormTwitterInput').val();}
+	if($('#userFormGoogleInput').val() && $('#userFormGoogleInput').val() != ''){userToEdit.googleAccountId = $('#userFormGoogleInput').val();}
+	if($('#userFormHighschoolInput').val() && $('#userFormHighschoolInput').val() != ''){userToEdit.highschool = $('#userFormHighschoolInput').val();}
+	if($('#userFormDateOfBirthInput').val() && $('#userFormDateOfBirthInput').val() != ''){userToEdit.dateOfBirth = $('#userFormDateOfBirthInput').val();}
+	userToEdit.userId = $('#userFormUserIdInput').val();
+	userToEdit.userTypeId = $('#userFormUserTypeInput').val();
 	return userToEdit;
+}
+
+function updateAfterUserEdit(data,responseHandler){
+	alert('woot2');
+	console.log(data);
 }
 
 function populateUserForm(userObject){
