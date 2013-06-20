@@ -132,16 +132,16 @@ function initialSetup(){
 	$('#viewUserHeader a.edit .button').click(function(){
 		if($('#userFormCreateOrEdit').val() == "view"){
 			updateUserFormMode(1);
-			$('#userFormCreateOrEdit').val("edit");
+			//$('#userFormCreateOrEdit').val("edit");
 			$('#viewUserEditButton a.edit .button').empty().append("Discard");
-			console.log("showing button as enabled");
-			$('#userFormButton').removeClass('disabled');
+			//console.log("showing button as enabled");
+			//$('#userFormButton').removeClass('disabled');
 		}else if($('#userFormCreateOrEdit').val() == "edit"){
 			updateUserFormMode(0);
-			$('#userFormCreateOrEdit').val("view");
+			//$('#userFormCreateOrEdit').val("view");
 			$('#viewUserEditButton a.edit .button').empty().append("Edit");
-			console.log("showing button as disabled");
-			$('#userFormButton').addClass('disabled');
+			//console.log("showing button as disabled");
+			//$('#userFormButton').addClass('disabled');
 		}else{
 			console.log("User form is currently in unknown state and cannot be swapped.");
 		}
@@ -151,7 +151,6 @@ function initialSetup(){
 			console.log("Building edited profile.");
 			var userToEdit = buildUserToEdit();
 			//TODO: probably do some clientside validation here
-			console.log(userToEdit);
 			maxwellClient.updateUser(userToEdit, updateAfterUserEdit);
 		}else{
 			console.log("User form is not in edit mode, and no other modes are currently supported, and therefore this button cannot be used.");
@@ -433,9 +432,9 @@ function viewUser(userId, returnButtonCallback){
 
 	//Set the form to be in "view" mode by default
 	updateUserFormMode(0);
-	$('#userFormCreateOrEdit').val("view");
+	//$('#userFormCreateOrEdit').val("view");
 	$('#viewUserEditButton a.edit .button').empty().append("Edit");
-	$('#userFormButton').addClass('disabled');
+	//$('#userFormButton').addClass('disabled');
 	
 	var myObj = $('#userFormDiv');
 	$('#viewUserDiv').append(myObj);
@@ -474,8 +473,10 @@ function buildUserToEdit(){
 }
 
 function updateAfterUserEdit(data,responseHandler){
-	alert('woot2');
 	console.log(data);
+	userInfoByUserId[data.userId] = data;
+	populateUserForm(data);
+	updateUserFormMode(0);
 }
 
 function populateUserForm(userObject){
@@ -554,10 +555,14 @@ function updateUserFormMode(userFormMode){
 		$('#userFormDiv .userForm_create').hide();
 		$('#userFormDiv .userForm_edit').hide();
 		$('#userFormDiv .userForm_view').show();
+		$('#userFormCreateOrEdit').val("view");
+		$('#userFormButton').addClass('disabled');
 	}else if(userFormMode == 1){
 		$('#userFormDiv .userForm_create').hide();
 		$('#userFormDiv .userForm_view').hide();
 		$('#userFormDiv .userForm_edit').show();
+		$('#userFormCreateOrEdit').val("edit");
+		$('#userFormButton').removeClass('disabled');
 	}else{
 		console.log("Unknown mode for user form.");
 	}
