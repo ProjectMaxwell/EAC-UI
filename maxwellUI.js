@@ -11,7 +11,6 @@ var metadataOnChangeEvents = new Array();
 var metadataInitialized = false;
 
 $(document).ready(function(){
-	bradyCat();
 	initialSetup();
 	var refreshToken = getRefreshTokenCookie();
 		if(refreshToken){
@@ -37,10 +36,8 @@ $(document).ready(function(){
 		console.log("No refresh token cookie.");
 		$("#loginPane").lightbox_me();
 	}
-	//$("#loginPane").lightbox_me();
-//	joelLogin();
 });
-function bradyCat(){
+/*function bradyCat(){
 	var betweenNums = 10;
 	if(Math.floor(Math.random()*betweenNums+1) == 1){
 		var imageWidth = 200;
@@ -69,7 +66,7 @@ function bradyCat(){
 		bradyText += '</div>';
 		$('#bradyHolder').append(bradyText);
 	};
-}
+}*/
 function initialSetup(){
 	maxwellClient.init("http://www.evergreenalumniclub.com:7080/ProjectMaxwell/rest");
 	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
@@ -110,7 +107,7 @@ function initialSetup(){
 					top: '0px'
 				}, 250);
 			});
-		})
+		});
 	$('#addRecruitCommentButton').click(addRecruitComment);
 	$('#recruitCommentsHolder').find('.addItemButtonHolder').click(function(){
 		$(this).animate({
@@ -120,7 +117,7 @@ function initialSetup(){
 				top: '0px'
 			}, 250);
 		});
-	})
+	});
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
 	$('#loginFormUsername, #loginFormPassword').on('keyup', function(e){
 		var code = (e.keyCode ? e.keyCode : e.which);
@@ -129,6 +126,36 @@ function initialSetup(){
 		}
 	});
 	$('#createUserButton').click(submitUser);
+	
+	//$('#userFormAssociateClassInput').chosen();
+	
+	$('#viewUserHeader a.edit .button').click(function(){
+		if($('#userFormCreateOrEdit').val() == "view"){
+			updateUserFormMode(1);
+			//$('#userFormCreateOrEdit').val("edit");
+			$('#viewUserEditButton a.edit .button').empty().append("Discard");
+			//console.log("showing button as enabled");
+			//$('#userFormButton').removeClass('disabled');
+		}else if($('#userFormCreateOrEdit').val() == "edit"){
+			updateUserFormMode(0);
+			//$('#userFormCreateOrEdit').val("view");
+			$('#viewUserEditButton a.edit .button').empty().append("Edit");
+			//console.log("showing button as disabled");
+			//$('#userFormButton').addClass('disabled');
+		}else{
+			console.log("User form is currently in unknown state and cannot be swapped.");
+		}
+	});
+	$('#userFormButton').click(function(){
+		if($('#userFormCreateOrEdit').val() == "edit"){
+			console.log("Building edited profile.");
+			var userToEdit = buildUserToEdit();
+			//TODO: probably do some clientside validation here
+			maxwellClient.updateUser(userToEdit, updateAfterUserEdit);
+		}else{
+			console.log("User form is not in edit mode, and no other modes are currently supported, and therefore this button cannot be used.");
+		}
+	});
 }
 
 /*********************************************************************************************
@@ -225,6 +252,9 @@ function initializeOnChangeHandlers(){
 			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
 		});*/
 		$("#associateClassInput").val(associateClasses.length -1);
+		
+		$('#userFormAssociateClassInput').html(associateClassString);
+//		$("#userFormAssociateClassInput").trigger("liszt:updated");
 	};
 	
 	//Chapter event handlers
@@ -244,6 +274,8 @@ function initializeOnChangeHandlers(){
 			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
 		});*/
 		$("#chapterNameInput").val(41);
+		
+		$('#userFormChapterInput').html(chapterString);
 	};
 	
 	//UserType event handlers
@@ -261,6 +293,8 @@ function initializeOnChangeHandlers(){
 		/*.chosen().change(function(){
 			var currSelected = $(this).children('[value="' + $(this).val() + '"]').text();
 		});*/
+		
+		$('#userFormUserTypeInput').html(userTypeString);
 	};
 	
 	//RecruitContactType event handlers
@@ -372,50 +406,166 @@ function populateUserTable(userType){
 	for(var i = 0; i < data.length; i++){
 		var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
 		var email = data[i].email == null ? '' : data[i].email;
+		var phoneNumber = data[i].phoneNumber == null ? '' : data[i].phoneNumber;
 		newUserText += '<tr id="userTable_user' + data[i].userId + '"><td><div class="userTableFullName"><a href="#">' + data[i].firstName + ' ' + data[i].lastName + '</a></div></td>' +
 		'<td><div class="userTableAssociateClass">' + associateClasses[associateClassId].name + '</div></td>' +
 		'<td><div class="userTableEmailAddy">' + email + '</div></td>' +
-		'<td><div class="userTablePhoneNumber">520-977-3126</div></td></tr>';
+		'<td><div class="userTablePhoneNumber">' + phoneNumber + '</div></td></tr>';
 	}
 	$('#usersListBody').empty().append(newUserText);
 	
 	for(var i = 0; i < data.length; i++){
-/*		var userId = data[i].userId;
-		var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
-		$(userTableString).click(function(){
-			var tmpUser = tmpFunction(userId);
-			//alert(tmpUser);
-			viewUser(tmpUser,function(){
-				//populateUserTable(userType);
-				$('#contentHolder').children().not('#usersListHolder').hide();
-				$('#usersListHolder').show();
-			});
-		});*/
 		(function(userId){
 			var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
 			$(userTableString).click(function(){
-				alert(userId);
-				/*viewUser(userId,function(){
-					//populateUserTable(userType);
+				viewUser(userId,function(){
 					$('#contentHolder').children().not('#usersListHolder').hide();
 					$('#usersListHolder').show();
-				});*/
+				});
 			});
 		})(data[i].userId);
 	}
 }
 
-function makeUserReturnCallback(){
-	return function(tmpUserId){
-		alert(tmpUserId);
-		//return tmpUserId;
-		};
+function viewUser(userId, returnButtonCallback){
+	$('#viewUserHeader a.previous').click(returnButtonCallback);
+
+	//Set the form to be in "view" mode by default
+	updateUserFormMode(0);
+	//$('#userFormCreateOrEdit').val("view");
+	$('#viewUserEditButton a.edit .button').empty().append("Edit");
+	//$('#userFormButton').addClass('disabled');
+	
+	var myObj = $('#userFormDiv');
+	$('#viewUserDiv').append(myObj);
+	myObj.show();
+	retrieveUserIfNull(userId,function(userObject){
+		$('#viewUserTitle').text("User: " + userObject.firstName + " " + userObject.lastName);
+		$('input.newUserInput').val(null);
+		$('span.newUserSpan').empty();
+		$('select.newUserInput').val(0);
+		populateUserForm(userObject);
+	});
+	$('#contentHolder').children().not('#viewUserHolder').hide();
+	$('#viewUserHolder').show();
 }
 
+function buildUserToEdit(){
+	var userToEdit = new Object();
+	if($('#userFormFirstNameInput').val() && $('#userFormFirstNameInput').val() != ''){userToEdit.firstName = $('#userFormFirstNameInput').val();}
+	if($('#userFormLastNameInput').val() && $('#userFormLastNameInput').val() != ''){userToEdit.lastName = $('#userFormLastNameInput').val();}
+	if($('#userFormEmailAddressInput').val() && $('#userFormEmailAddressInput').val() != ''){userToEdit.email = $('#userFormEmailAddressInput').val();}
+	if($('#userFormPhoneNumberInput').val() && $('#userFormPhoneNumberInput').val() != ''){userToEdit.phoneNumber = $('#userFormPhoneNumberInput').val();}
+	if($('#userFormYearInitiatedInput').val() && $('#userFormYearInitiatedInput').val() != ''){userToEdit.yearInitiated = $('#userFormYearInitiatedInput').val();}
+	if($('#userFormYearGraduatedInput').val() && $('#userFormYearGraduatedInput').val() != ''){userToEdit.yearGraduated = $('#userFormYearGraduatedInput').val();}
+	if($('#userFormChapterInput').val() && $('#userFormChapterInput').val() != 0){userToEdit.chapterId = $('#userFormChapterInput').val();}
+	if($('#userFormAssociateClassInput').val() && $('#userFormAssociateClassInput').val() != 0){userToEdit.associateClassId = $('#userFormAssociateClassInput').val();}
+	if($('#userFormPinInput').val() && $('#userFormPinInput').val() != ''){userToEdit.pin = $('#userFormPinInput').val();}
+	if($('#userFormLinkedInInput').val() && $('#userFormLinkedInInput').val() != ''){userToEdit.linkedInId = $('#userFormLinkedInInput').val();}
+	if($('#userFormFacebookInput').val() && $('#userFormFacebookInput').val() != ''){userToEdit.facebookId = $('#userFormFacebookInput').val();}
+	if($('#userFormTwitterInput').val() && $('#userFormTwitterInput').val() != ''){userToEdit.twitterId = $('#userFormTwitterInput').val();}
+	if($('#userFormGoogleInput').val() && $('#userFormGoogleInput').val() != ''){userToEdit.googleAccountId = $('#userFormGoogleInput').val();}
+	if($('#userFormHighschoolInput').val() && $('#userFormHighschoolInput').val() != ''){userToEdit.highschool = $('#userFormHighschoolInput').val();}
+	if($('#userFormDateOfBirthInput').val() && $('#userFormDateOfBirthInput').val() != ''){userToEdit.dateOfBirth = $('#userFormDateOfBirthInput').val();}
+	userToEdit.userId = $('#userFormUserIdInput').val();
+	userToEdit.userTypeId = $('#userFormUserTypeInput').val();
+	return userToEdit;
+}
 
-function viewUser(userId, returnButtonCallback){
-	alert("woot" + userId);
-	returnButtonCallback();
+function updateAfterUserEdit(data,responseHandler){
+	console.log(data);
+	userInfoByUserId[data.userId] = data;
+	populateUserForm(data);
+	updateUserFormMode(0);
+}
+
+function populateUserForm(userObject){
+	if(userObject.firstName){
+		$('#userFormFirstNameInput').empty().val(userObject.firstName);
+		$('#userFormFirstNameSpan').empty().append(userObject.firstName);
+	}
+	if(userObject.lastName){
+		$('#userFormLastNameInput').empty().val(userObject.lastName);
+		$('#userFormLastNameSpan').empty().append(userObject.lastName);
+	}
+	if(userObject.email){
+		$('#userFormEmailAddressInput').empty().val(userObject.email);
+		$('#userFormEmailAddressSpan').empty().append(userObject.email);
+	}
+	if(userObject.phoneNumber){
+		$('#userFormPhoneNumberInput').empty().val(userObject.phoneNumber);
+		$('#userFormPhoneNumberSpan').empty().append(userObject.phoneNumber);
+	}
+	if(userObject.yearInitiated){
+		$('#userFormYearInitiatedInput').empty().val(userObject.yearInitiated);
+		$('#userFormYearInitiatedSpan').empty().append(userObject.yearInitiated);
+	}
+	if(userObject.yearGraduated){
+		$('#userFormYearGraduatedInput').empty().val(userObject.yearGraduated);
+		$('#userFormYearGraduatedSpan').empty().append(userObject.yearGraduated);
+	}
+	if(userObject.associateClassId){
+		$('#userFormAssociateClassInput').val(userObject.associateClassId);
+		$('#userFormAssociateClassSpan').empty().append(associateClasses[userObject.associateClassId].name);
+	}
+	if(userObject.chapterId){
+		$('#userFormChapterInput').val(userObject.chapterId);
+		$('#userFormChapterSpan').empty().append(chapters[userObject.chapterId].name);
+	}
+	if(userObject.userTypeId){
+		$('#userFormUserTypeInput').val(userObject.userTypeId);
+		$('#userFormUserTypeSpan').empty().append(userTypes[userObject.userTypeId].name);
+	}
+	if(userObject.pin){
+		$('#userFormPinInput').empty().val(userObject.pin);
+		$('#userFormPinSpan').empty().append(userObject.pin);
+	}
+	if(userObject.googleAccountId){
+		$('#userFormGoogleInput').empty().val(userObject.googleAccountId);
+		$('#userFormGoogleSpan').empty().append(userObject.googleAccountId);
+	}
+	if(userObject.facebookId){
+		$('#userFormFacebookInput').empty().val(userObject.facebookId);
+		$('#userFormFacebookSpan').empty().append(userObject.facebookId);
+	}
+	if(userObject.linkedInId){
+		$('#userFormLinkedInInput').empty().val(userObject.linkedInId);
+		$('#userFormLinkedInSpan').empty().append(userObject.linkedInId);
+	}
+	if(userObject.twitterId){
+		$('#userFormTwitterInput').empty().val(userObject.twitterId);
+		$('#userFormTwitterSpan').empty().append(userObject.twitterId);
+	}
+	if(userObject.highschool){
+		$('#userFormHighschoolInput').empty().val(userObject.highschool);
+		$('#userFormHighschoolSpan').empty().append(userObject.highschool);
+	}
+	if(userObject.dateOfBirth){
+		$('#userFormDateOfBirthInput').empty().val(userObject.dateOfBirth);
+		$('#userFormDateOfBirthSpan').empty().append(userObject.dateOfBirth);
+	}
+	if(userObject.userId){
+		$('#userFormUserIdInput').empty().val(userObject.userId);
+	}
+	
+}
+
+function updateUserFormMode(userFormMode){
+	if(userFormMode == 0){
+		$('#userFormDiv .userForm_create').hide();
+		$('#userFormDiv .userForm_edit').hide();
+		$('#userFormDiv .userForm_view').show();
+		$('#userFormCreateOrEdit').val("view");
+		$('#userFormButton').addClass('disabled');
+	}else if(userFormMode == 1){
+		$('#userFormDiv .userForm_create').hide();
+		$('#userFormDiv .userForm_view').hide();
+		$('#userFormDiv .userForm_edit').show();
+		$('#userFormCreateOrEdit').val("edit");
+		$('#userFormButton').removeClass('disabled');
+	}else{
+		console.log("Unknown mode for user form.");
+	}
 }
 
 function retrieveAndPopulateRecruitTable(){
@@ -450,7 +600,6 @@ function populateRecruitmentPage(){
 	maxwellClient.getUsersByType(5, function(data){
 		var recruitListText = '';
 		for(var i = 0; i < data.length; i++){
-			console.log
 			recruitListText += '<li id="recruitsListItem' + data[i]['userId'] + '" class="recruitsListItem"><div class="userTableFullName">' + data[i].firstName + ' ' + data[i].lastName + '</div></li>';
 		}
 		if(data.length != 0){
@@ -492,7 +641,7 @@ function loadRecruitDetails(recruitId){
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
-		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;'
+		var normalTab = '&nbsp;&nbsp;&nbsp;&nbsp;';
 		var recruitDetails = '<div class="recruitDivider"></div><div id="recruitInfoAreaTop"><div class="recruitSmallLabel">Source:<br /><div class="recruitLargeData">' + normalTab + recruitSources[recruitObject.recruitSourceId].name +'</div></div>' +
 		'<div class="recruitSmallLabel">Involvement Level:<br /><div class="recruitLargeData">' + normalTab + recruitEngagementLevels[recruitObject.recruitEngagementLevelId].engagementLevel + '</div></div>';
 		if(recruitObject.classStanding){recruitDetails += '<div class="recruitSmallLabel">Class:<br /><div class="recruitLargeData">' + normalTab + recruitObject.classStanding + '</div></div>';}
@@ -598,7 +747,6 @@ function loadRecruitDetails(recruitId){
 			}
 			recruitsDetailsHolder.css('opacity', 1);
 			$('#recruitsListItem' + recruitId + ' > div').css('border-right', '');
-			console.log($('#recruitsListItem' + recruitId + ' > div'));
 			$('html, body').animate({scrollTop:0}, 'slow');
 		}
 	}
@@ -808,7 +956,7 @@ function retrieveRecruitInfoIfNull(userId, additionalCallback){
 			this.recruitInfoByUserId[userId] = data;
 			additionalCallback(this.recruitInfoByUserId[userId]);
 		});
-	}
+	};
 }
 function setRefreshTokenCookie(value){
 	var exdate=new Date();
