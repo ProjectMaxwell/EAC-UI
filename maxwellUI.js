@@ -13,30 +13,36 @@ var maxwellServiceURI;
 var phiAuthServiceURI;
 var danteURI = "https://students.washington.edu/phitau/UWNetIDBounce/UWNetIDBounce.php";
 
+function loadPageVar (sVar) {
+  return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
+}
+
 $(document).ready(function(){
 	initialSetup();
 	var refreshToken = getRefreshTokenCookie();
-		if(refreshToken){
-			phiAuthClient.refreshToken(refreshToken,function(data, status, responseHandler){
-				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
-				console.log("Refreshed token from cookie.");
-				setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
-				//These variables are here because this is an asynchronous wait timer,
-				//and phiAuthClient is liable to change in the time before the timer is triggered
-				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
-				var tmpTtl = phiAuthClient.tokenResponse.ttl;
-				setRefreshTimer(tmpRefreshToken, tmpTtl);
-				
-				if(!metadataInitialized){
-					metadataInitialized = true;
-					initializeMetadata();
-				}
-			},function(data,status,responseHandler){
-				console.log("Refresh token from cookie not valid.");
-				$("#loginPane").lightbox_me();
-			});
+	var uwnetidToken = loadPageVar("token");
+	if(refreshToken){
+		phiAuthClient.refreshToken(refreshToken,function(data, status, responseHandler){
+			maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+			
+			setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
+			//These variables are here because this is an asynchronous wait timer,
+			//and phiAuthClient is liable to change in the time before the timer is triggered
+			var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
+			var tmpTtl = phiAuthClient.tokenResponse.ttl;
+			setRefreshTimer(tmpRefreshToken, tmpTtl);
+			
+			if(!metadataInitialized){
+				metadataInitialized = true;
+				initializeMetadata();
+			}
+		},function(data,status,responseHandler){
+			console.log("Refresh token from cookie not valid.");
+			$("#loginPane").lightbox_me();
+		});
+	}else if(uwnetidToken){
+		phiAuthClient.authenticateByUWNetID(uwnetidToken,successfulLogin,failedLogin);
 	}else{
-		console.log("No refresh token cookie.");
 		$("#loginPane").lightbox_me();
 	}
 });
@@ -173,31 +179,35 @@ function doLoginByPassword(){
 	var username = $("#loginFormUsername").val();
 	var password = $("#loginFormPassword").val();
 	phiAuthClient.authenticateByPassword(username,password,
-			function(data,statusCode,responseHandler){
-				$("#loginPane").trigger("close");
-				maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
-				
-				$(".loginFormInput").val("");
-				setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
-				//These variables are here because this is an asynchronous wait timer,
-				//and phiAuthClient is liable to change in the time before the timer is triggered
-				var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
-				var tmpTtl = phiAuthClient.tokenResponse.ttl;
-				setRefreshTimer(tmpRefreshToken, tmpTtl);
-				
-				if(!metadataInitialized){
-					metadataInitialized = true;
-					initializeMetadata();
-				}
-			},function(data,statusCode,responseHandler){
-				$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
-				$("#loginFormPassword").val("");
-			});
+			successfulLogin,failedLogin);
 }
 
 function doLoginByUWNetID(){
 	var redirectAddress = danteURI + "?redir=" + encodeURIComponent(document.URL);
 	$(location).attr("href",redirectAddress);
+}
+
+function successfulLogin(data,statusCode,responseHandler){
+	$("#loginPane").trigger("close");
+	maxwellClient.setAccessToken(phiAuthClient.tokenResponse.accessToken);
+	
+	$(".loginFormInput").val("");
+	setRefreshTokenCookie(phiAuthClient.tokenResponse.refreshToken);
+	//These variables are here because this is an asynchronous wait timer,
+	//and phiAuthClient is liable to change in the time before the timer is triggered
+	var tmpRefreshToken = phiAuthClient.tokenResponse.refreshToken;
+	var tmpTtl = phiAuthClient.tokenResponse.ttl;
+	setRefreshTimer(tmpRefreshToken, tmpTtl);
+	
+	if(!metadataInitialized){
+		metadataInitialized = true;
+		initializeMetadata();
+	}
+}
+
+function failedLogin(data,statusCode,responseHandler){
+	$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
+	$("#loginFormPassword").val("");
 }
 
 /**
