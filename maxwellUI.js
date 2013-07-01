@@ -9,6 +9,9 @@ var userInfoByUserId = new Array();
 var recruitInfoByUserId = new Array();
 var metadataOnChangeEvents = new Array();
 var metadataInitialized = false;
+var maxwellServiceURI;
+var phiAuthServiceURI;
+var danteURI = "https://students.washington.edu/phitau/UWNetIDBounce/UWNetIDBounce.php";
 
 $(document).ready(function(){
 	initialSetup();
@@ -96,6 +99,7 @@ function initialSetup(){
 	$('#recruitsDetailsHolder').hide();
 	$('#submitEventButton').click(createEACMeeting);
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
+	$('#UWNetIDLoginButton').click(doLoginByUWNetID);
 
 
 	$('#recordRecruitContactButton').click(recordRecruitContact);
@@ -118,7 +122,7 @@ function initialSetup(){
 			}, 250);
 		});
 	});
-	$('#submitPasswordLoginButton').click(doLoginByPassword);
+	//$('#submitPasswordLoginButton').click(doLoginByPassword);
 	$('#loginFormUsername, #loginFormPassword').on('keyup', function(e){
 		var code = (e.keyCode ? e.keyCode : e.which);
 		if(code == 13 && $('#loginFormUsername').val() != "" && $('#loginFormPassword').val() != ""){
@@ -189,6 +193,11 @@ function doLoginByPassword(){
 				$("#loginFormErrorDiv").html(phiAuthClient.errorResponse.errorMessage);
 				$("#loginFormPassword").val("");
 			});
+}
+
+function doLoginByUWNetID(){
+	var redirectAddress = danteURI + "?redir=" + encodeURIComponent(document.URL);
+	$(location).attr("href",redirectAddress);
 }
 
 /**
