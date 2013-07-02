@@ -12,6 +12,7 @@ var metadataInitialized = false;
 var maxwellServiceURI;
 var phiAuthServiceURI;
 var danteURI = "https://students.washington.edu/phitau/UWNetIDBounce/UWNetIDBounce.php";
+var tmpUserToEdit;
 
 function loadPageVar (sVar) {
   return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
@@ -177,6 +178,7 @@ function initialSetup(){
  */
 function doLoginByPassword(){
 	var username = $("#loginFormUsername").val();
+	console.log("Logging in user '" + username + "' by password.");
 	var password = $("#loginFormPassword").val();
 	phiAuthClient.authenticateByPassword(username,password,
 			successfulLogin,failedLogin);
@@ -438,6 +440,7 @@ function populateUserTable(userType){
 			var userTableString = "#userTable_user" + userId + " div.userTableFullName a";
 			$(userTableString).click(function(){
 				viewUser(userId,function(){
+					if(!updateUserFormMode(0)){return;}
 					$('#contentHolder').children().not('#usersListHolder').hide();
 					$('#usersListHolder').show();
 				});
@@ -571,12 +574,19 @@ function populateUserForm(userObject){
 
 function updateUserFormMode(userFormMode){
 	if(userFormMode == 0){
+		if(tmpUserToEdit != null && !compareUsers(tmpUserToEdit,buildUserToEdit())){
+			if(!confirm("User form has unsaved changes - do you want to continue?")){
+				return false;
+			}
+		}
 		$('#userFormDiv .userForm_create').hide();
 		$('#userFormDiv .userForm_edit').hide();
 		$('#userFormDiv .userForm_view').show();
 		$('#userFormCreateOrEdit').val("view");
 		$('#userFormButton').addClass('disabled');
+		tmpUserToEdit = null;
 	}else if(userFormMode == 1){
+		tmpUserToEdit = buildUserToEdit();
 		$('#userFormDiv .userForm_create').hide();
 		$('#userFormDiv .userForm_view').hide();
 		$('#userFormDiv .userForm_edit').show();
@@ -585,6 +595,7 @@ function updateUserFormMode(userFormMode){
 	}else{
 		console.log("Unknown mode for user form.");
 	}
+	return true;
 }
 
 function retrieveAndPopulateRecruitTable(){
@@ -996,4 +1007,56 @@ function getRefreshTokenCookie(){
 			return unescape(y);
 		}
 	}
+}
+
+function compareUsers(user1, user2){
+	if(user1.firstName != user2.firstName){
+		return false;
+	}
+	if(user1.lastName != user2.lastName){
+		return false;
+	}
+	if(user1.email != user2.email){
+		return false;
+	}
+	if(user1.phoneNumber != user2.phoneNumber){
+		return false;
+	}
+	if(user1.yearGraduated != user2.yearGraduated){
+		return false;
+	}
+	if(user1.yearInitiated != user2.yearInitiated){
+		return false;
+	}
+	if(user1.chapter != user2.chapter){
+		return false;
+	}
+	if(user1.associateClassId != user2.associateClassId){
+		return false;
+	}
+	if(user1.pin != user2.pin){
+		return false;
+	}
+	if(user1.linkedInId != user2.linkedInId){
+		return false;
+	}
+	if(user1.facebookId != user2.facebookId){
+		return false;
+	}
+	if(user1.twitterId != user2.twitterId){
+		return false;
+	}
+	if(user1.googleAccountId != user2.googleAccountId){
+		return false;
+	}
+	if(user1.highschool != user2.highschool){
+		return false;
+	}
+	if(user1.dateOfBirth != user2.dateOfBirth){
+		return false;
+	}
+	if(user1.userTypeId != user2.userTypeId){
+		return false;
+	}
+	return true;
 }
