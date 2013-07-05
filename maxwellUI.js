@@ -15,6 +15,7 @@ var danteURI = "https://students.washington.edu/phitau/UWNetIDBounce/UWNetIDBoun
 var tmpUserToEdit;
 
 function loadPageVar (sVar) {
+	console.log("Loading page var '" + sVar + "'.");
   return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
 }
 
