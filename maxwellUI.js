@@ -14,11 +14,6 @@ var phiAuthServiceURI;
 var danteURI = "https://students.washington.edu/phitau/UWNetIDBounce/UWNetIDBounce.php";
 var tmpUserToEdit;
 
-function loadPageVar (sVar) {
-	console.log("Loading page var '" + sVar + "'.");
-  return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
-}
-
 $(document).ready(function(){
 	initialSetup();
 	var refreshToken = getRefreshTokenCookie();
@@ -83,9 +78,14 @@ function initialSetup(){
 	phiAuthClient.init("http://www.evergreenalumniclub.com:7080");
 	initializeOnChangeHandlers();
 	$('#newUser').click(function(){
-		$('#contentHolder').children().not('#createUsersHolder').hide();
+		var myObj = $('#userFormDiv');
+		$('#contentHolder').append(myObj);
+		myObj.show();
+		$('#viewUserEditButton a.edit .button').empty().append("Create");
+		$('#contentHolder').children().not('#userFormDiv').hide();
+		updateUserFormMode(2);
 		setNewUserValues();
-		$('#createUsersHolder').show();
+//		$('#createUsersHolder').show();
 	});
 	$('#usersList').click(function(){
 		$('#contentHolder').children().not('#usersListHolder').hide();
@@ -104,10 +104,13 @@ function initialSetup(){
 		retrieveAndPopulateRecruitTable();
 		$('#recruitmentPageHolder').show();
 	});
+	
+	$('#navHolder div').click(hideNotification);
 	$('#recruitsDetailsHolder').hide();
 	$('#submitEventButton').click(createEACMeeting);
 	$('#submitPasswordLoginButton').click(doLoginByPassword);
 	$('#UWNetIDLoginButton').click(doLoginByUWNetID);
+	$('#notificationBarCloseButton').click(hideNotification);
 
 
 	$('#recordRecruitContactButton').click(recordRecruitContact);
@@ -144,26 +147,44 @@ function initialSetup(){
 	$('#viewUserHeader a.edit .button').click(function(){
 		if($('#userFormCreateOrEdit').val() == "view"){
 			updateUserFormMode(1);
-			//$('#userFormCreateOrEdit').val("edit");
 			$('#viewUserEditButton a.edit .button').empty().append("Discard");
-			//console.log("showing button as enabled");
-			//$('#userFormButton').removeClass('disabled');
 		}else if($('#userFormCreateOrEdit').val() == "edit"){
 			updateUserFormMode(0);
-			//$('#userFormCreateOrEdit').val("view");
 			$('#viewUserEditButton a.edit .button').empty().append("Edit");
-			//console.log("showing button as disabled");
-			//$('#userFormButton').addClass('disabled');
 		}else{
 			console.log("User form is currently in unknown state and cannot be swapped.");
 		}
 	});
 	$('#userFormButton').click(function(){
+		//TODO: probably do some clientside validation here
 		if($('#userFormCreateOrEdit').val() == "edit"){
 			console.log("Building edited profile.");
-			var userToEdit = buildUserToEdit();
-			//TODO: probably do some clientside validation here
-			maxwellClient.updateUser(userToEdit, updateAfterUserEdit);
+			var userToEdit = buildUserObject();
+			maxwellClient.updateUser(userToEdit, updateAfterUserEdit,function(data,responseHandler){
+				try{
+					var errorObject = JSON.parse(responseHandler.responseText);
+					console.log(errorObject);
+					doNotification('Could not update user due to exception: ' + errorObject.errorMessage,true);	
+				}catch(e){
+					console.log("Could not parse exception as json.");
+					doNotification('Could not update user due to unknown exception.');
+				}
+			});
+		}else if($('#userFormCreateOrEdit').val() == "create"){
+			console.log("Building new profile to create.");
+			var userToCreate = buildUserObject();
+			console.log(userToCreate);
+			maxwellClient.createUser(userToCreate, updateAfterUserCreate, function(data,responseHandler){
+				try{
+					var errorObject = JSON.parse(responseHandler.responseText);
+					console.log(errorObject);
+					doNotification('Could not create new user due to exception: ' + errorObject.errorMessage,true);	
+				}catch(e){
+					console.log("Could not parse exception as json.");
+					doNotification('Could not create new user due to unknown exception.');
+				}
+			});
+		//	maxwellClient.updateUser(userToEdit, updateAfterUserEdit);
 		}else{
 			console.log("User form is not in edit mode, and no other modes are currently supported, and therefore this button cannot be used.");
 		}
@@ -429,7 +450,7 @@ function populateUserTable(userType){
 		var associateClassId = data[i].associateClassId == null ? '' : data[i].associateClassId;
 		var email = data[i].email == null ? '' : data[i].email;
 		var phoneNumber = data[i].phoneNumber == null ? '' : data[i].phoneNumber;
-		newUserText += '<tr id="userTable_user' + data[i].userId + '"><td><div class="userTableFullName"><a href="#">' + data[i].firstName + ' ' + data[i].lastName + '</a></div></td>' +
+		newUserText += '<tr id="userTable_user' + data[i].userId + '"><td><div class="userTableFullName"><a>' + data[i].firstName + ' ' + data[i].lastName + '</a></div></td>' +
 		'<td><div class="userTableAssociateClass">' + associateClasses[associateClassId].name + '</div></td>' +
 		'<td><div class="userTableEmailAddy">' + email + '</div></td>' +
 		'<td><div class="userTablePhoneNumber">' + phoneNumber + '</div></td></tr>';
@@ -473,26 +494,28 @@ function viewUser(userId, returnButtonCallback){
 	$('#viewUserHolder').show();
 }
 
-function buildUserToEdit(){
-	var userToEdit = new Object();
-	if($('#userFormFirstNameInput').val() && $('#userFormFirstNameInput').val() != ''){userToEdit.firstName = $('#userFormFirstNameInput').val();}
-	if($('#userFormLastNameInput').val() && $('#userFormLastNameInput').val() != ''){userToEdit.lastName = $('#userFormLastNameInput').val();}
-	if($('#userFormEmailAddressInput').val() && $('#userFormEmailAddressInput').val() != ''){userToEdit.email = $('#userFormEmailAddressInput').val();}
-	if($('#userFormPhoneNumberInput').val() && $('#userFormPhoneNumberInput').val() != ''){userToEdit.phoneNumber = $('#userFormPhoneNumberInput').val();}
-	if($('#userFormYearInitiatedInput').val() && $('#userFormYearInitiatedInput').val() != ''){userToEdit.yearInitiated = $('#userFormYearInitiatedInput').val();}
-	if($('#userFormYearGraduatedInput').val() && $('#userFormYearGraduatedInput').val() != ''){userToEdit.yearGraduated = $('#userFormYearGraduatedInput').val();}
-	if($('#userFormChapterInput').val() && $('#userFormChapterInput').val() != 0){userToEdit.chapterId = $('#userFormChapterInput').val();}
-	if($('#userFormAssociateClassInput').val() && $('#userFormAssociateClassInput').val() != 0){userToEdit.associateClassId = $('#userFormAssociateClassInput').val();}
-	if($('#userFormPinInput').val() && $('#userFormPinInput').val() != ''){userToEdit.pin = $('#userFormPinInput').val();}
-	if($('#userFormLinkedInInput').val() && $('#userFormLinkedInInput').val() != ''){userToEdit.linkedInId = $('#userFormLinkedInInput').val();}
-	if($('#userFormFacebookInput').val() && $('#userFormFacebookInput').val() != ''){userToEdit.facebookId = $('#userFormFacebookInput').val();}
-	if($('#userFormTwitterInput').val() && $('#userFormTwitterInput').val() != ''){userToEdit.twitterId = $('#userFormTwitterInput').val();}
-	if($('#userFormGoogleInput').val() && $('#userFormGoogleInput').val() != ''){userToEdit.googleAccountId = $('#userFormGoogleInput').val();}
-	if($('#userFormHighschoolInput').val() && $('#userFormHighschoolInput').val() != ''){userToEdit.highschool = $('#userFormHighschoolInput').val();}
-	if($('#userFormDateOfBirthInput').val() && $('#userFormDateOfBirthInput').val() != ''){userToEdit.dateOfBirth = $('#userFormDateOfBirthInput').val();}
-	userToEdit.userId = $('#userFormUserIdInput').val();
-	userToEdit.userTypeId = $('#userFormUserTypeInput').val();
-	return userToEdit;
+function buildUserObject(){
+	var userToBuild = new Object();
+	if($('#userFormFirstNameInput').val() && $('#userFormFirstNameInput').val() != ''){userToBuild.firstName = $('#userFormFirstNameInput').val();}
+	if($('#userFormLastNameInput').val() && $('#userFormLastNameInput').val() != ''){userToBuild.lastName = $('#userFormLastNameInput').val();}
+	if($('#userFormEmailAddressInput').val() && $('#userFormEmailAddressInput').val() != ''){userToBuild.email = $('#userFormEmailAddressInput').val();}
+	if($('#userFormPhoneNumberInput').val() && $('#userFormPhoneNumberInput').val() != ''){userToBuild.phoneNumber = $('#userFormPhoneNumberInput').val();}
+	if($('#userFormYearInitiatedInput').val() && $('#userFormYearInitiatedInput').val() != ''){userToBuild.yearInitiated = $('#userFormYearInitiatedInput').val();}
+	if($('#userFormYearGraduatedInput').val() && $('#userFormYearGraduatedInput').val() != ''){userToBuild.yearGraduated = $('#userFormYearGraduatedInput').val();}
+	if($('#userFormChapterInput').val() && $('#userFormChapterInput').val() != 0){userToBuild.chapterId = $('#userFormChapterInput').val();}
+	if($('#userFormAssociateClassInput').val() && $('#userFormAssociateClassInput').val() != 0){userToBuild.associateClassId = $('#userFormAssociateClassInput').val();}
+	if($('#userFormPinInput').val() && $('#userFormPinInput').val() != ''){userToBuild.pin = $('#userFormPinInput').val();}
+	if($('#userFormLinkedInInput').val() && $('#userFormLinkedInInput').val() != ''){userToBuild.linkedInId = $('#userFormLinkedInInput').val();}
+	if($('#userFormFacebookInput').val() && $('#userFormFacebookInput').val() != ''){userToBuild.facebookId = $('#userFormFacebookInput').val();}
+	if($('#userFormTwitterInput').val() && $('#userFormTwitterInput').val() != ''){userToBuild.twitterId = $('#userFormTwitterInput').val();}
+	if($('#userFormGoogleInput').val() && $('#userFormGoogleInput').val() != ''){userToBuild.googleAccountId = $('#userFormGoogleInput').val();}
+	if($('#userFormHighschoolInput').val() && $('#userFormHighschoolInput').val() != ''){userToBuild.highschool = $('#userFormHighschoolInput').val();}
+	if($('#userFormDateOfBirthInput').val() && $('#userFormDateOfBirthInput').val() != ''){userToBuild.dateOfBirth = $('#userFormDateOfBirthInput').val();}
+	if($('#userFormUserIdInput').val() && $('#userFormUserIdInput').val() != ''){
+		userToBuild.userId = $('#userFormUserIdInput').val();
+	}
+	userToBuild.userTypeId = $('#userFormUserTypeInput').val();
+	return userToBuild;
 }
 
 function updateAfterUserEdit(data,responseHandler){
@@ -500,6 +523,15 @@ function updateAfterUserEdit(data,responseHandler){
 	userInfoByUserId[data.userId] = data;
 	populateUserForm(data);
 	updateUserFormMode(0);
+}
+
+function updateAfterUserCreate(data,responseHandler){
+	console.log(data);
+	userInfoByUserId[data.userId] = data;
+	doNotification("User created with id = " + data.userId);
+//	populateUserForm(data);
+	$('#userFormDiv input').val(null);
+	$('#userFormDiv select').prop("selectedIndex",0);
 }
 
 function populateUserForm(userObject){
@@ -575,7 +607,7 @@ function populateUserForm(userObject){
 
 function updateUserFormMode(userFormMode){
 	if(userFormMode == 0){
-		if(tmpUserToEdit != null && !compareUsers(tmpUserToEdit,buildUserToEdit())){
+		if(tmpUserToEdit != null && !compareUsers(tmpUserToEdit,buildUserObject())){
 			if(!confirm("User form has unsaved changes - do you want to continue?")){
 				return false;
 			}
@@ -587,11 +619,20 @@ function updateUserFormMode(userFormMode){
 		$('#userFormButton').addClass('disabled');
 		tmpUserToEdit = null;
 	}else if(userFormMode == 1){
-		tmpUserToEdit = buildUserToEdit();
+		tmpUserToEdit = buildUserObject();
 		$('#userFormDiv .userForm_create').hide();
 		$('#userFormDiv .userForm_view').hide();
 		$('#userFormDiv .userForm_edit').show();
 		$('#userFormCreateOrEdit').val("edit");
+		$('#userFormButton').removeClass('disabled');
+	}else if(userFormMode == 2){
+		$('#userFormDiv .newUserSpan').empty();
+		$('#userFormDiv input').val(null);
+		$('#userFormDiv select').prop("selectedIndex",0);
+		$('#userFormDiv .userForm_edit').hide();
+		$('#userFormDiv .userForm_view').hide();
+		$('#userFormDiv .userForm_create').show();
+		$('#userFormCreateOrEdit').val("create");
 		$('#userFormButton').removeClass('disabled');
 	}else{
 		console.log("Unknown mode for user form.");
@@ -697,17 +738,18 @@ function loadRecruitDetails(recruitId){
 			var recruitContactors = [];
 			var recruitListText = '';
 			for(var i = 0; i < data.length; i++){
+				var contactTypeClass = null;
 				recruitListText += '<li id="recruitComment-' + this.recruitCommentId + '">';
 				if(data[i]['recruitContactTypeId'] == 1){
-					var contactTypeClass = 'Text';
+					contactTypeClass = 'Text';
 				}else if(data[i]['recruitContactTypeId'] == 2){
-					var contactTypeClass = 'Email';
+					contactTypeClass = 'Email';
 				}else if(data[i]['recruitContactTypeId'] == 3){
-					var contactTypeClass = 'SocialMedia';
+					contactTypeClass = 'SocialMedia';
 				}else if(data[i]['recruitContactTypeId'] == 4){
-					var contactTypeClass = 'Phone';
+					contactTypeClass = 'Phone';
 				}else if(data[i]['recruitContactTypeId'] == 5){
-					var contactTypeClass = 'Voicemail';
+					contactTypeClass = 'Voicemail';
 				}
 				recruitListText += '<div class="contactVia' + contactTypeClass + ' contactViaIcon" title="Via ' + contactTypeClass + '"></div><div class="recruitContactInnerHolder"><div class="contactHeader"><span class="recruitContactor recruitContactorUserId-' + data[i]['recruitContactorUserId'] + '">loading....</span> via ' + recruitContactTypes[data[i]['recruitContactTypeId']].name + ' at ' + data[i]['contactTimestamp'] + '</div>' +
 				'<div class="recruitContactNote">' + (data[i]['notes'] == null ? '' : data[i]['notes']) + '</div>' +
@@ -1008,6 +1050,25 @@ function getRefreshTokenCookie(){
 			return unescape(y);
 		}
 	}
+}
+
+function loadPageVar (sVar) {
+  return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
+}
+
+function doNotification(notification, isError){
+	if(isError){
+		$('#notificationBar').addClass('errorNotification');
+	}else{
+		$('#notificationBar').removeClass('errorNotification');
+	}
+	$('#notificationBarText').html(notification);
+	$('#notificationBar').show();
+}
+
+function hideNotification(){
+	$('#notificationBarText').empty();
+	$('#notificationBar').hide();
 }
 
 function compareUsers(user1, user2){

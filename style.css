@@ -12,6 +12,13 @@ ul{
 li{
 	list-style: none;
 }
+a{ 
+	cursor: pointer; 
+	color: blue; 
+}
+a:hover,a.hover{ 
+	text-decoration: underline; 
+}
 #container{
 	background: white;
 	width: 1000px;
@@ -432,6 +439,24 @@ input::-webkit-inner-spin-button {
 
 .displayInline{
 	display: table-cell;
+}
+
+#notificationBar{
+	display: none;
+	text-align: center;
+	background: #61b832;
+	color: white;
+	border-radius: 6px;
+	padding: 4px;
+}
+#notificationBarCloseButton{
+	background: url('images/sprite.png') -132px -16px;
+	width: 16px;
+	height: 16px;
+	float: right;
+}
+.errorNotification{
+	background-color: #eb593c !important;
 }
 
 /* Wiz Buttons */

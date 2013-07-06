@@ -27,9 +27,13 @@
 		</div>
 	</div>
 	<div id="container">
+		<div id="notificationBar">
+			<span id="notificationBarText"></span>
+			<a id="notificationBarCloseButton"></a>
+		</div>
 		<div id="navHolder">
 			<div class="sectionSelector" id="usersList">Users List</div>
-			<div class="sectionSelector" id="newUser">New Recruits</div>
+			<div class="sectionSelector" id="newUser">New User</div>
 			<div class="sectionSelector" id="newEACMeeting">New EAC Meeting</div>
 			<div class="sectionSelector" id="recruitPage">Recruitment</div>
 		</div>
@@ -156,7 +160,7 @@
 			<div id="viewUserHolder">
 				<div id="viewUserHeader" class="wiz-buttons">
 					<div class="displayInline">
-						<a class="previous" href="#">
+						<a class="previous">
 					        <span class="arrow"></span>
 					        <span class="arrow-inner"></span>
 					        <span class="button">Return</span>
@@ -164,7 +168,7 @@
 				    </div>
 				    <div id="viewUserTitle" class="displayInline">User: </div>
 					<div class="displayInline">
-						<a class="edit" id="viewUserEditButton" href="#">
+						<a class="edit" id="viewUserEditButton">
 					        <span class="button">Edit</span>
 					    </a>
 				    </div>
@@ -214,7 +218,7 @@
 				</div>
 				<div class="normalInputHolder">
 					Google Account URL: <span class="userForm_view newUserSpan" id="userFormGoogleSpan"></span>
-					<input class="newUserInput userForm_create userForm_edit" type="number" id="userFormGoogleInput">
+					<input class="newUserInput userForm_create userForm_edit" type="text" id="userFormGoogleInput">
 				</div>
 				<div class="normalInputHolder">
 					LinkedIn URL: <span class="userForm_view newUserSpan" id="userFormLinkedInSpan"></span>

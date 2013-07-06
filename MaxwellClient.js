@@ -165,16 +165,24 @@ var maxwellClient = {
 			alert('Could not retrieve user.');
 		});
 	},
-	createUser: function(userObject,successCallback){
-		this.post(this.usersEndpoint, userObject, successCallback, function(data, responseHandler){ 
-			alert('Could not create user.' + data);
-		});
+	createUser: function(userObject,successCallback,failureCallback){
+		if(!failureCallback){
+			failureCallback = function(data, responseHandler){
+				console.log('Could not create user.' + data);
+				alert('Could not create user.' + data);
+			};
+		}
+		this.post(this.usersEndpoint, userObject, successCallback, failureCallback);
 	},
-	updateUser: function(userObject,successCallback){
+	updateUser: function(userObject,successCallback,failureCallback){
+		if(!failureCallback){
+			failureCallback = function(data, responseHandler){
+				console.log('Could not update user. ' + responseHandler.responseText);
+				alert('Could not update user.');
+			};
+		}
 		var path = this.userByIdEndpoint.replace("%s",userObject.userId);
-		this.put(path, userObject, successCallback, function(data, responseHandler){ 
-			alert('Could not update user.' + data);
-		});
+		this.put(path, userObject, successCallback, failureCallback);
 	},
 	getAssociateClasses: function(successCallback){
 		
