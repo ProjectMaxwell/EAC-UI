@@ -35,7 +35,11 @@ $(document).ready(function(){
 			}
 		},function(data,status,responseHandler){
 			console.log("Refresh token from cookie not valid.");
-			$("#loginPane").lightbox_me();
+			if(uwnetidToken){
+				phiAuthClient.authenticateByUWNetID(uwnetidToken,successfulLogin,failedLogin);
+			}else{
+				$("#loginPane").lightbox_me();
+			}
 		});
 	}else if(uwnetidToken){
 		phiAuthClient.authenticateByUWNetID(uwnetidToken,successfulLogin,failedLogin);
