@@ -699,12 +699,13 @@ function loadRecruitDetails(recruitId){
 	$('.addItemButtonHolder, .addItemHolder').removeAttr('style');
 	$('.addItemHolder').find('input, textarea').val('');
 	retrieveUserIfNull(recruitId,function(userObject){
-		var userDetails = '<div id="recruitTopDivision"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
+		var userDetails = '<div id="recruitTopDivision" class="wiz-buttons"><div id="recruitName">' + userObject.firstName + ' ' + userObject.lastName + '</div>';
 		userDetails += '<input type="hidden" id="recruitUserId" value="' + userObject.userId +'"/>';
 		if(userObject.facebookId){userDetails +='<a href="' + userObject.facebookId + '" target="_blank"><div class="recruitFacebookIcon recruitSocialIcon"></div>';}
 		if(userObject.linkedInId){userDetails +='<a href="' + userObject.linkedInId + '" target="_blank"><div class="recruitLinkedInIcon recruitSocialIcon"></div>';}
 		if(userObject.twitterId){userDetails +='<a href="' + userObject.twitterId + '" target="_blank"><div class="recruitTwitterIcon recruitSocialIcon"></div>';}
 		if(userObject.googleAccountId){userDetails +='<a href="' + userObject.googleAccountId + '" target="_blank"><div class="recruitGoogleIcon recruitSocialIcon"></div>';}
+		userDetails += '<div class="editRecruitUserInfoButton"><a class="edit" id="editRecruit' + recruitId + 'Button"><span class="button">Edit User</span></a></div>';
 		userDetails += '</div><div id="recruitMiddleDivision">';
 		if(userObject.phoneNumber){userDetails +='<div class="recruitPhoneNumber" title="' + userObject.phoneNumber + '"><a href="tel:' + userObject.phoneNumber + '">' + userObject.phoneNumber + '</a></div>';}
 		if(userObject.email){userDetails +='<div class="recruitEmailAddress"><a href="mailto:' + userObject.email + '">' + userObject.email + '</a></div>';}
@@ -713,8 +714,9 @@ function loadRecruitDetails(recruitId){
 		if(userObject.highschool){userDetails +='<div class="recruitHSLabelHolder"><span class="recruitHSLabel">HS:</span> ' + userObject.highschool + '</div>';}
 		userDetails += '</div>';
 		$('#recruitBlurbUserData').append(userDetails);
+		$('#editRecruit' + recruitId + 'Button').click(getCurrentRecruitUserIdAndViewUser);
 		recruitFirstBlurbCheck = true;
-		showRecruitDetails();
+		//showRecruitDetails();
 	});
 	//maxwellClient.getRecruitInfoByUserId(recruitID, function(data){
 	retrieveRecruitInfoIfNull(recruitId, function(recruitObject){
@@ -732,14 +734,13 @@ function loadRecruitDetails(recruitId){
 		if(recruitObject.extracurriculars){recruitDetails += '<div class="recruitSmallLabel">extracurriculars:<br /><div class="recruitLargeData">' + normalTab + recruitObject.extracurriculars + '</div></div>';}
 		$('#recruitBlurbRecruitData').append(recruitDetails);
 		recruitSecondBlurbCheck = true;
-		showRecruitDetails();
+		//showRecruitDetails();
 	});
 	maxwellClient.getRecruitContactHistoryByRecruitUserId(recruitId, function(data){
 		if(data.length == 0){
 			$('#recruitsContactHistoryListHolder').prepend('<div>Recruit has not been contacted yet.</div>');
 		}else{
 			var recruitContactUL = $('<ul id="recruitsContactHistoryList"></ul>');
-			var recruitListText = '';
 			var recruitContactors = [];
 			var recruitListText = '';
 			for(var i = 0; i < data.length; i++){
@@ -784,7 +785,7 @@ function loadRecruitDetails(recruitId){
 			}
 		}
 		recruitContactCheck = true;
-		showRecruitDetails();
+		//showRecruitDetails();
 	});
 	maxwellClient.getRecruitCommentsByRecruitUserId(recruitId, function(data, responseHandler){
 		if(data == null || data.length == 0){
@@ -813,21 +814,31 @@ function loadRecruitDetails(recruitId){
 			});
 		}
 		recruitsCommentCheck = true;
-		showRecruitDetails();
+		showRecruitDetails(recruitId);
 	});
-	function showRecruitDetails(){
-		if(recruitFirstBlurbCheck && recruitSecondBlurbCheck && recruitContactCheck && recruitsCommentCheck){
-			var selectedRecruit = $('.selectedRecruitListItem');
-			recruitsDetailsHolder.css('opacity', 0).show();
-			//Stretches the box to line up with a user if the user is low on the list.
-			if($('.selectedRecruitListItem').offset().top + $('.selectedRecruitListItem').height() > $('#recruitsDetailsHolder').offset().top + $('#recruitsDetailsHolder').height()){
-				recruitsDetailsHolder.css('height', selectedRecruit.offset().top + selectedRecruit.height() - recruitsDetailsHolder.offset().top);
-			}
-			recruitsDetailsHolder.css('opacity', 1);
-			$('#recruitsListItem' + recruitId + ' > div').css('border-right', '');
-			$('html, body').animate({scrollTop:0}, 'slow');
+}
+function showRecruitDetails(recruitId){
+	//if(recruitFirstBlurbCheck && recruitSecondBlurbCheck && recruitContactCheck && recruitsCommentCheck){
+		var selectedRecruit = $('.selectedRecruitListItem');
+		var recruitsDetailsHolder = $('#recruitsDetailsHolder');
+		recruitsDetailsHolder.css('opacity', 0).show();
+		//Stretches the box to line up with a user if the user is low on the list.
+		if(selectedRecruit.offset().top + selectedRecruit.height() > recruitsDetailsHolder.offset().top + recruitsDetailsHolder.height()){
+			recruitsDetailsHolder.css('height', selectedRecruit.offset().top + selectedRecruit.height() - recruitsDetailsHolder.offset().top);
 		}
-	}
+		recruitsDetailsHolder.css('opacity', 1);
+		$('#recruitsListItem' + recruitId + ' > div').css('border-right', '');
+		$('html, body').animate({scrollTop:0}, 'slow');
+	//}
+}
+function getCurrentRecruitUserIdAndViewUser(){
+	var currentRecruitUserId = $('#recruitUserId').val();
+	viewUser(currentRecruitUserId, function(){
+		$('#contentHolder').children().not('#recruitmentPageHolder').hide();
+		$('#recruitmentPageHolder').show();
+		populateRecruitTable();
+		loadRecruitDetails(currentRecruitUserId);
+	});
 }
 function setNewUserValues(editUser){
 	if($('#referredByMemberInput').children().length != 0){
@@ -846,9 +857,6 @@ function setNewUserValues(editUser){
 	/*$('#associateClassInput').chosen().change(function(){
 		console.log($(this).val())
 	});*/
-}
-function editUser(){
-	//Maybe just do a submitUser and if X things are the same it updates instead of creates? I dunno.
 }
 function submitUser(){
 	var errorList = new Array();

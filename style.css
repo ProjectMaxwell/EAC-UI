@@ -392,6 +392,11 @@ input::-webkit-inner-spin-button {
 #recruitsCommentsHolder > textarea{
 	height: 50px;
 }
+.editRecruitUserInfoButton{
+	float: right;
+	margin-top: 20px;
+	margin-right: 10px;
+}
 #createUserButton{
 	border: 1px solid black;
 	width: 208px;
