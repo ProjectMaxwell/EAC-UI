@@ -34,10 +34,11 @@ $(document).ready(function(){
 				initializeMetadata();
 			}
 		},function(data,status,responseHandler){
-			console.log("Refresh token from cookie not valid.");
 			if(uwnetidToken){
 				phiAuthClient.authenticateByUWNetID(uwnetidToken,successfulLogin,failedLogin);
+				console.log("Refresh token from cookie not valid, getting new authorization via UWNetID token.");
 			}else{
+				console.log("Refresh token from cookie not valid.");
 				$("#loginPane").lightbox_me();
 			}
 		});
@@ -765,7 +766,7 @@ function loadRecruitDetails(recruitId){
 			}
 			recruitContactUL.append(recruitListText);
 			$('#recruitsContactHistoryListHolder').prepend(recruitContactUL);
-			$('#recordRecruitContactButton').click(recordRecruitContact);
+			//$('#recordRecruitContactButton').click(recordRecruitContact);
 			$('#recruitsContactHistoryListHolder').find('.addItemButtonHolder').click(function(){
 				$(this).animate({
 					top: '-40px'
