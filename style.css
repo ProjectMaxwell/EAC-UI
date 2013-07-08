@@ -464,6 +464,55 @@ input::-webkit-inner-spin-button {
 	background-color: #eb593c !important;
 }
 
+#recruitmentLandingPage{
+	display: none;
+	width: 100%;
+	height: 800px;
+	position: relative;
+	border: 2px solid black;
+}
+/* Landing Page Quadrants */
+.landingPage div{
+	border-radius: 3px;
+	overflow-y: auto;
+}
+.landingPage .topLeftQuadrant{
+	background-color: #FF0000;
+	width: 49%;
+	height: 49%;
+	position: absolute;
+	border: 2px solid black;
+	margin: .25% 0 0 .25%;
+}
+.landingPage .topRightQuadrant{
+	background-color: #0000FF;
+	right: 0%;
+	width: 49%;
+	height: 49%;
+	position: absolute;
+	margin: .25% .25% 0 0;
+	border: 2px solid black;
+}
+.landingPage .bottomLeftQuadrant{
+	background-color: #00FF00;
+	bottom: 0%;
+	width: 49%;
+	height: 49%;
+	position: absolute;
+	margin: 0 0 .25% .25%;
+	border: 2px solid black;
+}
+.landingPage .bottomRightQuadrant{
+	background-color: #888888;
+	right: 0%;
+	bottom: 0%;
+	width: 49%;
+	height: 49%;
+	position: absolute;
+	margin: 0 .25% .25% 0;
+	border: 2px solid black;
+}
+
 /* Wiz Buttons */
 
 .wiz-buttons > div > a {

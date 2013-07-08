@@ -1135,3 +1135,7 @@ function compareUsers(user1, user2){
 	}
 	return true;
 }
+function viewRecruitmentLandingPage(){
+	$('#contentHolder').children().not('#recruitmentLandingPage').hide();
+	$('#recruitmentLandingPage').show();
+}
