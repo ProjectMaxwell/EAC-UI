@@ -477,7 +477,6 @@ input::-webkit-inner-spin-button {
 	overflow-y: auto;
 }
 .landingPage .topLeftQuadrant{
-	background-color: #FF0000;
 	width: 49%;
 	height: 49%;
 	position: absolute;
@@ -512,6 +511,28 @@ input::-webkit-inner-spin-button {
 	margin: 0 .25% .25% 0;
 	border: 2px solid black;
 }
+.landingPage > .topLeftQuadrant > div.landingPageQuadrantHeader{
+	text-align: center;
+	font-weight: bold;
+}
+.recentlyUpdatedRecruitEntry{
+	border: 1px solid gray;
+	border-radius:3px;
+}
+.recentlyUpdatedRecruitEntry > div{
+	display: inline-block;
+	height: 10%;
+}
+.recentlyUpdatedRecruitEntry > .newOrEdited{
+	width: 20%;
+}
+.recentlyUpdatedRecruitEntry > .name{
+	width: 50%;
+}
+.recentlyUpdatedRecruitEntry > .recruitEngagementLevel{
+	width: 30%;
+}
+
 
 /* Wiz Buttons */
 
