@@ -1171,6 +1171,20 @@ function viewRecruitmentLandingPage(){
 	$('#recruitmentLandingPage').show();
 	recentlyUpdatedRecruits = mockRecentlyUpdatedRecruits;
 	populateRecentlyUpdatedRecruits();
+	
+	var blockUISettings = {
+			message:'Coming Soon...', 
+			css: {
+				fontSize: '32px',
+				cursor:'normal'
+			}, 
+			overlayCSS: {
+				cursor: 'normal'
+			}		
+	};
+	$('#recruitmentLandingPage > div.topRightQuadrant').block(blockUISettings);
+	$('#recruitmentLandingPage > div.bottomLeftQuadrant').block(blockUISettings);
+	$('#recruitmentLandingPage > div.bottomRightQuadrant').block(blockUISettings);
 }
 function populateRecentlyUpdatedRecruits(){
 	var holder = $('#recruitmentLandingPage > div.topLeftQuadrant > div.landingPageQuadrantContent');
