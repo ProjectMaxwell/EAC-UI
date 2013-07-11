@@ -13,6 +13,37 @@ var maxwellServiceURI;
 var phiAuthServiceURI;
 var danteURI = "https://students.washington.edu/phitau/UWNetIDBounce/UWNetIDBounce.php";
 var tmpUserToEdit;
+var recentlyUpdatedRecruits;
+var mockRecentlyUpdatedRecruits = [{
+		"userDateCreated": 1373236501,
+		"userDateModified": 1373239888,
+		"firstName": "TESTUSER3",
+		"lastName": "tu3",
+		"userId": 368,
+		"recruitEngagementLevelId": 1,
+		"recruitDateCreated": 1373236502,
+		"recruitDateModified": 0
+		},
+		{
+		"userDateCreated": 1373236401,
+		"userDateModified": 0,
+		"firstName": "Johnny",
+		"lastName": "Testster",
+		"userId": 10,
+		"recruitEngagementLevelId": 3,
+		"recruitDateCreated": 1373236402,
+		"recruitDateModified": 0
+		},
+		{
+		"userDateCreated": 1373236301,
+		"userDateModified": 1373236303,
+		"firstName": "Cornelius J.",
+		"lastName": "Recruitingston",
+		"userId": 365,
+		"recruitEngagementLevelId": 4,
+		"recruitDateCreated": 1373236302,
+		"recruitDateModified": 0
+		}];
 
 $(document).ready(function(){
 	initialSetup();
@@ -1138,4 +1169,43 @@ function compareUsers(user1, user2){
 function viewRecruitmentLandingPage(){
 	$('#contentHolder').children().not('#recruitmentLandingPage').hide();
 	$('#recruitmentLandingPage').show();
+	recentlyUpdatedRecruits = mockRecentlyUpdatedRecruits;
+	populateRecentlyUpdatedRecruits();
+}
+function populateRecentlyUpdatedRecruits(){
+	var holder = $('#recruitmentLandingPage > div.topLeftQuadrant > div.landingPageQuadrantContent');
+	holder.empty();
+	//var content = '';
+	for(var i=0; i < recentlyUpdatedRecruits.length; i++){
+		var content = '';
+		var updatedRecruit = recentlyUpdatedRecruits[i];
+		console.log(recentlyUpdatedRecruits[i]);
+		content += '<div class="recentlyUpdatedRecruitEntry">';
+		content += '<div class="newOrEdited">';
+		if(updatedRecruit.userDateModified > 0 || updatedRecruit.recruitDateModified > 0){
+			content += 'Edited';
+		}else{
+			content += 'New';
+		}
+		content += '</div>';
+		content += '<div class="name"><a id="recentlyUpdatedRecruit_user' + updatedRecruit.userId + '">' + updatedRecruit.firstName + ' ' + updatedRecruit.lastName + '</a></div>';
+		content += '<div class="recruitEngagementLevel">' + recruitEngagementLevels[updatedRecruit.recruitEngagementLevelId].engagementLevel + '</div>';
+		content += '</div>';
+		holder.append(content);
+		
+		
+
+		(function(userId){
+			var viewUserLink = $('#recentlyUpdatedRecruit_user' + updatedRecruit.userId);
+			viewUserLink.click(function(){
+				$('#contentHolder').children().not('#recruitmentPageHolder').hide();
+				$('#recruitmentPageHolder').show();
+				retrieveAndPopulateRecruitTable();
+				loadRecruitDetails(userId);
+			});
+		})(updatedRecruit.userId);
+	}
+	//holder.html(content);
+	
+
 }
